@@ -13,14 +13,28 @@
   },
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Nicolas Charpentier <nicolas.charpentier079@gmail.com>",
   "license": "MIT",
+  "dependencies": {
+    "buffer": "^5.4.3",
+    "whatwg-url-without-unicode": "^7.0.0"
+  },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",
     "eslint": "^6.6.0",
     "eslint-plugin-prettier": "^3.1.1",
-    "prettier": "^1.19.1"
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "^0.57.0",
+    "prettier": "^1.19.1",
+    "react": "^16.12.0",
+    "react-native": "^0.61.4"
+  },
+  "peerDependencies": {
+    "react-native": "*"
+  },
+  "jest": {
+    "preset": "react-native"
   }
 }
