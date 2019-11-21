@@ -1,0 +1,26 @@
+{
+  "name": "react-native-url-polyfill",
+  "version": "1.0.0",
+  "description": "",
+  "bugs": {
+    "url": "https://github.com/charpeni/react-native-url-polyfill/issues"
+  },
+  "homepage": "https://github.com/charpeni/react-native-url-polyfill",
+  "readme": "https://github.com/charpeni/react-native-url-polyfill#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/charpeni/react-native-url-polyfill.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicolas Charpentier <nicolas.charpentier079@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@react-native-community/eslint-config": "^0.0.5",
+    "eslint": "^6.6.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "prettier": "^1.19.1"
+  }
+}
