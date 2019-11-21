@@ -38,7 +38,11 @@
     "react-native": "*"
   },
   "jest": {
-    "preset": "react-native"
+    "preset": "react-native",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "./detox/"
+    ]
   },
   "husky": {
     "hooks": {

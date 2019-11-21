@@ -12,3 +12,5 @@ pids
 *.pid
 *.seed
 *.pid.lock
+
+*.hprof
