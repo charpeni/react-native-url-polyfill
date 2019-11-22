@@ -1,5 +1,7 @@
 node_modules
 
+BundleSize
+
 .DS_Store
 
 logs
@@ -14,3 +16,5 @@ pids
 *.pid.lock
 
 *.hprof
+
+*.tgz
