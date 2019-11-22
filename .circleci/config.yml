@@ -1,0 +1,62 @@
+aliases:
+  - &save-cache-yarn
+    key: yarn-packages-{{ checksum "yarn.lock" }}
+    paths:
+      - ~/.cache/yarn
+  - &restore-cache-yarn
+    name: Restore Yarn Package Cache
+    keys:
+      - yarn-packages-{{ checksum "yarn.lock" }}
+  - &attach_workspace
+    attach_workspace:
+      at: ~/react-native-url-polyfill
+
+defaults: &defaults
+  working_directory: ~/react-native-url-polyfill
+  docker:
+    - image: circleci/node:12
+
+version: 2
+jobs:
+  checkout:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache: *restore-cache-yarn
+      - run:
+          name: Yarn version
+          command: yarn -v
+      - run:
+          name: Yarn Install
+          command: |
+            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+      - save_cache: *save-cache-yarn
+      - persist_to_workspace:
+          root: .
+          paths: .
+  lint:
+    <<: *defaults
+    steps:
+      - *attach_workspace
+      - run:
+          name: Lint
+          command: yarn lint
+  test:
+    <<: *defaults
+    steps:
+      - *attach_workspace
+      - run:
+          name: Run Jest
+          command: yarn test
+
+workflows:
+  version: 2
+  tests:
+    jobs:
+      - checkout
+      - lint:
+          requires:
+            - checkout
+      - test:
+          requires:
+            - checkout
