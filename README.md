@@ -52,6 +52,59 @@ That's why you may need this external dependency. So, if you use `URL` within yo
 
 ## Installation
 
+First, you need to install the polyfill, which can be done with [Yarn](https://yarnpkg.com/) or [npm](https://www.npmjs.com/).
+
+Then, the polyfill can be used by multiple ways, pick the option you prefer.
+
+#### Yarn
+
+```bash
+yarn add react-native-url-polyfill
+```
+
+#### npm
+
+```bash
+npm install --save react-native-url-polyfill
+```
+
+### Option 1 (_Simple_)
+
+Locate your JavaScript entry-point file, commonely called `index.js` at the root of your React Native project.
+
+Then, import `react-native-url-polyfill` at the top of your entry-point file, the polyfill will be automatically applied.
+
+```javascript
+import 'react-native-url-polyfill`;
+```
+
+### Option 2 (_Flexible_)
+
+If you want to apply the polyfill when you're ready, you can import `setupURLPolyfill` and call it yourself.
+
+> ⚠️ Metro doesn't support optional imports.
+>
+> If you do not applied the polyfill, it will still be added to your JavaScript bundle.
+> Even if it's wrapped in a condition, Metro won't strip it in production.
+
+```javascript
+import { setupURLPolyfill } from 'react-native-url-polyfill';
+
+setupURLPolyfill();
+```
+
+### Option 3 (_Convenient_)
+
+If you prefer to not apply this polyfill over React Native's default `URL`, you can still import those classes manually when you want them.
+
+```javascript
+import { URL, URLSearchParams } from 'react-native-url-polyfill';
+
+const url = new URL('https://github.com');
+const searchParams = new URLSearchParams('q=GitHub')
+```
+
+
 ## License
 
 react-native-url-polyfill is [MIT licensed](LICENSE.md).
