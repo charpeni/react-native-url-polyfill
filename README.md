@@ -54,8 +54,6 @@ That's why you may need this external dependency. So, if you use `URL` within yo
 
 First, you need to install the polyfill, which can be done with [Yarn](https://yarnpkg.com/) or [npm](https://www.npmjs.com/).
 
-Then, the polyfill can be used in multiple ways. Pick your preferred option.
-
 #### Yarn
 
 ```bash
@@ -67,6 +65,10 @@ yarn add react-native-url-polyfill
 ```bash
 npm install --save react-native-url-polyfill
 ```
+
+Then, the polyfill can be used in multiple ways. Pick your preferred option.
+
+To verify if the polyfill has been correctly applied, you can check if the global variable `REACT_NATIVE_URL_POLYFILL` contains the current package and version like: `react-native-url-polyfill@CURRENT_VERSION`.
 
 ### Option 1 (_Simple_)
 
