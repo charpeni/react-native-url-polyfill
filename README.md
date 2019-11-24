@@ -39,7 +39,7 @@ React Native does include [a polyfill for `URL`](https://github.com/facebook/rea
 
 Meanwhile, React Native has grown around that polyfill, then some unexpected errors have arisen.
 
->Known issues with React Native's URL are:
+>Known issues (non-exhaustive) with React Native's URL are:
 >
 >- URL cannot handle "localhost" domain for base url [react-native#26019](https://github.com/facebook/react-native/issues/26019).
 >- URL implementation should add a trailing slash to the base [react-native#25717](https://github.com/facebook/react-native/issues/25717).
