@@ -30,12 +30,12 @@
 react-native-url-polyfill is a full implementation of the WHATWG [URL Standard](https://url.spec.whatwg.org/) that has been optimized for React Native.
 
 - **Trustworthy**. Follows closely the URL Standard spec, and relys on unit tests and Detox e2e tests within [React Native](https://github.com/facebook/react-native).
-- **Light**. Instead of using directly `whatwg-url`, this polyfill uses a forked version ([`whatwg-url-without-unicode`](https://github.com/charpeni/whatwg-url)) that has been stripped of unicode support — Going down from [353 kB](https://bundlephobia.com/result?p=whatwg-url@7.0.0) to [54 kB](https://bundlephobia.com/result?p=whatwg-url-without-unicode@7.0.0).
+- **Light**. Instead of using directly [`whatwg-url`](https://github.com/jsdom/whatwg-url), this polyfill uses a forked version ([`whatwg-url-without-unicode`](https://github.com/charpeni/whatwg-url)) where unicode support has been stripped out — Going down from [353 kB](https://bundlephobia.com/result?p=whatwg-url@7.0.0) to [54 kB](https://bundlephobia.com/result?p=whatwg-url-without-unicode@7.0.0).
 - **Blog support**. Supports React Native's Blob without additional steps.
 
 ## Why do we need this?
 
-React Native does include a polyfill for `URL`, but this polyfill is homemade — in order to keep it light-weight — and was initially created to handle specific use cases.
+React Native does include [a polyfill for `URL`](https://github.com/facebook/react-native/blob/8c0c860e38f57e18296f689e47dfb4a54088c260/Libraries/Blob/URL.js#L115-L222), but this polyfill is homemade — in order to keep it light-weight — and was initially created to handle specific use cases.
 
 Meanwhile, React Native has grown around that polyfill, then some unexpected errors have arisen.
 
@@ -48,8 +48,10 @@ Meanwhile, React Native has grown around that polyfill, then some unexpected err
 
 Unfortunately, adding this polyfill to React Native will means adding 📦 **84.78 kB** to the JavaScript bundle, even if you don't use `URL` because 🚇 [Metro](https://github.com/facebook/metro) doesn't support [optional imports](https://github.com/react-native-community/discussions-and-proposals/issues/120).
 
-That's why you may need this external dependency. So, if you use `URL` within your app, you probably want to take a look at the installation steps!
+That's why you may need this external dependency. So, if you use `URL` within your app, you probably want to take a look at the installation steps below!
 
 ## Installation
 
 ## License
+
+react-native-url-polyfill is [MIT licensed](LICENSE.md).
