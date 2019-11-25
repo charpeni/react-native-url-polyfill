@@ -74,7 +74,7 @@ Then, the polyfill can be used in multiple ways. Pick your preferred option.
 
 Locate your JavaScript entry-point file, commonly called `index.js` at the root of your React Native project.
 
-Then, import `react-native-url-polyfill` at the top of your entry-point file, the polyfill will be automatically applied.
+Then, import `react-native-url-polyfill/auto` at the top of your entry-point file, the polyfill will be automatically applied.
 
 ```javascript
 import 'react-native-url-polyfill/auto`;
