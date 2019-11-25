@@ -19,7 +19,7 @@
   "dependencies": {
     "eslint-plugin-detox": "^1.0.0",
     "react": "16.9.0",
-    "react-native": "0.61.4",
+    "react-native": "0.61.5",
     "react-native-url-polyfill": "file:../react-native-url-polyfill-detox.tgz"
   },
   "devDependencies": {
