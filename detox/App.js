@@ -6,8 +6,6 @@
  * @flow
  */
 
-import 'react-native-url-polyfill';
-
 import React from 'react';
 import {SafeAreaView, Text, StatusBar} from 'react-native';
 

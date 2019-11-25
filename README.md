@@ -39,12 +39,12 @@ React Native does include [a polyfill for `URL`](https://github.com/facebook/rea
 
 Meanwhile, React Native has grown around that polyfill, then some unexpected errors have arisen.
 
->Known issues (non-exhaustive) with React Native's URL are:
+> Known issues (non-exhaustive) with React Native's URL are:
 >
->- URL cannot handle "localhost" domain for base url [react-native#26019](https://github.com/facebook/react-native/issues/26019).
->- URL implementation should add a trailing slash to the base [react-native#25717](https://github.com/facebook/react-native/issues/25717).
->- URL incorrectly adds trailing slash [react-native#24428](https://github.com/facebook/react-native/issues/24428).
->- Creating an instance of URL like: `new URL('http://facebook.com')` throws an exception [react-native#16434](https://github.com/facebook/react-native/issues/16434).
+> - URL cannot handle "localhost" domain for base url [react-native#26019](https://github.com/facebook/react-native/issues/26019).
+> - URL implementation should add a trailing slash to the base [react-native#25717](https://github.com/facebook/react-native/issues/25717).
+> - URL incorrectly adds trailing slash [react-native#24428](https://github.com/facebook/react-native/issues/24428).
+> - Creating an instance of URL like: `new URL('http://facebook.com')` throws an exception [react-native#16434](https://github.com/facebook/react-native/issues/16434).
 
 Unfortunately, adding this polyfill to React Native will means adding 📦 **84.78 KB** to the JavaScript bundle, even if you don't use `URL` because 🚇 [Metro](https://github.com/facebook/metro) doesn't support [optional imports](https://github.com/react-native-community/discussions-and-proposals/issues/120).
 
@@ -77,7 +77,7 @@ Locate your JavaScript entry-point file, commonly called `index.js` at the root 
 Then, import `react-native-url-polyfill` at the top of your entry-point file, the polyfill will be automatically applied.
 
 ```javascript
-import 'react-native-url-polyfill`;
+import 'react-native-url-polyfill/auto`;
 ```
 
 ### Option 2 (_Flexible_)
@@ -100,12 +100,11 @@ setupURLPolyfill();
 If you prefer not to apply this polyfill over React Native's default `URL`, you can still import those classes manually when you want them.
 
 ```javascript
-import { URL, URLSearchParams } from 'react-native-url-polyfill';
+import { URL, URLSearchParams } from 'react-native-url-polyfill';
 
 const url = new URL('https://github.com');
-const searchParams = new URLSearchParams('q=GitHub')
+const searchParams = new URLSearchParams('q=GitHub');
 ```
-
 
 ## License
 

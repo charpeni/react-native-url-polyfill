@@ -13,7 +13,6 @@ export function setupURLPolyfill() {
     'URLSearchParams',
     () => require('./js/URLSearchParams').URLSearchParams,
   );
-  polyfillGlobal('Buffer', () => require('buffer').Buffer);
 }
 
-setupURLPolyfill();
+polyfillGlobal('Buffer', () => require('buffer').Buffer);
