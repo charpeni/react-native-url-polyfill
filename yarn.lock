@@ -7287,10 +7287,10 @@ whatwg-mimetype@^2.1.0, whatwg-mimetype@^2.2.0:
   resolved "https://registry.yarnpkg.com/whatwg-mimetype/-/whatwg-mimetype-2.3.0.tgz#3d4b1e0312d2079879f826aff18dbeeca5960fbf"
   integrity sha512-M4yMwr6mAnQz76TbJm914+gPpB/nCwvZbJU28cUD6dR004SAxDLOOSUaB1JDRqLtaOV/vi0IC5lEAGFgrjGv/g==
 
-whatwg-url-without-unicode@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/whatwg-url-without-unicode/-/whatwg-url-without-unicode-7.0.0.tgz#7407e53cc3e48cebdbb7abd86b11fc529881170e"
-  integrity sha512-M3CqAI0US1lgiVCFm7LCEbt/ByGBjsz9ZN55y8eiXIXo5+j/HrRvJ/j7l1tRyBdTmWEP0+2jO/lTLGulgz+how==
+whatwg-url-without-unicode@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/whatwg-url-without-unicode/-/whatwg-url-without-unicode-7.1.0.tgz#b94ebd5bfa69644036c0a486a8e3b5c6a690adc7"
+  integrity sha512-8AHNyrFnj42Vm/QpaXwf+0Uo6NToTL6fk6Yi58e83/UEErHamsokD/zqxE9wXyWW2FwIH83hw3qZ12TIP89a6Q==
   dependencies:
     lodash.sortby "^4.7.0"
     webidl-conversions "^4.0.2"

@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "buffer": "^5.4.3",
-    "whatwg-url-without-unicode": "^7.0.0"
+    "whatwg-url-without-unicode": "^7.1.0"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",
