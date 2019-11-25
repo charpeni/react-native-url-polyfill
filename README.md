@@ -108,4 +108,4 @@ const searchParams = new URLSearchParams('q=GitHub');
 
 ## License
 
-react-native-url-polyfill is [MIT licensed](LICENSE.md).
+react-native-url-polyfill is [MIT licensed](LICENSE).
