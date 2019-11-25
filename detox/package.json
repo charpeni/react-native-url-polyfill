@@ -13,13 +13,14 @@
     "test:ios": "detox test --configuration ios.sim.release",
     "test:android": "detox test --configuration android.emu.release",
     "e2e:ios": "yarn build:ios && yarn test:ios",
-    "e2e:android": "yarn build:android && yarn test:android"
+    "e2e:android": "yarn build:android && yarn test:android",
+    "preinstall": "cd .. && yarn pack --filename react-native-url-polyfill-detox.tgz && cd detox"
   },
   "dependencies": {
     "eslint-plugin-detox": "^1.0.0",
     "react": "16.9.0",
     "react-native": "0.61.4",
-    "react-native-url-polyfill": "file:../"
+    "react-native-url-polyfill": "file:../react-native-url-polyfill-detox.tgz"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",
