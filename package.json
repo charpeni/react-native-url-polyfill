@@ -26,7 +26,7 @@
   "devDependencies": {
     "@react-native-community/eslint-config": "^0.0.5",
     "chalk": "^3.0.0",
-    "eslint": "^6.6.0",
+    "eslint": "^6.7.0",
     "eslint-plugin-prettier": "^3.1.1",
     "execa": "^3.3.0",
     "filesize": "^6.0.1",
