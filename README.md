@@ -77,7 +77,7 @@ Locate your JavaScript entry-point file, commonly called `index.js` at the root 
 Then, import `react-native-url-polyfill/auto` at the top of your entry-point file, the polyfill will be automatically applied.
 
 ```javascript
-import 'react-native-url-polyfill/auto`;
+import 'react-native-url-polyfill/auto';
 ```
 
 ### Option 2 (_Flexible_)
