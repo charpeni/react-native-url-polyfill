@@ -73,7 +73,7 @@ jobs:
       - run:
           name: Yarn Install
           command: |
-            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+            yarn install --skip-integrity-check --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
       - run:
           name: Install Detox
           command: |
