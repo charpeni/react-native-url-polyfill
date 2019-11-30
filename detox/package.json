@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "build:ios": "detox build --configuration ios.sim.release",
     "build:android": "detox build --configuration android.emu.release",
-    "test:ios": "detox test --configuration ios.sim.release",
+    "test:ios": "detox test --configuration ios.sim.release --cleanup",
     "test:android": "detox test --configuration android.emu.release",
     "e2e:ios": "yarn build:ios && yarn test:ios",
     "e2e:android": "yarn build:android && yarn test:android",
