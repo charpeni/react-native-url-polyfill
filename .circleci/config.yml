@@ -7,6 +7,15 @@ aliases:
     name: Restore Yarn Package Cache
     keys:
       - yarn-packages-{{ checksum "yarn.lock" }}
+  - &save-cache-detox
+    key: detox-{{ checksum "yarn.lock" }}
+    paths:
+      - node_modules
+      - ios/build
+  - &restore-cache-detox
+    name: Restore Yarn Package Cache
+    keys:
+      - detox-{{ checksum "yarn.lock" }}
   - &attach_workspace
     attach_workspace:
       at: ~/react-native-url-polyfill
@@ -15,6 +24,11 @@ defaults: &defaults
   working_directory: ~/react-native-url-polyfill
   docker:
     - image: circleci/node:12
+
+ios: &ios
+  working_directory: ~/react-native-url-polyfill/detox
+  macos:
+    xcode: 11
 
 version: 2
 jobs:
@@ -41,13 +55,36 @@ jobs:
       - run:
           name: Lint
           command: yarn lint
-  test:
+  test-js:
     <<: *defaults
     steps:
       - *attach_workspace
       - run:
           name: Run Jest
           command: yarn test
+  test-ios:
+    <<: *ios
+    steps:
+      - *attach_workspace
+      - restore_cache: *restore-cache-detox
+      - run:
+          name: Yarn version
+          command: yarn -v
+      - run:
+          name: Yarn Install
+          command: |
+            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+      - run:
+          name: Install Detox
+          command: |
+            brew update
+            brew tap wix/brew
+            brew install applesimutils
+            yarn global add detox-cli
+      - run:
+          name: Run Detox on iOS
+          command: yarn e2e:ios
+      - save_cache: *save-cache-detox
 
 workflows:
   version: 2
@@ -57,6 +94,9 @@ workflows:
       - lint:
           requires:
             - checkout
-      - test:
+      - test-js:
+          requires:
+            - checkout
+      - test-ios:
           requires:
             - checkout
