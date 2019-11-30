@@ -8,14 +8,15 @@ aliases:
     keys:
       - yarn-packages-{{ checksum "yarn.lock" }}
   - &save-cache-detox
-    key: detox-{{ checksum "yarn.lock" }}
+    key: detox-{{ checksum "ios/Podfile.lock"}}
     paths:
       - node_modules
       - ios/build
+      - ios/Pods
   - &restore-cache-detox
     name: Restore Yarn Package Cache
     keys:
-      - detox-{{ checksum "yarn.lock" }}
+      - detox-{{ checksum "ios/Podfile.lock"}}
   - &attach_workspace
     attach_workspace:
       at: ~/react-native-url-polyfill
@@ -81,6 +82,9 @@ jobs:
             brew tap wix/brew
             brew install applesimutils
             yarn global add detox-cli
+      - run:
+          name: Install Pods
+          command: cd ios && pod install
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
