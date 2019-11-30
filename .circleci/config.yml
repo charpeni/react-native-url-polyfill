@@ -71,9 +71,15 @@ jobs:
           name: Yarn version
           command: yarn -v
       - run:
+          name: Pack react-native-url-polyfill
+          command: yarn preinstall
+      - run:
+          name: Install react-native-url-polyfill
+          command: yarn add react-native-url-polyfill@file:../react-native-url-polyfill.tgz
+      - run:
           name: Yarn Install
           command: |
-            yarn install --skip-integrity-check --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+            yarn install --skip-integrity-check --no-progress --non-interactive --cache-folder ~/.cache/yarn
       - run:
           name: Install Detox
           command: |
