@@ -23,7 +23,7 @@
     "react-native-url-polyfill": "file:../react-native-url-polyfill-detox.tgz"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
+    "@babel/core": "^7.7.5",
     "@babel/runtime": "^7.7.6",
     "@react-native-community/eslint-config": "^0.0.5",
     "babel-jest": "^24.9.0",
