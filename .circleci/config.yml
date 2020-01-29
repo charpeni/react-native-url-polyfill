@@ -8,15 +8,15 @@ aliases:
     keys:
       - yarn-packages-{{ checksum "yarn.lock" }}
   - &save-cache-detox
-    key: detox-{{ checksum "ios/Podfile.lock"}}
+    key: detox-{{ checksum "detox/ios/Podfile.lock"}}
     paths:
       - node_modules
-      - ios/build
-      - ios/Pods
+      - detox/ios/build
+      - detox/ios/Pods
   - &restore-cache-detox
     name: Restore Yarn Package Cache
     keys:
-      - detox-{{ checksum "ios/Podfile.lock"}}
+      - detox-{{ checksum "detox/ios/Podfile.lock"}}
   - &attach_workspace
     attach_workspace:
       at: ~/react-native-url-polyfill
