@@ -8,7 +8,7 @@ aliases:
     keys:
       - yarn-packages-{{ checksum "yarn.lock" }}
   - &save-cache-detox
-    key: detox-{{ checksum "ios/Podfile.lock"}}
+    key: detox-{{ checksum "yarn.lock"}}
     paths:
       - node_modules
       - ios/build
@@ -16,7 +16,7 @@ aliases:
   - &restore-cache-detox
     name: Restore Yarn Package Cache
     keys:
-      - detox-{{ checksum "ios/Podfile.lock"}}
+      - detox-{{ checksum "yarn.lock"}}
   - &attach_workspace
     attach_workspace:
       at: ~/react-native-url-polyfill
@@ -74,7 +74,7 @@ jobs:
       - run:
           name: Yarn Install
           command: |
-            yarn install --update-checksums --no-progress --non-interactive --cache-folder ~/.cache/yarn
+            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
       - run:
           name: Install Detox
           command: |
