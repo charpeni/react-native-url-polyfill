@@ -82,6 +82,10 @@ jobs:
             brew install applesimutils
             yarn global add detox-cli
       - run:
+          name: Clean Detox
+          command: |
+            detox clean-framework-cache && detox build-framework-cache
+      - run:
           name: Install Pods
           command: cd ios && pod install
       - run:
