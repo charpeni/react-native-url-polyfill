@@ -1,22 +1,21 @@
 aliases:
   - &save-cache-yarn
-    key: yarn-packages-{{ checksum "yarn.lock" }}
+    key: v1-yarn-packages-{{ checksum "yarn.lock" }}
     paths:
       - ~/.cache/yarn
   - &restore-cache-yarn
     name: Restore Yarn Package Cache
     keys:
-      - yarn-packages-{{ checksum "yarn.lock" }}
+      - v1-yarn-packages-{{ checksum "yarn.lock" }}
   - &save-cache-detox
-    key: detox-{{ checksum "yarn.lock"}}
+    key: v1-detox-{{ checksum "yarn.lock"}}
     paths:
       - node_modules
-      - ios/build
       - ios/Pods
   - &restore-cache-detox
     name: Restore Yarn Package Cache
     keys:
-      - detox-{{ checksum "yarn.lock"}}
+      - v1-detox-{{ checksum "yarn.lock"}}
   - &attach_workspace
     attach_workspace:
       at: ~/react-native-url-polyfill
