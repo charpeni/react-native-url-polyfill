@@ -30,7 +30,7 @@
 react-native-url-polyfill is a full implementation of the WHATWG [URL Standard](https://url.spec.whatwg.org/) that has been optimized for React Native.
 
 - **Trustworthy**. Follows closely the URL Standard spec, and relys on unit tests and Detox e2e tests within [React Native](https://github.com/facebook/react-native).
-- **Light**. Instead of using directly [`whatwg-url`](https://github.com/jsdom/whatwg-url), this polyfill uses a forked version ([`whatwg-url-without-unicode`](https://github.com/charpeni/whatwg-url)) where unicode support has been stripped out — Going down from [372 KB](https://bundlephobia.com/result?p=whatwg-url@8.0.0) to [54 KB](https://bundlephobia.com/result?p=whatwg-url-without-unicode@8.0.0).
+- **Light**. Instead of using directly [`whatwg-url`](https://github.com/jsdom/whatwg-url), this polyfill uses a forked version ([`whatwg-url-without-unicode`](https://github.com/charpeni/whatwg-url)) where unicode support has been stripped out — Going down from [372 KB](https://bundlephobia.com/result?p=whatwg-url@8.0.0) to [41 KB](https://bundlephobia.com/result?p=whatwg-url-without-unicode@8.0.0-0).
 - **Blob support**. Supports React Native's Blob without additional steps.
 
 ## Why do we need this?
@@ -46,7 +46,7 @@ Meanwhile, React Native has grown around that polyfill, then some unexpected err
 > - URL incorrectly adds trailing slash [react-native#24428](https://github.com/facebook/react-native/issues/24428).
 > - Creating an instance of URL like: `new URL('http://facebook.com')` throws an exception [react-native#16434](https://github.com/facebook/react-native/issues/16434).
 
-Unfortunately, adding `react-native-url-polyfill` to React Native source code will means adding 📦 **84.76 KB** to the JavaScript bundle, even if you don't use `URL` because 🚇 [Metro](https://github.com/facebook/metro) doesn't support [optional imports](https://github.com/react-native-community/discussions-and-proposals/issues/120).
+Unfortunately, adding `react-native-url-polyfill` to React Native source code will means adding 📦 **73.41 KB** to the JavaScript bundle, even if you don't use `URL` because 🚇 [Metro](https://github.com/facebook/metro) doesn't support [optional imports](https://github.com/react-native-community/discussions-and-proposals/issues/120).
 
 That's why you may need this external dependency. So, if you use `URL` within your app, you probably want to take a look at the installation steps below!
 
