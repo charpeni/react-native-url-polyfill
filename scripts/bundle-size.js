@@ -5,6 +5,7 @@ const fs = require('fs');
 const ora = require('ora');
 const prependFile = require('prepend-file');
 const tmp = require('tmp');
+const uuidv4 = require('uuid/v4');
 
 async function action(text, promise) {
   const spinner = ora(text).start();
@@ -48,6 +49,8 @@ async function generateSourceMapExplorer(
     ),
   );
 
+  const tarballName = `react-native-url-polyfill-${uuidv4()}.tgz`;
+
   await action(
     'Bundling freshly initialized React Native app',
     execa(
@@ -72,18 +75,17 @@ async function generateSourceMapExplorer(
 
   await action(
     'Packing react-native-url-polyfill',
-    execa('yarn', ['pack', '--filename', 'react-native-url-polyfill.tgz']),
+    execa('yarn', ['pack', '--filename', tarballName]),
   );
 
   await action(
     'Adding react-native-url-polyfill',
     execa(
       'yarn',
-      [
-        'add',
-        'react-native-url-polyfill@file:../react-native-url-polyfill.tgz',
-      ],
-      {cwd: tempDirectory},
+      ['add', `react-native-url-polyfill@file:${__dirname}/../${tarballName}`],
+      {
+        cwd: tempDirectory,
+      },
     ),
   );
 
