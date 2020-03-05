@@ -1,22 +1,26 @@
 aliases:
   - &save-cache-yarn
-    key: v1-yarn-packages-{{ checksum "yarn.lock" }}
-    paths:
-      - ~/.cache/yarn
+    save_cache:
+      key: v1-yarn-packages-{{ checksum "yarn.lock" }}
+      paths:
+        - ~/.cache/yarn
   - &restore-cache-yarn
-    name: Restore Yarn Package Cache
-    keys:
-      - v1-yarn-packages-{{ checksum "yarn.lock" }}
-  - &save-cache-detox
-    key: v1-detox-{{ checksum "yarn.lock"}}
-    paths:
-      - node_modules
-      - ios/Pods
+    restore_cache:
+      name: Restore Yarn Package Cache
+      keys:
+        - v1-yarn-packages-{{ checksum "yarn.lock" }}
+  - &save-cache-detox-pods
+    save_cache:
+      key: v1-detox-{{ checksum "yarn.lock"}}
+      paths:
+        - node_modules
+        - ios/Pods
   - &restore-cache-detox
-    name: Restore Yarn Package Cache
-    keys:
-      - v1-detox-{{ checksum "yarn.lock"}}
-  - &save_android_build_cache
+    restore_cache:
+      name: Restore Yarn Package Cache
+      keys:
+        - v1-detox-{{ checksum "yarn.lock"}}
+  - &save-android-build-cache
     save_cache:
       paths:
         - ~/.gradle/caches
@@ -24,11 +28,11 @@ aliases:
         - ~/.android/build-cache
       key: v1-gradle-build-cache-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
       when: always # Ensures build assets are cached even on failed builds
-  - &restore_android_build_cache
+  - &restore-android-build-cache
     restore_cache:
       keys:
         - v1-gradle-build-cache-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
-  - &attach_workspace
+  - &attach-workspace
     attach_workspace:
       at: ~/react-native-url-polyfill
 
@@ -56,7 +60,7 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-      - restore_cache: *restore-cache-yarn
+      - *restore-cache-yarn
       - run:
           name: Yarn version
           command: yarn -v
@@ -64,29 +68,29 @@ jobs:
           name: Yarn Install
           command: |
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
-      - save_cache: *save-cache-yarn
+      - *save-cache-yarn
       - persist_to_workspace:
           root: .
           paths: .
   lint:
     <<: *defaults
     steps:
-      - *attach_workspace
+      - *attach-workspace
       - run:
           name: Lint
           command: yarn lint
   test-js:
     <<: *defaults
     steps:
-      - *attach_workspace
+      - *attach-workspace
       - run:
           name: Run Jest
           command: yarn test
   test-ios:
     <<: *ios
     steps:
-      - *attach_workspace
-      - restore_cache: *restore-cache-detox
+      - *attach-workspace
+      - *restore-cache-detox
       - run:
           name: Yarn version
           command: yarn -v
@@ -111,19 +115,20 @@ jobs:
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
-      - save_cache: *save-cache-detox
+      - *save-cache-detox
   test-hermes:
     <<: *android
     steps:
-      - *attach_workspace
-      - *restore_android_build_cache
+      - *attach-workspace
+      - *restore-cache-detox
+      - *restore-android-build-cache
       - run:
           name: Enable Hermes
-          command: sed -i "s/enableHermes:\sfalse/enableHermes:\strue/g" android/app/build.gradle
+          command: sed -i "s/enableHermes: false/enableHermes: true/g" android/app/build.gradle
       - run:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
-      - *save_android_build_cache
+      - *save-android-build-cache
 
 workflows:
   version: 2
@@ -141,4 +146,4 @@ workflows:
             - checkout
       - test-hermes:
           requires:
-            - checkout
+            - test-ios
