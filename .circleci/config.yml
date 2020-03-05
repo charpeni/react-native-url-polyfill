@@ -16,6 +16,18 @@ aliases:
     name: Restore Yarn Package Cache
     keys:
       - v1-detox-{{ checksum "yarn.lock"}}
+  - &save_android_build_cache
+    save_cache:
+      paths:
+        - ~/.gradle/caches
+        - ~/.gradle/wrapper
+        - ~/.android/build-cache
+      key: v1-gradle-build-cache-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
+      when: always # Ensures build assets are cached even on failed builds
+  - &restore_android_build_cache
+    restore_cache:
+      keys:
+        - v1-gradle-build-cache-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
   - &attach_workspace
     attach_workspace:
       at: ~/react-native-url-polyfill
@@ -29,6 +41,14 @@ ios: &ios
   working_directory: ~/react-native-url-polyfill/detox
   macos:
     xcode: 11
+
+android: &android
+  working_directory: ~/react-native-url-polyfill/detox
+  docker:
+    - image: circleci/android:api-29-node
+  environment:
+    JAVA_TOOL_OPTIONS: '-Xmx1536m'
+    GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
 
 version: 2
 jobs:
@@ -92,6 +112,18 @@ jobs:
           name: Run Detox on iOS
           command: yarn e2e:ios
       - save_cache: *save-cache-detox
+  test-hermes:
+    <<: *android
+    steps:
+      - *attach_workspace
+      - *restore_android_build_cache
+      - run:
+          name: Enable Hermes
+          command: sed -i "s/enableHermes:\sfalse/enableHermes:\strue/g" android/app/build.gradle
+      - run:
+          name: Build APK
+          command: cd android && ./gradlew assembleRelease
+      - *save_android_build_cache
 
 workflows:
   version: 2
@@ -105,5 +137,8 @@ workflows:
           requires:
             - checkout
       - test-ios:
+          requires:
+            - checkout
+      - test-hermes:
           requires:
             - checkout
