@@ -9,17 +9,26 @@ aliases:
       name: Restore Yarn Package Cache
       keys:
         - v1-yarn-packages-{{ checksum "yarn.lock" }}
-  - &save-cache-detox
+  - &save-cache-detox-pods
     save_cache:
-      key: v1-detox-{{ checksum "yarn.lock"}}
+      key: v1-detox-pods-{{ checksum "yarn.lock"}}
+      paths:
+        - ios/Pods
+  - &restore-cache-detox-pods
+    restore_cache:
+      name: Restore Detox Pods Cache
+      keys:
+        - v1-detox-pods-{{ checksum "yarn.lock"}}
+  - &save-cache-detox-yarn
+    save_cache:
+      key: v1-detox-yarn-{{ checksum "yarn.lock"}}
       paths:
         - node_modules
-        - ios/Pods
-  - &restore-cache-detox
+  - &restore-cache-detox-yarn
     restore_cache:
-      name: Restore Yarn Package Cache
+      name: Restore Detox Yarn Package Cache
       keys:
-        - v1-detox-{{ checksum "yarn.lock"}}
+        - v1-detox-yarn-{{ checksum "yarn.lock"}}
   - &save-android-build-cache
     save_cache:
       paths:
@@ -90,7 +99,8 @@ jobs:
     <<: *ios
     steps:
       - *attach-workspace
-      - *restore-cache-detox
+      - *restore-cache-detox-yarn
+      - *restore-cache-detox-pods
       - run:
           name: Yarn version
           command: yarn -v
@@ -98,6 +108,7 @@ jobs:
           name: Yarn Install
           command: |
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+      - *save-cache-detox-yarn
       - run:
           name: Install Detox
           command: |
@@ -112,16 +123,24 @@ jobs:
       - run:
           name: Install Pods
           command: cd ios && pod install
+      - *save-cache-detox-pods
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
-      - *save-cache-detox
   test-hermes:
     <<: *android
     steps:
       - *attach-workspace
-      - *restore-cache-detox
+      - *restore-cache-detox-yarn
       - *restore-android-build-cache
+      - run:
+          name: Yarn version
+          command: yarn -v
+      - run:
+          name: Yarn Install
+          command: |
+            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+      - *save-cache-detox-yarn
       - run:
           name: Enable Hermes
           command: sed -i "s/enableHermes:\sfalse/enableHermes:\strue/g" android/app/build.gradle
@@ -146,4 +165,4 @@ workflows:
             - checkout
       - test-hermes:
           requires:
-            - test-ios
+            - checkout
