@@ -9,7 +9,7 @@ aliases:
       name: Restore Yarn Package Cache
       keys:
         - v1-yarn-packages-{{ checksum "yarn.lock" }}
-  - &save-cache-detox-pods
+  - &save-cache-detox
     save_cache:
       key: v1-detox-{{ checksum "yarn.lock"}}
       paths:
