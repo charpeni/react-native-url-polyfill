@@ -7645,10 +7645,10 @@ whatwg-mimetype@^2.2.0, whatwg-mimetype@^2.3.0:
   resolved "https://registry.yarnpkg.com/whatwg-mimetype/-/whatwg-mimetype-2.3.0.tgz#3d4b1e0312d2079879f826aff18dbeeca5960fbf"
   integrity sha512-M4yMwr6mAnQz76TbJm914+gPpB/nCwvZbJU28cUD6dR004SAxDLOOSUaB1JDRqLtaOV/vi0IC5lEAGFgrjGv/g==
 
-whatwg-url-without-unicode@8.0.0-0:
-  version "8.0.0-0"
-  resolved "https://registry.yarnpkg.com/whatwg-url-without-unicode/-/whatwg-url-without-unicode-8.0.0-0.tgz#b27e9a150eda3c99091fb90cf8f96b2602680902"
-  integrity sha512-UbuJxCSqGtz3pO8pS5vS5BeZibtR3+5LKFAeU+vNsEZjaWBecS9fppn1vCnlHmUY6Gf6u234WyqQi+JKnwSwzw==
+whatwg-url-without-unicode@8.0.0-1:
+  version "8.0.0-1"
+  resolved "https://registry.yarnpkg.com/whatwg-url-without-unicode/-/whatwg-url-without-unicode-8.0.0-1.tgz#86d2916bc654fd6f7949432cd24fa43e5b3ad279"
+  integrity sha512-0Uy8mjsG5O8Y53327XL+ZqsrMdxO1CL/6m840SmW5iyRWFvU2zlxS2RzpD3pFFVKYOKCmsKn5JKzWxQ+bImnWA==
   dependencies:
     webidl-conversions "^5.0.0"
 
