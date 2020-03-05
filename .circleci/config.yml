@@ -16,7 +16,7 @@ aliases:
         - ios/Pods
   - &restore-cache-detox-pods
     restore_cache:
-      name: Restore Detox Pods Cache
+      name: Restoring Detox Pods Cache
       keys:
         - v1-detox-pods-{{ checksum "yarn.lock"}}
   - &save-cache-detox-yarn
@@ -26,7 +26,7 @@ aliases:
         - node_modules
   - &restore-cache-detox-yarn
     restore_cache:
-      name: Restore Detox Yarn Package Cache
+      name: Restoring Detox Yarn Package Cache
       keys:
         - v1-detox-yarn-{{ checksum "yarn.lock"}}
   - &save-android-build-cache
@@ -39,6 +39,7 @@ aliases:
       when: always # Ensures build assets are cached even on failed builds
   - &restore-android-build-cache
     restore_cache:
+      name: Restoring Android & Gradle cache
       keys:
         - v1-gradle-build-cache-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
   - &attach-workspace
