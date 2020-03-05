@@ -124,7 +124,7 @@ jobs:
       - *restore-android-build-cache
       - run:
           name: Enable Hermes
-          command: sed -i "s/enableHermes: false/enableHermes: true/g" android/app/build.gradle
+          command: sed -i "s/enableHermes:\sfalse/enableHermes:\strue/g" android/app/build.gradle
       - run:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
