@@ -58,7 +58,7 @@ ios: &ios
 android: &android
   working_directory: ~/react-native-url-polyfill/detox
   docker:
-    - image: circleci/android:api-29-node
+    - image: circleci/android:api-28-node
   environment:
     JAVA_TOOL_OPTIONS: '-Xmx1536m'
     GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
