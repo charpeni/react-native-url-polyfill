@@ -14,6 +14,9 @@
   <a href="https://www.npmjs.org/package/react-native-url-polyfill">
     <img src="https://badge.fury.io/js/react-native-url-polyfill.svg" alt="Current npm package version." />
   </a>
+  <a href="https://www.npmjs.org/package/react-native-url-polyfill">
+    <img src="https://img.shields.io/npm/dm/react-native-url-polyfill" alt="Monthly downloads" />
+  </a>
   <a href="https://circleci.com/gh/charpeni/react-native-url-polyfill">
     <img src="https://circleci.com/gh/charpeni/react-native-url-polyfill.svg?style=shield" alt="Current CircleCI build status." />
   </a>
