@@ -7,7 +7,7 @@
 </h3>
 
 <p align="center">
-  A light and trustworthy URL polyfill for React Native
+  A lightweight and trustworthy URL polyfill for React Native
 </p>
 
 <p align="center">
@@ -32,9 +32,10 @@
 
 react-native-url-polyfill is a full implementation of the WHATWG [URL Standard](https://url.spec.whatwg.org/) that has been optimized for React Native.
 
-- **Light**. Instead of using directly [`whatwg-url`](https://github.com/jsdom/whatwg-url), this polyfill uses a forked version ([`whatwg-url-without-unicode`](https://github.com/charpeni/whatwg-url)) where unicode support has been stripped out — Going down from [372 KB](https://bundlephobia.com/result?p=whatwg-url@8.0.0) to [41 KB](https://bundlephobia.com/result?p=whatwg-url-without-unicode@8.0.0-1).
+- **Lightweight**. Instead of using directly [`whatwg-url`](https://github.com/jsdom/whatwg-url), this polyfill uses a forked version ([`whatwg-url-without-unicode`](https://github.com/charpeni/whatwg-url)) where unicode support has been stripped out — Going down from [372 KB](https://bundlephobia.com/result?p=whatwg-url@8.0.0) to [41 KB](https://bundlephobia.com/result?p=whatwg-url-without-unicode@8.0.0-1).
 - **Trustworthy**. Follows closely the URL Standard spec, and relys on unit tests and Detox e2e tests within [React Native](https://github.com/facebook/react-native).
 - **Blob support**. Supports React Native's Blob without additional steps.
+- **Hermes support**. Supports [Hermes](https://github.com/facebook/hermes), a JavaScript engine optimized for running React Native on Android.
 
 ## Why do we need this?
 
