@@ -1,7 +1,8 @@
 {
   "name": "react-native-url-polyfill",
   "version": "1.1.1",
-  "description": "A light and trustworthy URL polyfill for React Native",
+  "description": "A lightweight and trustworthy URL polyfill for React Native",
+  "keywords": ["URL", "URLSearchParams", "polyfill", "react native"],
   "bugs": {
     "url": "https://github.com/charpeni/react-native-url-polyfill/issues"
   },
