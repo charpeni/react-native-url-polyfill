@@ -49,7 +49,7 @@
     "rmfr": "^2.0.0",
     "source-map-explorer": "^2.1.1",
     "tmp": "^0.1.0",
-    "uuid": "^7.0.2"
+    "uuid": "^8.0.0"
   },
   "peerDependencies": {
     "react-native": "*"
