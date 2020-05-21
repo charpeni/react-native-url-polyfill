@@ -48,7 +48,7 @@
     "react-native": "^0.62.0",
     "rmfr": "^2.0.0",
     "source-map-explorer": "^2.1.1",
-    "tmp": "^0.1.0",
+    "tmp": "^0.2.1",
     "uuid": "^7.0.2"
   },
   "peerDependencies": {
