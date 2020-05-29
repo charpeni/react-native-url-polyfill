@@ -14,7 +14,7 @@ async function action(text, promise) {
     await promise;
     spinner.succeed();
   } catch (error) {
-    spinner.fail();
+    spinner.fail(`${text}: ${error}`);
   }
 }
 
@@ -37,15 +37,16 @@ async function generateSourceMapExplorer(
   const {
     name: tempDirectory,
     removeCallback: clearTempDirectory,
-  } = tmp.dirSync();
+  } = tmp.dirSync({unsafeCleanup: true});
+
+  const tempProjectDirectory = `${tempDirectory}/BundleSize`;
+
+  console.log('temp dir', tempProjectDirectory);
 
   await action(
     'Creating a React Native sample app',
-    execa(
-      `echo "y" | npx react-native-cli init BundleSize --directory ${tempDirectory}`,
-      {
-        shell: true,
-      },
+    execa.command(
+      `yarn react-native init BundleSize --directory ${tempProjectDirectory}`,
     ),
   );
 
@@ -53,23 +54,9 @@ async function generateSourceMapExplorer(
 
   await action(
     'Bundling freshly initialized React Native app',
-    execa(
-      'npx',
-      [
-        'react-native-cli',
-        'bundle',
-        '--entry-file',
-        'index.js',
-        '--platform',
-        'ios',
-        '--dev',
-        'false',
-        '--bundle-output',
-        'original.jsbundle',
-        '--sourcemap-output',
-        'original.map',
-      ],
-      {cwd: tempDirectory},
+    execa.command(
+      'yarn react-native bundle --entry-file index.js --platform ios --dev false --bundle-output original.jsbundle --sourcemap-output original.map',
+      {cwd: tempProjectDirectory},
     ),
   );
 
@@ -84,7 +71,7 @@ async function generateSourceMapExplorer(
       'yarn',
       ['add', `react-native-url-polyfill@file:${__dirname}/../${tarballName}`],
       {
-        cwd: tempDirectory,
+        cwd: tempProjectDirectory,
       },
     ),
   );
@@ -93,7 +80,7 @@ async function generateSourceMapExplorer(
     'Importing react-native-url-polyfill',
     new Promise((resolve, reject) =>
       prependFile(
-        `${tempDirectory}/index.js`,
+        `${tempProjectDirectory}/index.js`,
         `import 'react-native-url-polyfill';
   `,
         err => {
@@ -109,23 +96,9 @@ async function generateSourceMapExplorer(
 
   await action(
     'Bundling React Native app with react-native-url-polyfill',
-    execa(
-      'npx',
-      [
-        'react-native-cli',
-        'bundle',
-        '--entry-file',
-        'index.js',
-        '--platform',
-        'ios',
-        '--dev',
-        'false',
-        '--bundle-output',
-        'withURLPolyfill.jsbundle',
-        '--sourcemap-output',
-        'withURLPolyfill.map',
-      ],
-      {cwd: tempDirectory},
+    execa.command(
+      'yarn react-native bundle --entry-file index.js --platform ios --dev false --bundle-output withURLPolyfill.jsbundle --sourcemap-output withURLPolyfill.map',
+      {cwd: tempProjectDirectory},
     ),
   );
 
@@ -133,18 +106,22 @@ async function generateSourceMapExplorer(
     'Comparing size of bundles',
     new Promise(async (resolve, reject) => {
       const originalSize = await new Promise(statsResolve =>
-        fs.stat(`${tempDirectory}/original.jsbundle`, [], (err, stats) => {
-          if (err) {
-            reject(err);
-          }
+        fs.stat(
+          `${tempProjectDirectory}/original.jsbundle`,
+          [],
+          (err, stats) => {
+            if (err) {
+              reject(err);
+            }
 
-          statsResolve(stats.size);
-        }),
+            statsResolve(stats.size);
+          },
+        ),
       );
 
       const polyfillSize = await new Promise(statsResolve =>
         fs.stat(
-          `${tempDirectory}/withURLPolyfill.jsbundle`,
+          `${tempProjectDirectory}/withURLPolyfill.jsbundle`,
           [],
           (err, stats) => {
             if (err) {
@@ -183,13 +160,13 @@ async function generateSourceMapExplorer(
 
       const originalOutput = await generateSourceMapExplorer(
         'original',
-        tempDirectory,
+        tempProjectDirectory,
         sourceMapOutputDirectory,
       );
 
       const withURLPolyfillOutput = await generateSourceMapExplorer(
         'withURLPolyfill',
-        tempDirectory,
+        tempProjectDirectory,
         sourceMapOutputDirectory,
       );
 
