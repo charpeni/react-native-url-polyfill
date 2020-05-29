@@ -5,7 +5,7 @@ const fs = require('fs');
 const ora = require('ora');
 const prependFile = require('prepend-file');
 const tmp = require('tmp');
-const uuidv4 = require('uuid/v4');
+const {v4: uuidv4} = require('uuid');
 
 async function action(text, promise) {
   const spinner = ora(text).start();
