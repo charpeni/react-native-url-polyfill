@@ -4,7 +4,7 @@ jest.mock('react-native/Libraries/Utilities/PolyfillFunctions', () => ({
   polyfillGlobal: jest.fn(),
 }));
 
-describe('Index', function() {
+describe('Index', function () {
   it('should apply Buffer polyfill', () => {
     require('../index');
 

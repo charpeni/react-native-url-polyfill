@@ -1,6 +1,6 @@
 import {URLSearchParams} from '../URLSearchParams';
 
-describe('URL', function() {
+describe('URL', function () {
   // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams#Examples
   it('should pass Mozilla Dev Network examples', () => {
     const paramsString = 'q=URLUtils.searchParams&topic=api';

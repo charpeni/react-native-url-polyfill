@@ -83,7 +83,7 @@ async function generateSourceMapExplorer(
         `${tempProjectDirectory}/index.js`,
         `import 'react-native-url-polyfill';
   `,
-        err => {
+        (err) => {
           if (err) {
             reject(err);
           }
@@ -105,7 +105,7 @@ async function generateSourceMapExplorer(
   await action(
     'Comparing size of bundles',
     new Promise(async (resolve, reject) => {
-      const originalSize = await new Promise(statsResolve =>
+      const originalSize = await new Promise((statsResolve) =>
         fs.stat(
           `${tempProjectDirectory}/original.jsbundle`,
           [],
@@ -119,7 +119,7 @@ async function generateSourceMapExplorer(
         ),
       );
 
-      const polyfillSize = await new Promise(statsResolve =>
+      const polyfillSize = await new Promise((statsResolve) =>
         fs.stat(
           `${tempProjectDirectory}/withURLPolyfill.jsbundle`,
           [],

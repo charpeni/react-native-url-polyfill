@@ -1,6 +1,6 @@
 import {URL} from '../URL';
 
-describe('URL', function() {
+describe('URL', function () {
   it('should pass Mozilla Dev Network examples', () => {
     const a = new URL('/', 'https://developer.mozilla.org');
     expect(a.href).toBe('https://developer.mozilla.org/');
