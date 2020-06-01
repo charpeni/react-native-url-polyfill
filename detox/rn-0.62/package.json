@@ -7,7 +7,13 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build:ios": "detox build --configuration ios.sim.release",
+    "build:android": "detox build --configuration android.emu.release",
+    "test:ios": "detox test --configuration ios.sim.release --cleanup",
+    "test:android": "detox test --configuration android.emu.release",
+    "e2e:ios": "yarn build:ios && yarn test:ios",
+    "e2e:android": "yarn build:android && yarn test:android"
   },
   "dependencies": {
     "react": "16.11.0",
@@ -18,6 +24,7 @@
     "@babel/runtime": "^7.6.2",
     "@react-native-community/eslint-config": "^0.0.5",
     "babel-jest": "^24.9.0",
+    "detox": "^16.7.1",
     "eslint": "^6.5.1",
     "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.58.0",
