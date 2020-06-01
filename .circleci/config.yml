@@ -55,7 +55,50 @@ android: &android
     JAVA_TOOL_OPTIONS: '-Xmx1536m'
     GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
 
-version: 2
+version: 2.1
+commands:
+  test-detox-ios:
+    steps:
+      - run:
+          name: Yarn version
+          command: yarn -v
+      - run:
+          name: Yarn Install
+          command: |
+            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+      - run:
+          name: Install Detox
+          command: |
+            brew update
+            brew tap wix/brew
+            brew install applesimutils
+            yarn global add detox-cli
+      - run:
+          name: Clean Detox
+          command: |
+            detox clean-framework-cache && detox build-framework-cache
+      - run:
+          name: Install Pods
+          command: cd ios && pod install
+      - run:
+          name: Run Detox on iOS
+          command: yarn e2e:ios
+  test-hermes:
+    steps:
+      - run:
+          name: Yarn version
+          command: yarn -v
+      - run:
+          name: Yarn Install
+          command: |
+            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+      - run:
+          name: Enable Hermes
+          command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
+      - run:
+          name: Build APK
+          command: cd android && ./gradlew assembleRelease
+
 jobs:
   checkout:
     <<: *defaults
@@ -92,53 +135,17 @@ jobs:
     steps:
       - *attach-workspace
       - *restore-cache-detox
-      - run:
-          name: Yarn version
-          command: yarn -v
-      - run:
-          name: Yarn Install
-          command: |
-            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
-      - run:
-          name: Install Detox
-          command: |
-            brew update
-            brew tap wix/brew
-            brew install applesimutils
-            yarn global add detox-cli
-      - run:
-          name: Clean Detox
-          command: |
-            detox clean-framework-cache && detox build-framework-cache
-      - run:
-          name: Install Pods
-          command: cd ios && pod install
-      - run:
-          name: Run Detox on iOS
-          command: yarn e2e:ios
+      - test-detox-ios
       - *save-cache-detox
   test-hermes:
     <<: *android
     steps:
       - *attach-workspace
       - *restore-android-build-cache
-      - run:
-          name: Yarn version
-          command: yarn -v
-      - run:
-          name: Yarn Install
-          command: |
-            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
-      - run:
-          name: Enable Hermes
-          command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
-      - run:
-          name: Build APK
-          command: cd android && ./gradlew assembleRelease
+      - test-hermes
       - *save-android-build-cache
 
 workflows:
-  version: 2
   tests:
     jobs:
       - checkout
