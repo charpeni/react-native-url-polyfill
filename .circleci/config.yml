@@ -81,7 +81,7 @@ commands:
           name: Install Pods
           command: |
             curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
-            pod install
+            cd ios && pod install
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
