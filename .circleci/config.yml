@@ -43,12 +43,10 @@ defaults: &defaults
     - image: circleci/node:12
 
 ios: &ios
-  working_directory: ~/react-native-url-polyfill/detox
   macos:
     xcode: 11
 
 android: &android
-  working_directory: ~/react-native-url-polyfill/detox
   docker:
     - image: circleci/android:api-28-node
   environment:
@@ -132,15 +130,17 @@ jobs:
       - run:
           name: Run Jest
           command: yarn test
-  test-ios:
+  rn-0-61-test-ios:
     <<: *ios
+    working_directory: ~/react-native-url-polyfill/detox/rn-0.61
     steps:
       - *attach-workspace
       - *restore-cache-detox
       - test-detox-ios
       - *save-cache-detox
-  test-hermes:
+  rn-0-61-test-hermes:
     <<: *android
+    working_directory: ~/react-native-url-polyfill/detox/rn-0.61
     steps:
       - *attach-workspace
       - *restore-android-build-cache
@@ -157,9 +157,9 @@ workflows:
       - test-js:
           requires:
             - checkout
-      - test-ios:
+      - rn-0-61-test-ios:
           requires:
             - checkout
-      - test-hermes:
+      - rn-0-61-test-hermes:
           requires:
             - checkout
