@@ -57,6 +57,8 @@ version: 2.1
 commands:
   test-detox-ios:
     steps:
+      - *attach-workspace
+      - *restore-cache-detox
       - run:
           name: Yarn version
           command: yarn -v
@@ -79,12 +81,15 @@ commands:
           name: Install Pods
           command: |
             curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
-            cd ios && pod install
+            cd ios && pod install --repo-update
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
+      - *save-cache-detox
   test-hermes:
     steps:
+      - *attach-workspace
+      - *restore-android-build-cache
       - run:
           name: Yarn version
           command: yarn -v
@@ -98,6 +103,7 @@ commands:
       - run:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
+      - *save-android-build-cache
 
 jobs:
   checkout:
@@ -134,18 +140,22 @@ jobs:
     <<: *ios
     working_directory: ~/react-native-url-polyfill/detox/rn-0.61
     steps:
-      - *attach-workspace
-      - *restore-cache-detox
       - test-detox-ios
-      - *save-cache-detox
   rn-0-61-test-hermes:
     <<: *android
     working_directory: ~/react-native-url-polyfill/detox/rn-0.61
     steps:
-      - *attach-workspace
-      - *restore-android-build-cache
       - test-hermes
-      - *save-android-build-cache
+  rn-0-62-test-ios:
+    <<: *ios
+    working_directory: ~/react-native-url-polyfill/detox/rn-0.62
+    steps:
+      - test-detox-ios
+  rn-0-62-test-hermes:
+    <<: *android
+    working_directory: ~/react-native-url-polyfill/detox/rn-0.62
+    steps:
+      - test-hermes
 
 workflows:
   tests:
@@ -161,5 +171,11 @@ workflows:
           requires:
             - checkout
       - rn-0-61-test-hermes:
+          requires:
+            - checkout
+      - rn-0-62-test-ios:
+          requires:
+            - checkout
+      - rn-0-62-test-hermes:
           requires:
             - checkout
