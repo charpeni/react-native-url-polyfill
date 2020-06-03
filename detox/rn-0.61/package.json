@@ -50,7 +50,7 @@
         "build": "cd android && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=release && cd ..",
         "type": "android.emulator",
         "device": {
-          "avdName": "Pixel_2_API_29"
+          "avdName": "Pixel_3_API_29"
         }
       }
     }

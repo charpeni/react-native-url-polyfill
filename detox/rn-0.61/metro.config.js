@@ -11,10 +11,11 @@ const blacklist = require('metro-config/src/defaults/blacklist');
 const reactNativeLib = path.resolve(__dirname, '../..');
 
 module.exports = {
-  watchFolders: [path.resolve(__dirname, 'node_modules'), reactNativeLib],
+  watchFolders: [reactNativeLib],
   resolver: {
     blacklistRE: blacklist([
       new RegExp(`${reactNativeLib}/node_modules/react-native/.*`),
+      new RegExp(`${reactNativeLib}/detox\/((?!rn-0\.61).).*`),
       new RegExp(path.resolve(__dirname, 'ios/.*')),
     ]),
     extraNodeModules: {
