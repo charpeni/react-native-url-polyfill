@@ -1,5 +1,8 @@
 import {URL as whatwgUrl} from 'whatwg-url-without-unicode';
-import NativeBlobModule from 'react-native/Libraries/Blob/NativeBlobModule';
+
+import {NativeModules} from 'react-native';
+
+const {NativeBlobModule} = NativeModules;
 
 let BLOB_URL_PREFIX = null;
 
