@@ -141,11 +141,6 @@ jobs:
     working_directory: ~/react-native-url-polyfill/detox/rn-0.60
     steps:
       - test-detox-ios
-  rn-0-60-test-hermes:
-    <<: *android
-    working_directory: ~/react-native-url-polyfill/detox/rn-0.60
-    steps:
-      - test-hermes
   rn-0-61-test-ios:
     <<: *ios
     working_directory: ~/react-native-url-polyfill/detox/rn-0.61
@@ -178,10 +173,6 @@ workflows:
           requires:
             - checkout
       - rn-0-60-test-ios:
-          requires:
-            - lint
-            - test-js
-      - rn-0-60-test-hermes:
           requires:
             - lint
             - test-js
