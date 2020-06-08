@@ -15,7 +15,7 @@ module.exports = {
   resolver: {
     blacklistRE: blacklist([
       new RegExp(`${reactNativeLib}/node_modules/react-native/.*`),
-      new RegExp(`${reactNativeLib}/detox\/((?!rn-0\.62).).*`),
+      new RegExp(`${reactNativeLib}/detox\/((?!rn-0\.60).).*`),
       new RegExp(path.resolve(__dirname, 'ios/.*')),
     ]),
     extraNodeModules: {
