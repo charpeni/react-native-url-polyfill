@@ -27,7 +27,6 @@
   "author": "Nicolas Charpentier <nicolas.charpentier079@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "buffer": "^5.4.3",
     "whatwg-url-without-unicode": "8.0.0-1"
   },
   "devDependencies": {
