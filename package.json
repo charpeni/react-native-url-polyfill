@@ -27,7 +27,7 @@
   "author": "Nicolas Charpentier <nicolas.charpentier079@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "whatwg-url-without-unicode": "8.0.0-2"
+    "whatwg-url-without-unicode": "8.0.0-3"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^1.1.0",
