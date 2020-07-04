@@ -1,3 +1,5 @@
+import './js/ios10Fix';
+
 import {polyfillGlobal} from 'react-native/Libraries/Utilities/PolyfillFunctions';
 
 import {name, version} from './package.json';
