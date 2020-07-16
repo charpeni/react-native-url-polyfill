@@ -2,8 +2,6 @@ jest.mock('react-native/Libraries/Utilities/PolyfillFunctions', () => ({
   polyfillGlobal: jest.fn(),
 }));
 
-// Test 2
-
 describe('Index', function () {
   it("shouldn't apply URL and URLSearchParams on import", () => {
     expect(global.REACT_NATIVE_URL_POLYFILL).toBeUndefined();
