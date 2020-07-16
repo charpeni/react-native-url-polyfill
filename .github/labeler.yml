@@ -1,0 +1,9 @@
+':tea: Detox':
+  - detox/**/*
+
+':test_tube: Tests':
+  - /**/__tests__/**/*
+
+':toolbox: Infra':
+  - .github/**/*
+  - .circleci/**/*
