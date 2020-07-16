@@ -2,7 +2,7 @@
   - detox/**/*
 
 ':test_tube: Tests':
-  - __tests_/**/*
+  - __tests__/**/*
   - /**/__tests__/**/*
 
 ':toolbox: Infra':
