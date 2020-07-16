@@ -8,3 +8,6 @@
 ':toolbox: Infra':
   - .github/**/*
   - .circleci/**/*
+  
+ ':books: Documentation':
+   - README.md
