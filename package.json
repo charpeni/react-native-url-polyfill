@@ -19,6 +19,7 @@
     "url": "https://github.com/charpeni/react-native-url-polyfill.git"
   },
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
