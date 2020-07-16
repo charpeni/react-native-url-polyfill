@@ -2,7 +2,7 @@ jest.mock('react-native/Libraries/Utilities/PolyfillFunctions', () => ({
   polyfillGlobal: jest.fn(),
 }));
 
-// Test
+// Test 2
 
 describe('Index', function () {
   it("shouldn't apply URL and URLSearchParams on import", () => {
