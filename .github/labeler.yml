@@ -9,5 +9,5 @@
   - .github/**/*
   - .circleci/**/*
   
- ':books: Documentation':
-   - README.md
+':books: Documentation':
+  - README.md
