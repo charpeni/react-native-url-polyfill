@@ -4,10 +4,12 @@ import {NativeModules} from 'react-native';
 
 let {NativeBlobModule} = NativeModules;
 
-if (!NativeBlobModule) {
-  NativeBlobModule = require('react-native/Libraries/Blob/NativeBlobModule')
-    .default;
-}
+try {
+  if (!NativeBlobModule) {
+    NativeBlobModule = require('react-native/Libraries/Blob/NativeBlobModule')
+      .default;
+  }
+} catch (e) {}
 
 let BLOB_URL_PREFIX = null;
 
