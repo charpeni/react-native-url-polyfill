@@ -5,9 +5,9 @@ import {NativeModules} from 'react-native';
 let {NativeBlobModule} = NativeModules;
 
 try {
-  if (!NativeBlobModule) {
-    NativeBlobModule = require('react-native/Libraries/Blob/NativeBlobModule')
-      .default;
+  const module = 'react-native/Libraries/Blob/NativeBlobModule'
+  if (!NativeBlobModule && require.resolve(module)) {
+    NativeBlobModule = require(module).default;
   }
 } catch (e) {}
 
