@@ -4,7 +4,7 @@ import {NativeModules, Platform} from 'react-native';
 
 let {NativeBlobModule} = NativeModules;
 
-if (Platform.constants.reactNativeVersion.minor > 60) {
+if (Platform.constants?.reactNativeVersion?.minor > 60) {
   const module = 'react-native/Libraries/Blob/NativeBlobModule';
   if (!NativeBlobModule && require.resolve(module)) {
     NativeBlobModule = require(module).default;
