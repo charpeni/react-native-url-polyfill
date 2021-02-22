@@ -1,15 +1,15 @@
 import {URL as whatwgUrl} from 'whatwg-url-without-unicode';
 
-import {NativeModules} from 'react-native';
+import {NativeModules, Platform} from 'react-native';
 
 let {NativeBlobModule} = NativeModules;
 
-try {
+if (Platform.constants.reactNativeVersion.minor > 60) {
   const module = 'react-native/Libraries/Blob/NativeBlobModule';
   if (!NativeBlobModule && require.resolve(module)) {
     NativeBlobModule = require(module).default;
   }
-} catch (e) {}
+}
 
 let BLOB_URL_PREFIX = null;
 
@@ -37,6 +37,7 @@ if (
  *       android:exported="false"
  *     />
  *   </application>
+
  * </manifest>
  * ```
  * And then define the `blob_provider_authority` string in `res/values/strings.xml`.
