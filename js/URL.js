@@ -1,15 +1,15 @@
 import {URL as whatwgUrl} from 'whatwg-url-without-unicode';
 
-import {NativeModules, Platform} from 'react-native';
+import {NativeModules} from 'react-native';
 
 let {NativeBlobModule} = NativeModules;
 
-if (Platform.constants?.reactNativeVersion?.minor > 60) {
+try {
   const module = 'react-native/Libraries/Blob/NativeBlobModule';
   if (!NativeBlobModule && require.resolve(module)) {
     NativeBlobModule = require(module).default;
   }
-}
+} catch (e) {}
 
 let BLOB_URL_PREFIX = null;
 
