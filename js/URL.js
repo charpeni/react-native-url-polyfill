@@ -6,7 +6,7 @@ let {NativeBlobModule} = NativeModules;
 
 try {
   const module = 'react-native/Libraries/Blob/NativeBlobModule';
-  if (!NativeBlobModule && require.resolve(module)) {
+  if (!NativeBlobModule) {
     NativeBlobModule = require(module).default;
   }
 } catch (e) {}
