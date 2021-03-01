@@ -27,6 +27,15 @@ const App: () => React$Node = () => {
             ).href
           }
         </Text>
+        <Text testID="url-test-3">
+          {URL.createObjectURL({
+            data: {
+              blobId: 1,
+              offset: 32,
+            },
+            size: 64,
+          })}
+        </Text>
       </SafeAreaView>
     </>
   );
