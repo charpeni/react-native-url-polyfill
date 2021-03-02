@@ -1,19 +1,14 @@
-import {URL as whatwgUrl} from 'whatwg-url-without-unicode';
-
 import {NativeModules} from 'react-native';
-
-const {NativeBlobModule} = NativeModules;
+import {URL as whatwgUrl} from 'whatwg-url-without-unicode';
 
 let BLOB_URL_PREFIX = null;
 
-if (
-  NativeBlobModule &&
-  typeof NativeBlobModule.getConstants().BLOB_URI_SCHEME === 'string'
-) {
-  const constants = NativeBlobModule.getConstants();
-  BLOB_URL_PREFIX = constants.BLOB_URI_SCHEME + ':';
-  if (typeof constants.BLOB_URI_HOST === 'string') {
-    BLOB_URL_PREFIX += `//${constants.BLOB_URI_HOST}/`;
+const {BlobModule} = NativeModules;
+
+if (BlobModule && typeof BlobModule.BLOB_URI_SCHEME === 'string') {
+  BLOB_URL_PREFIX = BlobModule.BLOB_URI_SCHEME + ':';
+  if (typeof BlobModule.BLOB_URI_HOST === 'string') {
+    BLOB_URL_PREFIX += `//${BlobModule.BLOB_URI_HOST}/`;
   }
 }
 
