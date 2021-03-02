@@ -40,7 +40,7 @@ aliases:
 defaults: &defaults
   working_directory: ~/react-native-url-polyfill
   docker:
-    - image: circleci/node:12
+    - image: circleci/node:14
 
 ios: &ios
   macos:
