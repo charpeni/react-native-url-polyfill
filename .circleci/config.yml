@@ -86,7 +86,7 @@ commands:
           name: Run Detox on iOS
           command: yarn e2e:ios
       - *save-cache-detox
-  test-hermes:
+  test-hermes-android:
     steps:
       - *attach-workspace
       - *restore-android-build-cache
@@ -146,21 +146,21 @@ jobs:
     working_directory: ~/react-native-url-polyfill/detox/rn-0.63
     steps:
       - test-detox-ios
-  rn-0-63-test-hermes:
+  rn-0-63-test-hermes-android:
     <<: *android
     working_directory: ~/react-native-url-polyfill/detox/rn-0.63
     steps:
-      - test-hermes
+      - test-hermes-android
   rn-0-64-test-ios:
     <<: *ios
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
       - test-detox-ios
-  rn-0-64-test-hermes:
+  rn-0-64-test-hermes-android:
     <<: *android
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
-      - test-hermes
+      - test-hermes-android
 
 workflows:
   tests:
@@ -180,7 +180,7 @@ workflows:
           requires:
             - lint
             - test-js
-      - rn-0-63-test-hermes:
+      - rn-0-63-test-hermes-android:
           requires:
             - lint
             - test-js
@@ -188,7 +188,7 @@ workflows:
           requires:
             - lint
             - test-js
-      - rn-0-64-test-hermes:
+      - rn-0-64-test-hermes-android:
           requires:
             - lint
             - test-js
