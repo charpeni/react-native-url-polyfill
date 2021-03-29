@@ -86,6 +86,9 @@ commands:
           name: Run Detox on iOS
           command: yarn e2e:ios
       - *save-cache-detox
+      - persist_to_workspace:
+          root: .
+          paths: .
   test-hermes-android:
     steps:
       - *attach-workspace
@@ -104,6 +107,19 @@ commands:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
       - *save-android-build-cache
+  test-hermes-ios:
+    steps:
+      - *attach-workspace
+      - run:
+          name: Enable Hermes
+          command: sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled\ =>\ true/g" ios/Podfile
+      - run:
+          name: Install Pods
+          command: |
+            cd ios && pod install
+      - run:
+          name: Run Detox on iOS
+          command: yarn e2e:ios
 
 jobs:
   checkout:
@@ -156,6 +172,11 @@ jobs:
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
       - test-detox-ios
+  rn-0-64-test-hermes-ios:
+    <<: *ios
+    working_directory: ~/react-native-url-polyfill/detox/rn-0.64
+    steps:
+      - test-hermes-ios
   rn-0-64-test-hermes-android:
     <<: *android
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
@@ -188,6 +209,9 @@ workflows:
           requires:
             - lint
             - test-js
+      - rn-0-64-test-hermes-ios:
+          requires:
+            - rn-0-64-test-ios
       - rn-0-64-test-hermes-android:
           requires:
             - lint
