@@ -46,7 +46,7 @@ ios: &ios
   macos:
     xcode: 12
 
-android: &android-28
+android: &android
   docker:
     - image: circleci/android:api-29-node
   environment:
