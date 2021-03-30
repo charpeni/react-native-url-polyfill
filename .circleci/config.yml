@@ -44,7 +44,7 @@ defaults: &defaults
 
 ios: &ios
   macos:
-    xcode: 11
+    xcode: 12
 
 android: &android-28
   docker:
