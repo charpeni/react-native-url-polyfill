@@ -1,3 +1,5 @@
+version: 2.1
+
 aliases:
   - &save-cache-yarn
     save_cache:
@@ -37,31 +39,28 @@ aliases:
     attach_workspace:
       at: ~/react-native-url-polyfill
 
-defaults: &defaults
-  working_directory: ~/react-native-url-polyfill
-  docker:
-    - image: circleci/node:14
+executors:
+  default:
+    docker:
+      - image: circleci/node:14
+    working_directory: ~/react-native-url-polyfill
+  xcode-11:
+    macos:
+      xcode: 11
+    environment:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+  xcode-12:
+    macos:
+      xcode: 12.4.0
+    environment:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+  android:
+    docker:
+      - image: circleci/android:api-29-node
+    environment:
+      JAVA_TOOL_OPTIONS: '-Xmx1536m'
+      GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
 
-xcode-11: &xcode-11
-  macos:
-    xcode: 11
-  environment:
-    HOMEBREW_NO_AUTO_UPDATE: 1
-
-xcode-12: &xcode-12
-  macos:
-    xcode: 12
-  environment:
-    HOMEBREW_NO_AUTO_UPDATE: 1
-
-android: &android
-  docker:
-    - image: circleci/android:api-29-node
-  environment:
-    JAVA_TOOL_OPTIONS: '-Xmx1536m'
-    GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
-
-version: 2.1
 commands:
   test-detox-ios:
     steps:
@@ -128,15 +127,10 @@ commands:
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
-  install-cocoapods-1-10-1:
-    steps:
-      - run:
-          name: Install Cocoapods 1.10.1
-          command: gem install cocoapods -v 1.10.1
 
 jobs:
   checkout:
-    <<: *defaults
+    executor: default
     steps:
       - checkout
       - *restore-cache-yarn
@@ -152,48 +146,46 @@ jobs:
           root: .
           paths: .
   lint:
-    <<: *defaults
+    executor: default
     steps:
       - *attach-workspace
       - run:
           name: Lint
           command: yarn lint
   test-js:
-    <<: *defaults
+    executor: default
     steps:
       - *attach-workspace
       - run:
           name: Run Jest
           command: yarn test
   rn-0-60-test-ios:
-    <<: *xcode-11
+    executor: xcode-11
     working_directory: ~/react-native-url-polyfill/detox/rn-0.60
     steps:
       - test-detox-ios
   rn-0-63-test-ios:
-    <<: *xcode-11
+    executor: xcode-11
     working_directory: ~/react-native-url-polyfill/detox/rn-0.63
     steps:
       - test-detox-ios
   rn-0-63-test-hermes-android:
-    <<: *android
+    executor: android
     working_directory: ~/react-native-url-polyfill/detox/rn-0.63
     steps:
       - test-hermes-android
   rn-0-64-test-ios:
-    <<: *xcode-12
+    executor: xcode-12
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
-      - install-cocoapods-1-10-1
       - test-detox-ios
   rn-0-64-test-hermes-ios:
-    <<: *xcode-12
+    executor: xcode-12
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
-      - install-cocoapods-1-10-1
       - test-hermes-ios
   rn-0-64-test-hermes-android:
-    <<: *android
+    executor: android
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
       - test-hermes-android
