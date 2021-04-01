@@ -128,6 +128,11 @@ commands:
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
+  install-cocoapods-1-10-1:
+    steps:
+      - run:
+          name: Install Cocoapods 1.10.1
+          command: gem install cocoapods -v 1.10.1
 
 jobs:
   checkout:
@@ -179,11 +184,13 @@ jobs:
     <<: *xcode-12
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
+      - install-cocoapods-1-10-1
       - test-detox-ios
   rn-0-64-test-hermes-ios:
     <<: *xcode-12
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
+      - install-cocoapods-1-10-1
       - test-hermes-ios
   rn-0-64-test-hermes-android:
     <<: *android
