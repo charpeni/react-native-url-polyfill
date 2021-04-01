@@ -42,17 +42,17 @@ defaults: &defaults
   docker:
     - image: circleci/node:14
 
-xcode-11: &ios-xcode-11
+xcode-11: &xcode-11
   macos:
     xcode: 11
   environment:
-      HOMEBREW_NO_AUTO_UPDATE: 1
+    HOMEBREW_NO_AUTO_UPDATE: 1
 
-xcode-12: &ios-xcode-12
+xcode-12: &xcode-12
   macos:
     xcode: 12
   environment:
-      HOMEBREW_NO_AUTO_UPDATE: 1
+    HOMEBREW_NO_AUTO_UPDATE: 1
 
 android: &android
   docker:
