@@ -42,7 +42,11 @@ defaults: &defaults
   docker:
     - image: circleci/node:14
 
-ios: &ios
+xcode-11: &ios-xcode-11
+  macos:
+    xcode: 11
+
+xcode-12: &ios-xcode-12
   macos:
     xcode: 12
 
@@ -153,12 +157,12 @@ jobs:
           name: Run Jest
           command: yarn test
   rn-0-60-test-ios:
-    <<: *ios
+    <<: *xcode-11
     working_directory: ~/react-native-url-polyfill/detox/rn-0.60
     steps:
       - test-detox-ios
   rn-0-63-test-ios:
-    <<: *ios
+    <<: *xcode-11
     working_directory: ~/react-native-url-polyfill/detox/rn-0.63
     steps:
       - test-detox-ios
@@ -168,12 +172,12 @@ jobs:
     steps:
       - test-hermes-android
   rn-0-64-test-ios:
-    <<: *ios
+    <<: *xcode-12
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
       - test-detox-ios
   rn-0-64-test-hermes-ios:
-    <<: *ios
+    <<: *xcode-12
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
       - test-hermes-ios
