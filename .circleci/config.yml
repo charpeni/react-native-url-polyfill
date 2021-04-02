@@ -93,7 +93,7 @@ commands:
       - run:
           name: Install Pods
           command: |
-            if [ ! -d "Pods" ]
+            if [ ! -d "ios/Pods" ]
             then
               curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
               cd ios && pod install
