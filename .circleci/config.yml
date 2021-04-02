@@ -62,10 +62,8 @@ executors:
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
 
 commands:
-  test-detox-ios:
+  install-yarn-dependencies:
     steps:
-      - *attach-workspace
-      - *restore-cache-detox
       - run:
           name: Yarn version
           command: yarn -v
@@ -73,6 +71,8 @@ commands:
           name: Yarn Install
           command: |
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+  install-detox:
+    steps:
       - run:
           name: Install Detox
           command: |
@@ -84,29 +84,29 @@ commands:
           name: Clean Detox
           command: |
             detox clean-framework-cache && detox build-framework-cache
+  test-detox-ios:
+    steps:
+      - *attach-workspace
+      - *restore-cache-detox
+      - install-yarn-dependencies
+      - install-detox
       - run:
           name: Install Pods
           command: |
-            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
-            cd ios && pod install --repo-update
+            if [ ! -d "Pods" ]
+            then
+              curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+              cd ios && pod install
+            fi
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
       - *save-cache-detox
-      - persist_to_workspace:
-          root: .
-          paths: .
   test-hermes-android:
     steps:
       - *attach-workspace
       - *restore-android-build-cache
-      - run:
-          name: Yarn version
-          command: yarn -v
-      - run:
-          name: Yarn Install
-          command: |
-            yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+      - install-yarn-dependencies
       - run:
           name: Enable Hermes
           command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
@@ -117,9 +117,12 @@ commands:
   test-hermes-ios:
     steps:
       - *attach-workspace
+      - *restore-cache-detox
       - run:
           name: Enable Hermes
-          command: sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled\ =>\ true/g" ios/Podfile
+          command: npx shx sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled => true/g" ios/Podfile
+      - install-yarn-dependencies
+      - install-detox
       - run:
           name: Install Pods
           command: |
@@ -218,7 +221,8 @@ workflows:
             - test-js
       - rn-0-64-test-hermes-ios:
           requires:
-            - rn-0-64-test-ios
+            - lint
+            - test-js
       - rn-0-64-test-hermes-android:
           requires:
             - lint
