@@ -46,7 +46,7 @@ executors:
     working_directory: ~/react-native-url-polyfill
   xcode-11:
     macos:
-      xcode: 11
+      xcode: 11.7.0
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
   xcode-12:
@@ -84,21 +84,6 @@ commands:
           name: Clean Detox
           command: |
             detox clean-framework-cache && detox build-framework-cache
-  test-detox-ios:
-    steps:
-      - *attach-workspace
-      - *restore-cache-detox
-      - install-yarn-dependencies
-      - install-detox
-      - run:
-          name: Install Pods
-          command: |
-            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
-            cd ios && pod install --repo-update
-      - run:
-          name: Run Detox on iOS
-          command: yarn e2e:ios
-      - *save-cache-detox
   test-hermes-android:
     steps:
       - *attach-workspace
@@ -143,8 +128,9 @@ jobs:
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
       - *save-cache-yarn
       - persist_to_workspace:
-          root: .
-          paths: .
+          root: ./
+          paths:
+            - ./
   lint:
     executor: default
     steps:
@@ -159,26 +145,34 @@ jobs:
       - run:
           name: Run Jest
           command: yarn test
-  rn-0-60-test-ios:
-    executor: xcode-11
-    working_directory: ~/react-native-url-polyfill/detox/rn-0.60
+  test-ios:
+    parameters:
+      executor:
+        default: xcode-12
+        type: executor
+      react-native-version:
+        type: string
+    executor: << parameters.executor >>
+    working_directory: ~/react-native-url-polyfill/detox/rn-<< parameters.react-native-version >>
     steps:
-      - test-detox-ios
-  rn-0-63-test-ios:
-    executor: xcode-11
-    working_directory: ~/react-native-url-polyfill/detox/rn-0.63
-    steps:
-      - test-detox-ios
+      - *attach-workspace
+      - *restore-cache-detox
+      - install-yarn-dependencies
+      - install-detox
+      - run:
+          name: Install Pods
+          command: |
+            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+            cd ios && pod install --repo-update
+      - run:
+          name: Run Detox on iOS
+          command: yarn e2e:ios
+      - *save-cache-detox
   rn-0-63-test-hermes-android:
     executor: android
     working_directory: ~/react-native-url-polyfill/detox/rn-0.63
     steps:
       - test-hermes-android
-  rn-0-64-test-ios:
-    executor: xcode-12
-    working_directory: ~/react-native-url-polyfill/detox/rn-0.64
-    steps:
-      - test-detox-ios
   rn-0-64-test-hermes-ios:
     executor: xcode-12
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
@@ -200,11 +194,16 @@ workflows:
       - test-js:
           requires:
             - checkout
-      - rn-0-60-test-ios:
+      - test-ios:
+          name: rn-0-60-test-ios
+          executor: xcode-11
+          react-native-version: '0.60'
           requires:
             - lint
             - test-js
-      - rn-0-63-test-ios:
+      - test-ios:
+          name: rn-0-63-test-ios
+          react-native-version: '0.63'
           requires:
             - lint
             - test-js
@@ -212,7 +211,9 @@ workflows:
           requires:
             - lint
             - test-js
-      - rn-0-64-test-ios:
+      - test-ios:
+          name: rn-0-64-test-ios
+          react-native-version: '0.64'
           requires:
             - lint
             - test-js
