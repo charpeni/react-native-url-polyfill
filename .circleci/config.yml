@@ -84,18 +84,6 @@ commands:
           name: Clean Detox
           command: |
             detox clean-framework-cache && detox build-framework-cache
-  test-hermes-android:
-    steps:
-      - *attach-workspace
-      - *restore-android-build-cache
-      - install-yarn-dependencies
-      - run:
-          name: Enable Hermes
-          command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
-      - run:
-          name: Build APK
-          command: cd android && ./gradlew assembleRelease
-      - *save-android-build-cache
   test-hermes-ios:
     steps:
       - *attach-workspace
@@ -168,21 +156,28 @@ jobs:
           name: Run Detox on iOS
           command: yarn e2e:ios
       - *save-cache-detox
-  rn-0-63-test-hermes-android:
+  test-hermes-android:
+    parameters:
+      react-native-version:
+        type: string
     executor: android
-    working_directory: ~/react-native-url-polyfill/detox/rn-0.63
+    working_directory: ~/react-native-url-polyfill/detox/rn-<< parameters.react-native-version >>
     steps:
-      - test-hermes-android
+      - *attach-workspace
+      - *restore-android-build-cache
+      - install-yarn-dependencies
+      - run:
+          name: Enable Hermes
+          command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
+      - run:
+          name: Build APK
+          command: cd android && ./gradlew assembleRelease
+      - *save-android-build-cache
   rn-0-64-test-hermes-ios:
     executor: xcode-12
     working_directory: ~/react-native-url-polyfill/detox/rn-0.64
     steps:
       - test-hermes-ios
-  rn-0-64-test-hermes-android:
-    executor: android
-    working_directory: ~/react-native-url-polyfill/detox/rn-0.64
-    steps:
-      - test-hermes-android
 
 workflows:
   tests:
@@ -207,7 +202,9 @@ workflows:
           requires:
             - lint
             - test-js
-      - rn-0-63-test-hermes-android:
+      - test-hermes-android:
+          name: rn-0-63-test-hermes-android
+          react-native-version: '0.63'
           requires:
             - lint
             - test-js
@@ -221,7 +218,9 @@ workflows:
           requires:
             - lint
             - test-js
-      - rn-0-64-test-hermes-android:
+      - test-hermes-android:
+          name: rn-0-64-test-hermes-android
+          react-native-version: '0.64'
           requires:
             - lint
             - test-js
