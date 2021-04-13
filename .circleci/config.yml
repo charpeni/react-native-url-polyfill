@@ -229,8 +229,7 @@ workflows:
             - test-js
       - rn-0-64-test-hermes-ios:
           requires:
-            - lint
-            - test-js
+            - rn-0-64-test-ios
       - test-hermes-android:
           name: rn-0-64-test-hermes-android
           react-native-version: '0.64'
