@@ -30,7 +30,7 @@ aliases:
         - ios/Pods
   - &restore-cache-detox-app
     restore_cache:
-      name: Restoring Detox Cache
+      name: Restoring Detox App Cache
       keys:
         - detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
   - &save-android-build-cache
@@ -88,8 +88,8 @@ commands:
       - run:
           name: Install Detox
           command: |
-            HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
+            brew tap wix/brew
+            brew install applesimutils
             yarn global add detox-cli
       - run:
           name: Clean Detox
@@ -160,10 +160,11 @@ jobs:
       - install-yarn-dependencies
       - install-detox
       - run:
+          name: Fetch Pods specs
+          command: curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+      - run:
           name: Install Pods
-          command: |
-            curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
-            cd ios && pod install --repo-update
+          command: cd ios && pod install --repo-update
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
