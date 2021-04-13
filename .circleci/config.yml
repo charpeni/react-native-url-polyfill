@@ -13,7 +13,7 @@ aliases:
         - yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
   - &save-cache-detox-env
     save_cache:
-      key: detox-env-{{ .Environment.CACHE_VERSION }}
+      key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}
       paths:
         - /usr/local/Homebrew
         - ~/Library/Caches/Homebrew
@@ -21,7 +21,7 @@ aliases:
     restore_cache:
       name: Restoring Detox Env Cache
       keys:
-        - detox-env-{{ .Environment.CACHE_VERSION }}
+        - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}
   - &save-cache-detox-app
     save_cache:
       key: detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
