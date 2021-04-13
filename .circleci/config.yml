@@ -3,38 +3,49 @@ version: 2.1
 aliases:
   - &save-cache-yarn
     save_cache:
-      key: v1-yarn-packages-{{ checksum "yarn.lock" }}
+      key: yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
       paths:
         - ~/.cache/yarn
   - &restore-cache-yarn
     restore_cache:
       name: Restore Yarn Package Cache
       keys:
-        - v1-yarn-packages-{{ checksum "yarn.lock" }}
-  - &save-cache-detox
+        - yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
+  - &save-cache-detox-env
     save_cache:
-      key: v1-detox-{{ checksum "yarn.lock"}}
+      key: detox-env-{{ .Environment.CACHE_VERSION }}
+      paths:
+        - /usr/local/Homebrew
+        - ~/Library/Caches/Homebrew
+  - &restore-cache-detox-env
+    restore_cache:
+      name: Restoring Detox Env Cache
+      keys:
+        - detox-env-{{ .Environment.CACHE_VERSION }}
+  - &save-cache-detox-app
+    save_cache:
+      key: detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
       paths:
         - node_modules
         - ios/Pods
-  - &restore-cache-detox
+  - &restore-cache-detox-app
     restore_cache:
       name: Restoring Detox Cache
       keys:
-        - v1-detox-{{ checksum "yarn.lock"}}
+        - detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
   - &save-android-build-cache
     save_cache:
       paths:
         - ~/.gradle/caches
         - ~/.gradle/wrapper
         - ~/.android/build-cache
-      key: v1-gradle-build-cache-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
+      key: gradle-build-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
       when: always # Ensures build assets are cached even on failed builds
   - &restore-android-build-cache
     restore_cache:
       name: Restoring Android & Gradle cache
       keys:
-        - v1-gradle-build-cache-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
+        - gradle-build-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
   - &attach-workspace
     attach_workspace:
       at: ~/react-native-url-polyfill
@@ -73,21 +84,22 @@ commands:
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
   install-detox:
     steps:
+      - *restore-cache-detox-env
       - run:
           name: Install Detox
           command: |
-            brew update
-            brew tap wix/brew
-            brew install applesimutils
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
             yarn global add detox-cli
       - run:
           name: Clean Detox
           command: |
             detox clean-framework-cache && detox build-framework-cache
+      - *save-cache-detox-env
   test-hermes-ios:
     steps:
       - *attach-workspace
-      - *restore-cache-detox
+      - *restore-cache-detox-app
       - run:
           name: Enable Hermes
           command: npx shx sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled => true/g" ios/Podfile
@@ -116,9 +128,9 @@ jobs:
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
       - *save-cache-yarn
       - persist_to_workspace:
-          root: ./
+          root: .
           paths:
-            - ./
+            - .
   lint:
     executor: default
     steps:
@@ -144,7 +156,7 @@ jobs:
     working_directory: ~/react-native-url-polyfill/detox/rn-<< parameters.react-native-version >>
     steps:
       - *attach-workspace
-      - *restore-cache-detox
+      - *restore-cache-detox-app
       - install-yarn-dependencies
       - install-detox
       - run:
@@ -155,7 +167,7 @@ jobs:
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
-      - *save-cache-detox
+      - *save-cache-detox-app
   test-hermes-android:
     parameters:
       react-native-version:
