@@ -177,11 +177,11 @@ jobs:
     working_directory: ~/react-native-url-polyfill/detox/rn-<< parameters.react-native-version >>
     steps:
       - *attach-workspace
-      - *restore-android-build-cache
-      - install-yarn-dependencies
       - run:
           name: Enable Hermes
           command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
+      - *restore-android-build-cache
+      - install-yarn-dependencies
       - run:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
