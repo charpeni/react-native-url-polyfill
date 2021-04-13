@@ -186,9 +186,15 @@ jobs:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
       - *save-android-build-cache
-  rn-0-64-test-hermes-ios:
-    executor: xcode-12
-    working_directory: ~/react-native-url-polyfill/detox/rn-0.64
+  test-hermes-ios:
+    parameters:
+      executor:
+        default: xcode-12
+        type: executor
+      react-native-version:
+        type: string
+    executor: << parameters.executor >>
+    working_directory: ~/react-native-url-polyfill/detox/rn-<< parameters.react-native-version >>
     steps:
       - test-hermes-ios
 
@@ -203,36 +209,28 @@ workflows:
           requires:
             - checkout
       - test-ios:
-          name: rn-0-60-test-ios
+          name: test-ios-0.60
           executor: xcode-11
           react-native-version: '0.60'
           requires:
             - lint
             - test-js
       - test-ios:
-          name: rn-0-63-test-ios
-          react-native-version: '0.63'
+          matrix:
+            parameters:
+              react-native-version: ['0.63', '0.64']
           requires:
             - lint
             - test-js
-      - test-hermes-android:
-          name: rn-0-63-test-hermes-android
-          react-native-version: '0.63'
-          requires:
-            - lint
-            - test-js
-      - test-ios:
-          name: rn-0-64-test-ios
+      - test-hermes-ios:
+          name: test-hermes-ios-0.64
           react-native-version: '0.64'
           requires:
-            - lint
-            - test-js
-      - rn-0-64-test-hermes-ios:
-          requires:
-            - rn-0-64-test-ios
+            - test-ios-0.64
       - test-hermes-android:
-          name: rn-0-64-test-hermes-android
-          react-native-version: '0.64'
+          matrix:
+            parameters:
+              react-native-version: ['0.63', '0.64']
           requires:
             - lint
             - test-js
