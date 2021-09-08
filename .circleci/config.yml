@@ -218,20 +218,20 @@ workflows:
       - test-ios:
           matrix:
             parameters:
-              react-native-version: ['0.63', '0.64']
+              react-native-version: ['0.64', '0.65']
           requires:
             - lint
             - test-js
       - test-hermes-ios:
           matrix:
             parameters:
-              react-native-version: ['0.64']
+              react-native-version: ['0.64', '0.65']]
           requires:
             - test-ios-<< matrix.react-native-version >>
       - test-hermes-android:
           matrix:
             parameters:
-              react-native-version: ['0.63', '0.64']
+              react-native-version: ['0.64', '0.65']
           requires:
             - lint
             - test-js
