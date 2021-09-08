@@ -34,10 +34,9 @@ async function generateSourceMapExplorer(
 }
 
 (async () => {
-  const {
-    name: tempDirectory,
-    removeCallback: clearTempDirectory,
-  } = tmp.dirSync({unsafeCleanup: true});
+  const {name: tempDirectory, removeCallback: clearTempDirectory} = tmp.dirSync(
+    {unsafeCleanup: true},
+  );
 
   const tempProjectDirectory = `${tempDirectory}/BundleSize`;
 

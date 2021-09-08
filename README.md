@@ -50,7 +50,7 @@ Meanwhile, React Native has grown around that polyfill, then some unexpected err
 > - URL incorrectly adds trailing slash [react-native#24428](https://github.com/facebook/react-native/issues/24428).
 > - Creating an instance of URL like: `new URL('http://facebook.com')` throws an exception [react-native#16434](https://github.com/facebook/react-native/issues/16434).
 
-Unfortunately, adding `react-native-url-polyfill` to React Native source code will means adding 📦 **74.94 KB** (as of RN 0.63) to the JavaScript bundle.
+Unfortunately, adding `react-native-url-polyfill` to React Native source code will means adding 📦 **78.78 KB** (as of RN 0.63) to the JavaScript bundle.
 
 That's why you may need this external dependency. So, if you use `URL` within your app, you probably want to take a look at the installation steps below!
 
