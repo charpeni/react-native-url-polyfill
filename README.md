@@ -30,7 +30,7 @@
 
 <hr />
 
-react-native-url-polyfill is a full implementation of the WHATWG [URL Standard](https://url.spec.whatwg.org/) optimized for React Native.
+react-native-url-polyfill is an implementation of the WHATWG [URL Standard](https://url.spec.whatwg.org/) optimized for React Native.
 
 - **Lightweight**. Uses a forked version of [`whatwg-url`](https://github.com/jsdom/whatwg-url) ([`whatwg-url-without-unicode`](https://github.com/charpeni/whatwg-url)) where unicode support has been stripped out — Going down from [372 KB](https://bundlephobia.com/result?p=whatwg-url@8.0.0) to [40.9 KB](https://bundlephobia.com/result?p=whatwg-url-without-unicode@8.0.0-3).
 - **Trustworthy**. Follows closely the URL Standard spec, and relys on unit tests and Detox e2e tests within [React Native](https://github.com/facebook/react-native).
@@ -50,9 +50,9 @@ Meanwhile, React Native has grown around that polyfill, then some unexpected err
 > - URL incorrectly adds trailing slash [react-native#24428](https://github.com/facebook/react-native/issues/24428).
 > - Creating an instance of URL like: `new URL('http://facebook.com')` throws an exception [react-native#16434](https://github.com/facebook/react-native/issues/16434).
 
-Unfortunately, adding `react-native-url-polyfill` to React Native source code will means adding 📦 **78.78 KB** (as of RN 0.65) to the JavaScript bundle.
-
 That's why you may need this external dependency. So, if you use `URL` within your app, you probably want to take a look at the installation steps below!
+
+Unfortunately, adding `react-native-url-polyfill` to React Native source code will means adding 📦 **78.78 KB** (as of RN 0.65) to the JavaScript bundle, that's why it's not included by default.
 
 ## Installation
 
@@ -99,7 +99,7 @@ import { setupURLPolyfill } from 'react-native-url-polyfill';
 setupURLPolyfill();
 ```
 
-### Option 3 (_Convenient_)
+### Option 3 (_Convenient_ / ponyfill)
 
 If you prefer not to apply this polyfill over React Native's default `URL`, you can still import those classes manually when you want them.
 
