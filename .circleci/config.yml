@@ -156,7 +156,7 @@ jobs:
       react-native-version:
         type: string
     executor: << parameters.executor >>
-    working_directory: ~/react-native-url-polyfill/detox/rn-<< parameters.react-native-version >>
+    working_directory: ~/react-native-url-polyfill/platforms/react-native/-<< parameters.react-native-version >>
     steps:
       - *attach-workspace
       - *restore-cache-detox-app
@@ -177,7 +177,7 @@ jobs:
       react-native-version:
         type: string
     executor: android
-    working_directory: ~/react-native-url-polyfill/detox/rn-<< parameters.react-native-version >>
+    working_directory: ~/react-native-url-polyfill/platforms/react-native/-<< parameters.react-native-version >>
     steps:
       - *attach-workspace
       - run:
@@ -197,7 +197,7 @@ jobs:
       react-native-version:
         type: string
     executor: << parameters.executor >>
-    working_directory: ~/react-native-url-polyfill/detox/rn-<< parameters.react-native-version >>
+    working_directory: ~/react-native-url-polyfill/platforms/react-native/-<< parameters.react-native-version >>
     steps:
       - test-hermes-ios
 

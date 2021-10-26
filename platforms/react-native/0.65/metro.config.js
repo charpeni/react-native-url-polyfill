@@ -7,14 +7,14 @@
 
 const path = require('path');
 
-const reactNativeLib = path.resolve(__dirname, '../..');
+const reactNativeLib = path.resolve(__dirname, '../../..');
 
 module.exports = {
   watchFolders: [reactNativeLib],
   resolver: {
     blockList: [
       new RegExp(`${reactNativeLib}/node_modules/react-native/.*`),
-      new RegExp(`${reactNativeLib}/detox\/((?!rn-0\.66).).*`),
+      new RegExp(`${reactNativeLib}/platforms/react-native/((?!0.65).).*`),
       new RegExp(path.resolve(__dirname, 'ios/.*')),
     ],
     extraNodeModules: {

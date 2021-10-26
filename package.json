@@ -60,7 +60,7 @@
     "preset": "react-native",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "./detox/"
+      "./platforms/"
     ]
   },
   "lint-staged": {
