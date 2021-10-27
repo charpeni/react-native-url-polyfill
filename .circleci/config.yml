@@ -53,21 +53,21 @@ aliases:
 executors:
   default:
     docker:
-      - image: circleci/node:14
+      - image: circleci/node:16
     working_directory: ~/react-native-url-polyfill
   xcode-11:
     macos:
       xcode: 11.7.0
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
-  xcode-12:
+  xcode-13:
     macos:
-      xcode: 12.4.0
+      xcode: 13.1.0
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
   android:
     docker:
-      - image: circleci/android:api-29-node
+      - image: circleci/android:api-30-node
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
@@ -148,7 +148,7 @@ jobs:
   test-ios:
     parameters:
       executor:
-        default: xcode-12
+        default: xcode-13
         type: executor
       react-native-version:
         type: string
@@ -189,7 +189,7 @@ jobs:
   test-hermes-ios:
     parameters:
       executor:
-        default: xcode-12
+        default: xcode-13
         type: executor
       react-native-version:
         type: string
