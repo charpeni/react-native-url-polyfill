@@ -94,10 +94,6 @@ commands:
             brew tap wix/brew
             brew install applesimutils
             yarn global add detox-cli
-      - run:
-          name: Clean Detox
-          command: |
-            detox clean-framework-cache && detox build-framework-cache
       - *save-cache-detox-env
   test-hermes-ios:
     steps:
