@@ -54,7 +54,7 @@ aliases:
 executors:
   default:
     docker:
-      - image: circleci/node:16
+      - image: cimg/node:16.12
     working_directory: ~/react-native-url-polyfill
   xcode-11:
     macos:
