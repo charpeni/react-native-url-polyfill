@@ -1,6 +1,7 @@
 version: 2.1
 
 aliases:
+  - &xcode-version 12.5.1
   - &save-cache-yarn
     save_cache:
       key: yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
@@ -13,7 +14,7 @@ aliases:
         - yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
   - &save-cache-detox-env
     save_cache:
-      key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
+      key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ *xcode-version }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
       paths:
         - /usr/local/Homebrew
         - ~/Library/Caches/Homebrew
@@ -21,7 +22,7 @@ aliases:
     restore_cache:
       name: Restoring Detox Env Cache
       keys:
-        - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
+        - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ *xcode-version }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
   - &save-cache-detox-app
     save_cache:
       key: detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
@@ -60,9 +61,9 @@ executors:
       xcode: 11.7.0
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
-  xcode-13:
+  xcode:
     macos:
-      xcode: 13.1.0
+      xcode: *xcode-version
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
   android:
@@ -148,7 +149,7 @@ jobs:
   test-ios:
     parameters:
       executor:
-        default: xcode-13
+        default: xcode
         type: executor
       react-native-version:
         type: string
@@ -189,7 +190,7 @@ jobs:
   test-hermes-ios:
     parameters:
       executor:
-        default: xcode-13
+        default: xcode
         type: executor
       react-native-version:
         type: string
