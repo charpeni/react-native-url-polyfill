@@ -1,6 +1,7 @@
 version: 2.1
 
 aliases:
+  - &xcode-version 12.5.1
   - &save-cache-yarn
     save_cache:
       key: yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
@@ -13,7 +14,7 @@ aliases:
         - yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
   - &save-cache-detox-env
     save_cache:
-      key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
+      key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.XCODE_VERSION }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
       paths:
         - /usr/local/Homebrew
         - ~/Library/Caches/Homebrew
@@ -21,7 +22,7 @@ aliases:
     restore_cache:
       name: Restoring Detox Env Cache
       keys:
-        - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
+        - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.XCODE_VERSION }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
   - &save-cache-detox-app
     save_cache:
       key: detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
@@ -53,21 +54,23 @@ aliases:
 executors:
   default:
     docker:
-      - image: circleci/node:14
+      - image: circleci/node:16
     working_directory: ~/react-native-url-polyfill
   xcode-11:
     macos:
       xcode: 11.7.0
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
-  xcode-12:
+      XCODE_VERSION: 11.7.0
+  xcode:
     macos:
-      xcode: 12.4.0
+      xcode: *xcode-version
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
+      XCODE_VERSION: *xcode-version
   android:
     docker:
-      - image: circleci/android:api-29-node
+      - image: circleci/android:api-30-node
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
@@ -148,7 +151,7 @@ jobs:
   test-ios:
     parameters:
       executor:
-        default: xcode-12
+        default: xcode
         type: executor
       react-native-version:
         type: string
@@ -189,7 +192,7 @@ jobs:
   test-hermes-ios:
     parameters:
       executor:
-        default: xcode-12
+        default: xcode
         type: executor
       react-native-version:
         type: string
