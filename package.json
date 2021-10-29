@@ -40,7 +40,7 @@
     "execa": "^5.0.0",
     "filesize": "^8.0.0",
     "husky": "^7.0.0",
-    "jest": "^27.2.4",
+    "jest": "^27.3.1",
     "lint-staged": ">=8",
     "metro-react-native-babel-preset": "^0.66.2",
     "ora": "^5.4.1",
