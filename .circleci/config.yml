@@ -103,6 +103,13 @@ commands:
           command: |
             detox clean-framework-cache && detox build-framework-cache
       - *save-cache-detox-env
+  install-node:
+    steps:
+      - node/install:
+          node-version: *node-version
+          install-npm: false
+          install-yarn: true
+          yarn-version: 1.22.5
 
 jobs:
   checkout:
@@ -148,8 +155,7 @@ jobs:
     steps:
       - *attach-workspace
       - *restore-cache-detox-app
-      - node/install:
-          node-version: *node-version
+      - install-node
       - install-yarn-dependencies
       - install-detox
       - run:
@@ -174,8 +180,7 @@ jobs:
           name: Enable Hermes
           command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
       - *restore-android-build-cache
-      - node/install:
-          node-version: *node-version
+      - install-node
       - install-yarn-dependencies
       - run:
           name: Build APK
@@ -196,8 +201,7 @@ jobs:
       - run:
           name: Enable Hermes
           command: npx shx sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled => true/g" ios/Podfile
-      - node/install:
-          node-version: *node-version
+      - install-node
       - install-yarn-dependencies
       - install-detox
       - run:
