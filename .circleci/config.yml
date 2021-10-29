@@ -2,6 +2,7 @@ version: 2.1
 
 aliases:
   - &xcode-version 12.5.1
+  - &node-version '16.12'
   - &save-cache-yarn
     save_cache:
       key: yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
@@ -51,6 +52,9 @@ aliases:
     attach_workspace:
       at: ~/react-native-url-polyfill
 
+orbs:
+  node: circleci/node@4.7.0
+
 executors:
   default:
     docker:
@@ -99,22 +103,6 @@ commands:
           command: |
             detox clean-framework-cache && detox build-framework-cache
       - *save-cache-detox-env
-  test-hermes-ios:
-    steps:
-      - *attach-workspace
-      - *restore-cache-detox-app
-      - run:
-          name: Enable Hermes
-          command: npx shx sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled => true/g" ios/Podfile
-      - install-yarn-dependencies
-      - install-detox
-      - run:
-          name: Install Pods
-          command: |
-            cd ios && pod install
-      - run:
-          name: Run Detox on iOS
-          command: yarn e2e:ios
 
 jobs:
   checkout:
@@ -160,6 +148,8 @@ jobs:
     steps:
       - *attach-workspace
       - *restore-cache-detox-app
+      - node/install:
+          node-version: *node-version
       - install-yarn-dependencies
       - install-detox
       - run:
@@ -184,6 +174,8 @@ jobs:
           name: Enable Hermes
           command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
       - *restore-android-build-cache
+      - node/install:
+          node-version: *node-version
       - install-yarn-dependencies
       - run:
           name: Build APK
@@ -199,7 +191,22 @@ jobs:
     executor: << parameters.executor >>
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
-      - test-hermes-ios
+      - *attach-workspace
+      - *restore-cache-detox-app
+      - run:
+          name: Enable Hermes
+          command: npx shx sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled => true/g" ios/Podfile
+      - node/install:
+          node-version: *node-version
+      - install-yarn-dependencies
+      - install-detox
+      - run:
+          name: Install Pods
+          command: |
+            cd ios && pod install
+      - run:
+          name: Run Detox on iOS
+          command: yarn e2e:ios
 
 workflows:
   tests:
