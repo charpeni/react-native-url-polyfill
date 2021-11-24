@@ -221,7 +221,7 @@ workflows:
           requires:
             - checkout
       - test-js:
-          name: test-rn-0.60
+          name: test-js-0.60
           parameters:
             react-native-version: '0.60.6'
           requires:
