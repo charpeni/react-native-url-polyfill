@@ -145,6 +145,7 @@ jobs:
     parameters:
       react-native-version:
         type: string
+        default: ''
     executor: default
     steps:
       - *attach-workspace
@@ -222,8 +223,7 @@ workflows:
             - checkout
       - test-js:
           name: test-js-0.60
-          parameters:
-            react-native-version: '0.60.6'
+          react-native-version: '0.60.6'
           requires:
             - checkout
       - test-ios:
