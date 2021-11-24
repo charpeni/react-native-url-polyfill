@@ -142,9 +142,18 @@ jobs:
           name: Lint
           command: yarn lint
   test-js:
+    parameters:
+      react-native-version:
+        type: string
     executor: default
     steps:
       - *attach-workspace
+      - when:
+          condition: << parameters.react-native-version >>
+          steps:
+            - run:
+                name: Overriding react-native version
+                command: yarn add --dev react-native@<< parameters.react-native-version >>
       - run:
           name: Run Jest
           command: yarn test
@@ -209,6 +218,12 @@ workflows:
           requires:
             - checkout
       - test-js:
+          requires:
+            - checkout
+      - test-js:
+          name: test-rn-0.60
+          parameters:
+            react-native-version: '0.60.6'
           requires:
             - checkout
       - test-ios:
