@@ -27,11 +27,6 @@ target 'Detox' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  target 'DetoxTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
   use_native_modules!
 
   post_install do |installer|
@@ -41,14 +36,4 @@ target 'Detox' do
      end
     end
    end
-end
-
-target 'Detox-tvOS' do
-  # Pods for Detox-tvOS
-
-  target 'Detox-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
-
 end
