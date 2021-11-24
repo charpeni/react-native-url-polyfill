@@ -34,12 +34,13 @@
   "devDependencies": {
     "@react-native-community/eslint-config": "3.0.1",
     "chalk": "^4.0.0",
+    "detox": "^18.23.1",
     "eslint": "7.32.0",
     "eslint-plugin-prettier": "4.0.0",
     "execa": "^5.0.0",
     "filesize": "^8.0.0",
     "husky": "^7.0.0",
-    "jest": "^27.2.4",
+    "jest": "^27.3.1",
     "lint-staged": ">=8",
     "metro-react-native-babel-preset": "^0.66.2",
     "ora": "^5.4.1",
@@ -60,7 +61,7 @@
     "preset": "react-native",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "./detox/"
+      "./platforms/"
     ]
   },
   "lint-staged": {
