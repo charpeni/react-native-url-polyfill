@@ -74,7 +74,7 @@ executors:
       XCODE_VERSION: *xcode-version
   android:
     docker:
-      - image: circleci/android:api-30-node
+      - image: cimg/android:2021.10.2
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
