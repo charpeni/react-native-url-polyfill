@@ -3,54 +3,6 @@ version: 2.1
 aliases:
   - &xcode-version 12.5.1
   - &node-version '16.12'
-  - &save-cache-yarn
-    save_cache:
-      key: yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
-      paths:
-        - ~/.cache/yarn
-  - &restore-cache-yarn
-    restore_cache:
-      name: Restore Yarn Package Cache
-      keys:
-        - yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
-  - &save-cache-detox-env
-    save_cache:
-      key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.XCODE_VERSION }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
-      paths:
-        - /usr/local/Homebrew
-        - ~/Library/Caches/Homebrew
-  - &restore-cache-detox-env
-    restore_cache:
-      name: Restoring Detox Env Cache
-      keys:
-        - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.XCODE_VERSION }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
-  - &save-cache-detox-app
-    save_cache:
-      key: detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
-      paths:
-        - node_modules
-        - ios/Pods
-  - &restore-cache-detox-app
-    restore_cache:
-      name: Restoring Detox App Cache
-      keys:
-        - detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
-  - &save-android-build-cache
-    save_cache:
-      paths:
-        - ~/.gradle/caches
-        - ~/.gradle/wrapper
-        - ~/.android/build-cache
-      key: gradle-build-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
-      when: always # Ensures build assets are cached even on failed builds
-  - &restore-android-build-cache
-    restore_cache:
-      name: Restoring Android & Gradle cache
-      keys:
-        - gradle-build-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
-  - &attach-workspace
-    attach_workspace:
-      at: ~/react-native-url-polyfill
 
 orbs:
   node: circleci/node@4.7.0
@@ -80,6 +32,63 @@ executors:
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
 
 commands:
+  save-cache-yarn:
+    steps:
+      - save_cache:
+          key: yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+  restore-cache-yarn:
+    steps:
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock" }}
+  save-cache-detox-env:
+    steps:
+      - save_cache:
+          key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.XCODE_VERSION }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
+          paths:
+            - /usr/local/Homebrew
+            - ~/Library/Caches/Homebrew
+  restore-cache-detox-env:
+    steps:
+      - restore_cache:
+          name: Restoring Detox Env Cache
+          keys:
+            - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.XCODE_VERSION }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
+  save-cache-detox-app:
+    steps:
+      - save_cache:
+          key: detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
+          paths:
+            - node_modules
+            - ios/Pods
+  restore-cache-detox-app:
+    steps:
+      - restore_cache:
+          name: Restoring Detox App Cache
+          keys:
+            - detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
+  save-android-build-cache:
+    steps:
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+            - ~/.android/build-cache
+          key: gradle-build-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
+          when: always # Ensures build assets are cached even on failed builds
+  restore-android-build-cache:
+    steps:
+      - restore_cache:
+          name: Restoring Android & Gradle cache
+          keys:
+            - gradle-build-cache-{{ .Environment.CACHE_VERSION }}-{{ checksum "android/build.gradle" }}-{{ checksum "android/app/build.gradle" }}-{{ checksum "yarn.lock" }}
+  attach-workspace:
+    steps:
+      - attach_workspace:
+          at: ~/react-native-url-polyfill
   install-yarn-dependencies:
     steps:
       - run:
@@ -91,7 +100,7 @@ commands:
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
   install-detox:
     steps:
-      - *restore-cache-detox-env
+      - restore-cache-detox-env
       - run:
           name: Install Detox
           command: |
@@ -102,7 +111,7 @@ commands:
           name: Clean Detox
           command: |
             detox clean-framework-cache && detox build-framework-cache
-      - *save-cache-detox-env
+      - save-cache-detox-env
   install-node:
     steps:
       - node/install:
@@ -116,7 +125,7 @@ jobs:
     executor: default
     steps:
       - checkout
-      - *restore-cache-yarn
+      - restore-cache-yarn
       - run:
           name: Yarn version
           command: yarn -v
@@ -124,7 +133,7 @@ jobs:
           name: Yarn Install
           command: |
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
-      - *save-cache-yarn
+      - save-cache-yarn
       - persist_to_workspace:
           root: .
           paths:
@@ -132,7 +141,7 @@ jobs:
   lint:
     executor: default
     steps:
-      - *attach-workspace
+      - attach-workspace
       - run:
           name: Lint
           command: yarn lint
@@ -143,7 +152,7 @@ jobs:
         default: ''
     executor: default
     steps:
-      - *attach-workspace
+      - attach-workspace
       - when:
           condition: << parameters.react-native-version >>
           steps:
@@ -163,8 +172,8 @@ jobs:
     executor: << parameters.executor >>
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
-      - *attach-workspace
-      - *restore-cache-detox-app
+      - attach-workspace
+      - restore-cache-detox-app
       - install-node
       - install-yarn-dependencies
       - install-detox
@@ -177,7 +186,7 @@ jobs:
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
-      - *save-cache-detox-app
+      - save-cache-detox-app
   test-hermes-android:
     parameters:
       react-native-version:
@@ -185,17 +194,17 @@ jobs:
     executor: android
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
-      - *attach-workspace
+      - attach-workspace
       - run:
           name: Enable Hermes
           command: sed -i "s/enableHermes:\sfalse/enableHermes:\ true/g" android/app/build.gradle
-      - *restore-android-build-cache
+      - restore-android-build-cache
       - install-node
       - install-yarn-dependencies
       - run:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
-      - *save-android-build-cache
+      - save-android-build-cache
   test-hermes-ios:
     parameters:
       executor:
@@ -206,8 +215,8 @@ jobs:
     executor: << parameters.executor >>
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
-      - *attach-workspace
-      - *restore-cache-detox-app
+      - attach-workspace
+      - restore-cache-detox-app
       - run:
           name: Enable Hermes
           command: npx shx sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled => true/g" ios/Podfile
