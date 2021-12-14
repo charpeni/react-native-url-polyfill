@@ -47,7 +47,7 @@ commands:
   save-cache-detox-env:
     steps:
       - save_cache:
-          key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.XCODE_VERSION }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
+          key: detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "/usr/bin/xcodebuild" }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
           paths:
             - /usr/local/Homebrew
             - ~/Library/Caches/Homebrew
@@ -56,7 +56,7 @@ commands:
       - restore_cache:
           name: Restoring Detox Env Cache
           keys:
-            - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ .Environment.XCODE_VERSION }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
+            - detox-env-{{ .Environment.CACHE_VERSION }}-{{ arch }}-{{ checksum "/usr/bin/xcodebuild" }}-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}
   save-cache-detox-app:
     steps:
       - save_cache:
@@ -112,6 +112,7 @@ commands:
           command: |
             detox clean-framework-cache && detox build-framework-cache
       - save-cache-detox-env
+
   install-node:
     steps:
       - node/install:
