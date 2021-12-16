@@ -1,8 +1,8 @@
 version: 2.1
 
 aliases:
-  - &xcode-version 12.5.1
-  - &node-version '16.12'
+  - &xcode-version 13.2.0
+  - &node-version '16.13'
 
 orbs:
   node: circleci/node@4.7.0
@@ -10,7 +10,7 @@ orbs:
 executors:
   default:
     docker:
-      - image: cimg/node:16.12
+      - image: cimg/node:16.13
     working_directory: ~/react-native-url-polyfill
   xcode-11:
     macos:
