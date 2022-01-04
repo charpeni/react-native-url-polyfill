@@ -7,6 +7,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "start": "react-native start",
+    "test:web": "jest",
     "test:ios": "detox test --configuration ios --cleanup"
   },
   "dependencies": {
@@ -29,10 +30,12 @@
     "babel-loader": "^8.2.3",
     "detox": "^18.23.1",
     "jest": "27.3.1",
-    "jest-expo": "^43.0.1"
+    "jest-expo": "^43.0.1",
+    "jest-expo-puppeteer": "^1.2.0",
+    "puppeteer": "^13.0.1"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo-puppeteer"
   },
   "private": true
 }

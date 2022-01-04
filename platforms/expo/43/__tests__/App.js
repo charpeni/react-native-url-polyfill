@@ -1,10 +1,29 @@
-import 'react-native';
-import React from 'react';
-import App from '../App';
+import 'expect-puppeteer';
 
-// Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+import config from '../jest-puppeteer.config';
 
-it('renders correctly', () => {
-  renderer.create(<App />);
+let response;
+
+beforeEach(async () => {
+  response = await page.goto(config.url);
+});
+
+it('should have REACT_NATIVE_URL_POLYFILL', async () => {
+  const {name, version} = require('../../../../package.json');
+
+  await expect(page).toMatchElement('div[data-testid="url-polyfill-version"]', {
+    text: `${name}@${version}`,
+  });
+});
+
+it('should handle test 1', async () => {
+  await expect(page).toMatchElement('div[data-testid="url-test-1"]', {
+    text: 'https://google.dev/dev',
+  });
+});
+
+it('should handle test 2', async () => {
+  await expect(page).toMatchElement('div[data-testid="url-test-2"]', {
+    text: 'https://facebook.github.io/react-native/img/header_logo.png',
+  });
 });
