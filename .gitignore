@@ -16,3 +16,5 @@ pids
 *.hprof
 
 *.tgz
+
+tmp
