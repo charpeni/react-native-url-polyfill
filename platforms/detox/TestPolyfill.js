@@ -1,6 +1,24 @@
 import React from 'react';
 import {Text} from 'react-native';
 
+function testCreateObjectURL() {
+  let objectURL;
+
+  try {
+    objectURL = URL.createObjectURL({
+      data: {
+        blobId: 1,
+        offset: 32,
+      },
+      size: 64,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+
+  return objectURL;
+}
+
 const PolyfillTests = () => (
   <>
     <Text testID="url-polyfill-version">
@@ -13,15 +31,7 @@ const PolyfillTests = () => (
           .href
       }
     </Text>
-    <Text testID="url-test-3">
-      {URL.createObjectURL({
-        data: {
-          blobId: 1,
-          offset: 32,
-        },
-        size: 64,
-      })}
-    </Text>
+    <Text testID="url-test-3">{testCreateObjectURL()}</Text>
   </>
 );
 
