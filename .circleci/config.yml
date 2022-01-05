@@ -285,7 +285,7 @@ jobs:
     working_directory: ~/react-native-url-polyfill/platforms/expo/<< parameters.expo-version >>
     steps:
       - attach-workspace
-      - browser-tools/install-browser-tools
+      - browser-tools/install-chrome
       - run: google-chrome --version
       - restore-cache-detox-app
       - install-node
