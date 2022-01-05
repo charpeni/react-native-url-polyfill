@@ -290,7 +290,9 @@ jobs:
       - restore-cache-detox-app
       - install-node
       - install-yarn-dependencies
+      - run: yarn global add expo-cli
       - run: yarn test:web
+      - save-cache-detox-app
 
 workflows:
   tests:
