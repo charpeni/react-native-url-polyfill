@@ -6,12 +6,16 @@ aliases:
 
 orbs:
   node: circleci/node@4.7.0
+  browser-tools: circleci/browser-tools@1.2.3
 
 executors:
   default:
     docker:
       - image: cimg/node:16.13
     working_directory: ~/react-native-url-polyfill
+  node-browsers:
+    docker:
+      - image: cimg/node:16.13-browsers
   xcode-11:
     macos:
       xcode: 11.7.0
@@ -273,6 +277,20 @@ jobs:
           name: Run Detox on iOS
           command: yarn test:ios
       - save-cache-detox-app
+  test-expo-web:
+    parameters:
+      expo-version:
+        type: string
+    executor: node-browsers
+    working_directory: ~/react-native-url-polyfill/platforms/expo/<< parameters.expo-version >>
+    steps:
+      - attach-workspace
+      - browser-tools/install-browser-tools
+      - run: google-chrome --version
+      - restore-cache-detox-app
+      - install-node
+      - install-yarn-dependencies
+      - run: yarn test:web
 
 workflows:
   tests:
@@ -312,6 +330,13 @@ workflows:
             - lint
             - test-js
       - test-expo-ios:
+          matrix:
+            parameters:
+              expo-version: ['43']
+          requires:
+            - lint
+            - test-js
+      - test-expo-web:
           matrix:
             parameters:
               expo-version: ['43']
