@@ -301,7 +301,9 @@ jobs:
       - run: google-chrome --version
       - run:
           name: Install certutil
-          command: sudo apt-get install libnss3-tools
+          command: |
+            sudo apt update
+            sudo apt install libnss3-tools
       - restore-cache-expo-app
       - install-node
       - install-yarn-dependencies
