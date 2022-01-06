@@ -74,6 +74,18 @@ commands:
           name: Restoring Detox App Cache
           keys:
             - detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
+  save-cache-expo-app:
+    steps:
+      - save_cache:
+          key: expo-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
+          paths:
+            - node_modules
+  restore-cache-expo-app:
+    steps:
+      - restore_cache:
+          name: Restoring Detox App Cache
+          keys:
+            - expo-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
   save-android-build-cache:
     steps:
       - save_cache:
@@ -287,12 +299,12 @@ jobs:
       - attach-workspace
       - browser-tools/install-chrome
       - run: google-chrome --version
-      - restore-cache-detox-app
+      - restore-cache-expo-app
       - install-node
       - install-yarn-dependencies
       - run: yarn global add expo-cli
       - run: yarn test:web
-      - save-cache-detox-app
+      - save-cache-expo-app
 
 workflows:
   tests:
