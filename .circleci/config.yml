@@ -270,9 +270,6 @@ jobs:
           command: cd ios && pod install --repo-update
       - run: yarn global add expo-cli
       - run:
-          name: Login into Expo
-          command: npx expo login -u $EXPO_USERNAME -p $EXPO_PASSWORD \<<< y
-      - run:
           name: Build iOS App w/ Expo
           no_output_timeout: 30m
           command: npx expo build:ios -t simulator --no-publish --non-interactive
