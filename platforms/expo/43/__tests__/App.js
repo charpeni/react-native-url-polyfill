@@ -4,9 +4,7 @@ import config from '../jest-puppeteer.config';
 
 beforeEach(async () => {
   await page.goto(config.url);
-  await page.waitForNavigation({
-    waitUntil: 'networkidle0',
-  });
+  await page.waitForSelector('#root');
 });
 
 it('should have REACT_NATIVE_URL_POLYFILL', async () => {
