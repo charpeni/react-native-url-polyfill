@@ -36,6 +36,7 @@ react-native-url-polyfill is an implementation of the WHATWG [URL Standard](http
 - **Trustworthy**. Follows closely the URL Standard spec, and relys on unit tests and Detox e2e tests within [React Native](https://github.com/facebook/react-native).
 - **Blob support**. Supports React Native's Blob without additional steps.
 - **Hermes support**. Supports [Hermes](https://github.com/facebook/hermes), a JavaScript engine optimized for running React Native.
+- **Expo support**. Supports [Expo](https://expo.dev/) and tested against.
 
 ## Why do we need this?
 
