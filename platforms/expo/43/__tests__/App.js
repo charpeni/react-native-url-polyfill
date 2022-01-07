@@ -2,6 +2,8 @@ import 'expect-puppeteer';
 
 import config from '../jest-puppeteer.config';
 
+jest.setTimeout(10000);
+
 beforeEach(async () => {
   await page.goto(config.url);
   await page.waitForSelector('#root');
