@@ -308,7 +308,7 @@ jobs:
       - install-node
       - install-yarn-dependencies
       - run: yarn global add expo-cli
-      - run: yarn test:web
+      - run: yarn test:web --runInBand
       - save-cache-expo-app
 
 workflows:
