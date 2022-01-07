@@ -321,40 +321,40 @@ workflows:
       - test-js:
           requires:
             - checkout
-      # - test-ios:
-      #     name: test-ios-0.60
-      #     executor: xcode-11
-      #     react-native-version: '0.60'
-      #     requires:
-      #       - lint
-      #       - test-js
-      # - test-ios:
-      #     matrix:
-      #       parameters:
-      #         react-native-version: ['0.65', '0.66']
-      #     requires:
-      #       - lint
-      #       - test-js
-      # - test-hermes-ios:
-      #     matrix:
-      #       parameters:
-      #         react-native-version: ['0.65', '0.66']
-      #     requires:
-      #       - test-ios-<< matrix.react-native-version >>
-      # - test-hermes-android:
-      #     matrix:
-      #       parameters:
-      #         react-native-version: ['0.65', '0.66']
-      #     requires:
-      #       - lint
-      #       - test-js
-      # - test-expo-ios:
-      #     matrix:
-      #       parameters:
-      #         expo-version: ['43']
-      #     requires:
-      #       - lint
-      #       - test-js
+      - test-ios:
+          name: test-ios-0.60
+          executor: xcode-11
+          react-native-version: '0.60'
+          requires:
+            - lint
+            - test-js
+      - test-ios:
+          matrix:
+            parameters:
+              react-native-version: ['0.65', '0.66']
+          requires:
+            - lint
+            - test-js
+      - test-hermes-ios:
+          matrix:
+            parameters:
+              react-native-version: ['0.65', '0.66']
+          requires:
+            - test-ios-<< matrix.react-native-version >>
+      - test-hermes-android:
+          matrix:
+            parameters:
+              react-native-version: ['0.65', '0.66']
+          requires:
+            - lint
+            - test-js
+      - test-expo-ios:
+          matrix:
+            parameters:
+              expo-version: ['43']
+          requires:
+            - lint
+            - test-js
       - test-expo-web:
           matrix:
             parameters:
