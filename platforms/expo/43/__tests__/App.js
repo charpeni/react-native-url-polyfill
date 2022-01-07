@@ -2,10 +2,11 @@ import 'expect-puppeteer';
 
 import config from '../jest-puppeteer.config';
 
-let response;
-
 beforeEach(async () => {
-  response = await page.goto(config.url);
+  await page.goto(config.url);
+  await page.waitForNavigation({
+    waitUntil: 'networkidle0',
+  });
 });
 
 it('should have REACT_NATIVE_URL_POLYFILL', async () => {
