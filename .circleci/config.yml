@@ -6,12 +6,16 @@ aliases:
 
 orbs:
   node: circleci/node@4.7.0
+  browser-tools: circleci/browser-tools@1.2.3
 
 executors:
   default:
     docker:
       - image: cimg/node:16.13
     working_directory: ~/react-native-url-polyfill
+  node-browsers:
+    docker:
+      - image: cimg/node:16.13-browsers
   xcode-11:
     macos:
       xcode: 11.7.0
@@ -70,6 +74,18 @@ commands:
           name: Restoring Detox App Cache
           keys:
             - detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
+  save-cache-expo-app:
+    steps:
+      - save_cache:
+          key: expo-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
+          paths:
+            - node_modules
+  restore-cache-expo-app:
+    steps:
+      - restore_cache:
+          name: Restoring Detox App Cache
+          keys:
+            - expo-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
   save-android-build-cache:
     steps:
       - save_cache:
@@ -231,6 +247,66 @@ jobs:
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
+  test-expo-ios:
+    parameters:
+      executor:
+        default: xcode
+        type: executor
+      expo-version:
+        type: string
+    executor: << parameters.executor >>
+    working_directory: ~/react-native-url-polyfill/platforms/expo/<< parameters.expo-version >>
+    steps:
+      - attach-workspace
+      - restore-cache-detox-app
+      - install-node
+      - install-yarn-dependencies
+      - install-detox
+      - run:
+          name: Fetch Pods specs
+          command: curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
+      - run:
+          name: Install Pods
+          command: cd ios && pod install --repo-update
+      - run: yarn global add expo-cli
+      - run:
+          name: Build iOS App w/ Expo
+          no_output_timeout: 30m
+          command: npx expo build:ios -t simulator --no-publish --non-interactive
+      - run:
+          name: Make Directory tmp
+          command: mkdir -p tmp
+      - run:
+          name: Downloading .ipa from expo
+          command: curl -o tmp/app.tar.gz "$(npx expo url:ipa --non-interactive)"
+      - run:
+          name: Un-tar app.tar.gz
+          command: tar -xzvf tmp/app.tar.gz -C tmp
+      - run:
+          name: Run Detox on iOS
+          command: yarn test:ios
+      - save-cache-detox-app
+  test-expo-web:
+    parameters:
+      expo-version:
+        type: string
+    executor: node-browsers
+    working_directory: ~/react-native-url-polyfill/platforms/expo/<< parameters.expo-version >>
+    steps:
+      - attach-workspace
+      - browser-tools/install-chrome
+      - run: google-chrome --version
+      - run:
+          name: Install certutil
+          command: |
+            sudo apt update
+            sudo apt install libnss3-tools
+      - restore-cache-expo-app
+      - install-node
+      - install-yarn-dependencies
+      - run: yarn global add expo-cli
+      - run: yarn test:web --runInBand
+      - save-cache-expo-app
 
 workflows:
   tests:
@@ -266,6 +342,20 @@ workflows:
           matrix:
             parameters:
               react-native-version: ['0.65', '0.66']
+          requires:
+            - lint
+            - test-js
+      - test-expo-ios:
+          matrix:
+            parameters:
+              expo-version: ['43']
+          requires:
+            - lint
+            - test-js
+      - test-expo-web:
+          matrix:
+            parameters:
+              expo-version: ['43']
           requires:
             - lint
             - test-js
