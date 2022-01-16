@@ -10,7 +10,7 @@ beforeEach(async () => {
 });
 
 it('should have REACT_NATIVE_URL_POLYFILL', async () => {
-  const {name, version} = require('../../../../package.json');
+  const {name, version} = require('../../package.json');
 
   await expect(page).toMatchElement('div[data-testid="url-polyfill-version"]', {
     text: `${name}@${version}`,

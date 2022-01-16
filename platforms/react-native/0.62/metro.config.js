@@ -16,6 +16,7 @@ module.exports = {
     blacklistRE: blacklist([
       new RegExp(`${reactNativeLib}/node_modules/react-native/.*`),
       new RegExp(`${reactNativeLib}/platforms/react-native/((?!0.62).).*`),
+      new RegExp(`${reactNativeLib}/platforms/expo/.*`),
       new RegExp(path.resolve(__dirname, 'ios/.*')),
     ]),
     extraNodeModules: {
