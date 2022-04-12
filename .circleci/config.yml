@@ -1,8 +1,8 @@
 version: 2.1
 
 aliases:
-  - &xcode-version 13.2.0
-  - &node-version '16.13'
+  - &xcode-version 13.3.1
+  - &node-version '16.14'
 
 orbs:
   node: circleci/node@4.7.0
@@ -11,11 +11,11 @@ orbs:
 executors:
   default:
     docker:
-      - image: cimg/node:16.13
+      - image: cimg/node:16.14
     working_directory: ~/react-native-url-polyfill
   node-browsers:
     docker:
-      - image: cimg/node:16.13-browsers
+      - image: cimg/node:16.14-browsers
   xcode-11:
     macos:
       xcode: 11.7.0
@@ -135,7 +135,7 @@ commands:
           node-version: *node-version
           install-npm: false
           install-yarn: true
-          yarn-version: 1.22.5
+          yarn-version: 1.22.18
 
 jobs:
   checkout:
