@@ -195,9 +195,6 @@ jobs:
       - install-yarn-dependencies
       - install-detox
       - run:
-          name: Fetch Pods specs
-          command: curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
-      - run:
           name: Install Pods
           command: cd ios && pod install --repo-update
       - run:
@@ -262,9 +259,6 @@ jobs:
       - install-node
       - install-yarn-dependencies
       - install-detox
-      - run:
-          name: Fetch Pods specs
-          command: curl https://cocoapods-specs.circleci.com/fetch-cocoapods-repo-from-s3.sh | bash -s cf
       - run:
           name: Install Pods
           command: cd ios && pod install --repo-update
