@@ -1,7 +1,7 @@
 version: 2.1
 
 aliases:
-  - &xcode-version 13.3.0
+  - &xcode-version 13.2.0
   - &node-version '16.14'
 
 orbs:
