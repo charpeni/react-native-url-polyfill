@@ -3,6 +3,7 @@ version: 2.1
 aliases:
   - &xcode-version 13.2.0
   - &node-version '16.14'
+  - &yarn-version '1.22.18'
 
 orbs:
   node: circleci/node@4.7.0
@@ -130,12 +131,16 @@ commands:
       - save-cache-detox-env
 
   install-node:
+    parameters:
+      install-yarn:
+        type: boolean
+        default: true
     steps:
       - node/install:
           node-version: *node-version
           install-npm: false
-          install-yarn: true
-          yarn-version: 1.22.18
+          install-yarn: << parameters.install-yarn >>
+          yarn-version: *yarn-version
 
 jobs:
   checkout:
@@ -186,12 +191,16 @@ jobs:
         type: executor
       react-native-version:
         type: string
+      install-yarn:
+        type: boolean
+        default: true
     executor: << parameters.executor >>
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
       - attach-workspace
       - restore-cache-detox-app
-      - install-node
+      - install-node:
+          install-yarn: << parameters.install-yarn >>
       - install-yarn-dependencies
       - install-detox
       - run:
@@ -316,6 +325,7 @@ workflows:
           name: test-ios-0.60
           executor: xcode-11
           react-native-version: '0.60'
+          install-yarn: false
           requires:
             - lint
             - test-js
