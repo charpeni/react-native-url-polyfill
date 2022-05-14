@@ -352,14 +352,14 @@ workflows:
       - test-expo-ios:
           matrix:
             parameters:
-              expo-version: ['43', '44']
+              expo-version: ['44', '45']
           requires:
             - lint
             - test-js
       - test-expo-web:
           matrix:
             parameters:
-              expo-version: ['43', '44']
+              expo-version: ['44', '45']
           requires:
             - lint
             - test-js
