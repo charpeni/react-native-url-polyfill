@@ -20,14 +20,12 @@ executors:
   xcode-11:
     macos:
       xcode: 11.7.0
-    resource_class: large
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: 11.7.0
   xcode:
     macos:
       xcode: *xcode-version
-    resource_class: large
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: *xcode-version
