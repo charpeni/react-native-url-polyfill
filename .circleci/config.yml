@@ -20,18 +20,21 @@ executors:
   xcode-11:
     macos:
       xcode: 11.7.0
+    resource_class: large
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: 11.7.0
   xcode:
     macos:
       xcode: *xcode-version
+    resource_class: large
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: *xcode-version
   android:
     docker:
       - image: cimg/android:2021.10.2
+    resource_class: large
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
