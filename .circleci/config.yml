@@ -32,6 +32,7 @@ executors:
   android:
     docker:
       - image: cimg/android:2021.10.2
+    resource_class: large
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
