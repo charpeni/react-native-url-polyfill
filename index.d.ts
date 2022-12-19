@@ -1,3 +1,4 @@
+/// <reference types="node" />
 declare module 'react-native-url-polyfill' {
   import { URL as NativeURL, URLSearchParams as NativeURLSearchParams } from 'url';
 
