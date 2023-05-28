@@ -1,13 +1,17 @@
-import './js/ios10Fix';
+require('./js/ios10Fix');
+const {URL} = require('./js/URL');
+const {URLSearchParams} = require('./js/URLSearchParams');
+const {name, version} = require('./package.json');
 
-import {name, version} from './package.json';
-
-export * from './js/URL';
-export * from './js/URLSearchParams';
-
-export function setupURLPolyfill() {
+function setupURLPolyfill() {
   global.REACT_NATIVE_URL_POLYFILL = `${name}@${version}`;
 
   global.URL = require('./js/URL').URL;
   global.URLSearchParams = require('./js/URLSearchParams').URLSearchParams;
 }
+
+module.exports = {
+  URL,
+  URLSearchParams,
+  setupURLPolyfill,
+};

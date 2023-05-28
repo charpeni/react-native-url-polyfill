@@ -1,3 +1,3 @@
-import {setupURLPolyfill} from './index';
+const {setupURLPolyfill} = require('./index');
 
 setupURLPolyfill();

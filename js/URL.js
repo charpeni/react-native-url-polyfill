@@ -1,5 +1,5 @@
-import {NativeModules} from 'react-native';
-import {URL as whatwgUrl} from 'whatwg-url-without-unicode';
+const {NativeModules} = require('react-native');
+const {URL: whatwgUrl} = require('whatwg-url-without-unicode');
 
 let BLOB_URL_PREFIX = null;
 
@@ -48,4 +48,4 @@ whatwgUrl.revokeObjectURL = function revokeObjectURL(url) {
   // Do nothing.
 };
 
-export const URL = whatwgUrl;
+module.exports.URL = whatwgUrl;
