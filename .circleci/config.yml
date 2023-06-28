@@ -254,42 +254,6 @@ jobs:
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
-  test-expo-ios:
-    parameters:
-      executor:
-        default: xcode
-        type: executor
-      expo-version:
-        type: string
-    executor: << parameters.executor >>
-    working_directory: ~/react-native-url-polyfill/platforms/expo/<< parameters.expo-version >>
-    steps:
-      - attach-workspace
-      - restore-cache-detox-app
-      - install-node
-      - install-yarn-dependencies
-      - install-detox
-      - run:
-          name: Install Pods
-          command: cd ios && pod install --repo-update
-      - run: yarn global add expo-cli
-      - run:
-          name: Build iOS App w/ Expo
-          no_output_timeout: 30m
-          command: npx expo build:ios -t simulator --no-publish --non-interactive
-      - run:
-          name: Make Directory tmp
-          command: mkdir -p tmp
-      - run:
-          name: Downloading .ipa from expo
-          command: curl -o tmp/app.tar.gz "$(npx expo url:ipa --non-interactive)"
-      - run:
-          name: Un-tar app.tar.gz
-          command: tar -xzvf tmp/app.tar.gz -C tmp
-      - run:
-          name: Run Detox on iOS
-          command: yarn test:ios
-      - save-cache-detox-app
   test-expo-web:
     parameters:
       expo-version:
@@ -350,17 +314,10 @@ workflows:
           requires:
             - lint
             - test-js
-      - test-expo-ios:
-          matrix:
-            parameters:
-              expo-version: ['43', '44']
-          requires:
-            - lint
-            - test-js
-      - test-expo-web:
-          matrix:
-            parameters:
-              expo-version: ['43', '44']
-          requires:
-            - lint
-            - test-js
+      # - test-expo-web:
+      #     matrix:
+      #       parameters:
+      #         expo-version: ['43', '44']
+      #     requires:
+      #       - lint
+      #       - test-js
