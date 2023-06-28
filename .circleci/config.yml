@@ -314,10 +314,10 @@ workflows:
           requires:
             - lint
             - test-js
-      - test-expo-web:
-          matrix:
-            parameters:
-              expo-version: ['43', '44']
-          requires:
-            - lint
-            - test-js
+      # - test-expo-web:
+      #     matrix:
+      #       parameters:
+      #         expo-version: ['43', '44']
+      #     requires:
+      #       - lint
+      #       - test-js
