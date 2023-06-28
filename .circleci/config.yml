@@ -139,7 +139,6 @@ commands:
     steps:
       - node/install:
           node-version: *node-version
-          install-npm: false
           install-yarn: << parameters.install-yarn >>
           yarn-version: *yarn-version
 
