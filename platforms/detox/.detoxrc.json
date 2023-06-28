@@ -7,7 +7,7 @@
       "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/Detox.app",
       "build": "xcodebuild -workspace ios/Detox.xcworkspace -scheme Detox -configuration Release -sdk iphonesimulator -derivedDataPath ios/build",
       "device": {
-        "type": "iPhone 11 Pro"
+        "type": "iPhone 14 Pro"
       }
     },
     "android.emu.release": {
