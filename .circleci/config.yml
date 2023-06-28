@@ -14,21 +14,27 @@ executors:
     docker:
       - image: cimg/node:18.16
     working_directory: ~/react-native-url-polyfill
+    environment:
+      NODE_OPTIONS: '--openssl-legacy-provider'
   node-browsers:
     docker:
       - image: cimg/node:18.16-browsers
+    environment:
+      NODE_OPTIONS: '--openssl-legacy-provider'
   xcode-11:
     macos:
       xcode: 11.7.0
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: 11.7.0
+      NODE_OPTIONS: '--openssl-legacy-provider'
   xcode:
     macos:
       xcode: *xcode-version
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: *xcode-version
+      NODE_OPTIONS: '--openssl-legacy-provider'
   android:
     docker:
       - image: cimg/android:2023.06.1
@@ -36,6 +42,7 @@ executors:
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
+      NODE_OPTIONS: '--openssl-legacy-provider'
 
 commands:
   save-cache-yarn:
