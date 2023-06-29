@@ -4,7 +4,7 @@
  * See https://github.com/charpeni/react-native-url-polyfill/issues/190
  * */
 
-import {Platform} from 'react-native';
+const {Platform} = require('react-native');
 
 const majorVersionIOS = parseInt(Platform.Version, 10);
 
