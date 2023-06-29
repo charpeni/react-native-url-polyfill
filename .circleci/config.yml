@@ -1,41 +1,48 @@
 version: 2.1
 
 aliases:
-  - &xcode-version 13.2.0
-  - &node-version '16.14'
-  - &yarn-version '1.22.18'
+  - &xcode-version 14.3.1
+  - &node-version '18.16'
+  - &yarn-version '1.22.19'
 
 orbs:
-  node: circleci/node@4.7.0
-  browser-tools: circleci/browser-tools@1.2.3
+  node: circleci/node@5.1.0
+  browser-tools: circleci/browser-tools@1.4.1
 
 executors:
   default:
     docker:
-      - image: cimg/node:16.14
+      - image: cimg/node:18.16
     working_directory: ~/react-native-url-polyfill
+    environment:
+      NODE_OPTIONS: '--openssl-legacy-provider'
   node-browsers:
     docker:
-      - image: cimg/node:16.14-browsers
+      - image: cimg/node:18.16-browsers
+    environment:
+      NODE_OPTIONS: '--openssl-legacy-provider'
   xcode-11:
     macos:
       xcode: 11.7.0
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: 11.7.0
+      NODE_OPTIONS: '--openssl-legacy-provider'
   xcode:
     macos:
       xcode: *xcode-version
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: *xcode-version
+      NODE_OPTIONS: '--openssl-legacy-provider'
   android:
     docker:
-      - image: cimg/android:2021.10.2
+      - image: cimg/android:2023.06.1
     resource_class: large
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
       GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2'
+      NODE_OPTIONS: '--openssl-legacy-provider'
 
 commands:
   save-cache-yarn:
@@ -139,7 +146,6 @@ commands:
     steps:
       - node/install:
           node-version: *node-version
-          install-npm: false
           install-yarn: << parameters.install-yarn >>
           yarn-version: *yarn-version
 
@@ -297,20 +303,20 @@ workflows:
       - test-ios:
           matrix:
             parameters:
-              react-native-version: ['0.67', '0.68']
+              react-native-version: ['0.68']
           requires:
             - lint
             - test-js
       - test-hermes-ios:
           matrix:
             parameters:
-              react-native-version: ['0.67', '0.68']
+              react-native-version: ['0.68']
           requires:
             - test-ios-<< matrix.react-native-version >>
       - test-hermes-android:
           matrix:
             parameters:
-              react-native-version: ['0.67', '0.68']
+              react-native-version: ['0.68']
           requires:
             - lint
             - test-js
