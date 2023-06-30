@@ -21,5 +21,10 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+        <provider
+            android:name="com.facebook.react.modules.blob.BlobProvider"
+            android:authorities="@string/blob_provider_authority"
+            android:exported="false"
+        />
     </application>
 </manifest>
