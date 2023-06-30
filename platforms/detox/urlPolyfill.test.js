@@ -28,8 +28,14 @@ describe('URL Polyfill', () => {
   });
 
   it('should handle test 3', async () => {
-    await expect(element(by.id('url-test-3'))).toHaveText(
-      'blob:1?offset=32&size=64',
-    );
+    if (device.getPlatform() === 'ios') {
+      await expect(element(by.id('url-test-3'))).toHaveText(
+        'blob:1?offset=32&size=64',
+      );
+    } else if (device.getPlatform() === 'android') {
+      await expect(element(by.id('url-test-3'))).toHaveText(
+        'content://com.detox.blobs/1?offset=32&size=64',
+      );
+    }
   });
 });
