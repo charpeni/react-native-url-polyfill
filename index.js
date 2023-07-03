@@ -6,8 +6,8 @@ export * from './js/URL';
 export * from './js/URLSearchParams';
 
 export function setupURLPolyfill() {
-  global.REACT_NATIVE_URL_POLYFILL = `${name}@${version}`;
+  globalThis.REACT_NATIVE_URL_POLYFILL = `${name}@${version}`;
 
-  global.URL = require('./js/URL').URL;
-  global.URLSearchParams = require('./js/URLSearchParams').URLSearchParams;
+  globalThis.URL = require('./js/URL').URL;
+  globalThis.URLSearchParams = require('./js/URLSearchParams').URLSearchParams;
 }
