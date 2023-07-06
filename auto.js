@@ -1,3 +1,7 @@
+import {Platform} from 'react-native';
+
 import {setupURLPolyfill} from './index';
 
-setupURLPolyfill();
+if (Platform.OS !== 'web') {
+  setupURLPolyfill();
+}
