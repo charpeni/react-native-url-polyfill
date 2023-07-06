@@ -37,6 +37,7 @@ react-native-url-polyfill is an implementation of the WHATWG [URL Standard](http
 - **Blob support**. Supports React Native's Blob without additional steps.
 - **Hermes support**. Supports [Hermes](https://github.com/facebook/hermes), a JavaScript engine optimized for running React Native.
 - **Expo support**. Supports [Expo](https://expo.dev/) and tested against.
+- **Web support**. Most of the time, this polyfill isn't useful on web and therefore using `react-native-url-polyfill/auto` will be no-op on web.
 
 ## Why do we need this?
 
