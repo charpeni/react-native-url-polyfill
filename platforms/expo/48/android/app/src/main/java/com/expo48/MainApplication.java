@@ -1,4 +1,4 @@
-package com.48;
+package com.expo48;
 
 import android.app.Application;
 import android.content.res.Configuration;
