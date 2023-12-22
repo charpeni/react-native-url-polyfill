@@ -210,6 +210,21 @@ jobs:
           name: Run Detox on iOS
           command: yarn e2e:ios
       - save-cache-detox-app
+  test-android:
+    parameters:
+      react-native-version:
+        type: string
+    executor: android
+    working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
+    steps:
+      - attach-workspace
+      - restore-android-build-cache
+      - install-node
+      - install-yarn-dependencies
+      - run:
+          name: Run Detox
+          command: yarn e2e:android
+      - save-android-build-cache
   test-hermes-android:
     parameters:
       react-native-version:
@@ -292,6 +307,20 @@ workflows:
           requires:
             - lint
             - test-js
+      - test-android:
+          matrix:
+            parameters:
+              react-native-version: ['0.72']
+          requires:
+            - lint
+            - test-js
+      # - test-expo-web:
+      #     matrix:
+      #       parameters:
+      #         expo-version: ['43', '44']
+      #     requires:
+      #       - lint
+      #       - test-js
       - test-hermes-ios:
           matrix:
             parameters:
@@ -305,10 +334,4 @@ workflows:
           requires:
             - lint
             - test-js
-      # - test-expo-web:
-      #     matrix:
-      #       parameters:
-      #         expo-version: ['43', '44']
-      #     requires:
-      #       - lint
-      #       - test-js
+            - test-android-<< matrix.react-native-version >>
