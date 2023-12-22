@@ -225,6 +225,9 @@ jobs:
       - restore-android-build-cache
       - install-node
       - install-yarn-dependencies
+      - run:
+          name: List available SDKs
+          command: sdkmanager --list
       - android/create-avd:
           avd-name: TestingAVD
           install: true
