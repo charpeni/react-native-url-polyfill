@@ -222,7 +222,6 @@ jobs:
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
       - attach-workspace
-      - restore-android-build-cache
       - install-node
       - install-yarn-dependencies
       - run:
@@ -235,13 +234,13 @@ jobs:
       - android/start-emulator:
           avd-name: TestingAVD
           no-window: true
+          post-emulator-launch-assemble-command: ''
           restore-gradle-cache-prefix: v1a
       - run:
           name: Run Detox
           command: yarn e2e:android
       - android/save-gradle-cache:
           cache-prefix: v1a
-      - save-android-build-cache
   test-hermes-android:
     parameters:
       react-native-version:
