@@ -8,7 +8,7 @@ aliases:
 orbs:
   node: circleci/node@5.1.1
   browser-tools: circleci/browser-tools@1.4.6
-  react-native: react-native-community/react-native@7.1.1
+  android: circleci/android@2.3.0
 
 executors:
   default:
@@ -215,17 +215,24 @@ jobs:
     parameters:
       react-native-version:
         type: string
-    executor: android
+    executor:
+      name: android/android-machine
+      resource-class: large
+      tag: 2023.11.1
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
       - attach-workspace
       - restore-android-build-cache
       - install-node
       - install-yarn-dependencies
-      - react-native/android_emulator_start:
-          device_name: TestingAVD
-          build_tools_version: '33.0.0'
-          platform_version: 'android-33'
+      - android/create-avd:
+          avd-name: TestingAVD
+          install: true
+          system-image: system-images;android-34;default;x86
+      - android/start-emulator:
+          avd-name: TestingAVD
+          no-window: true
+          restore-gradle-cache-prefix: v1a
       - run:
           name: Run Detox
           command: yarn e2e:android
