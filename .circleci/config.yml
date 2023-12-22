@@ -21,13 +21,6 @@ executors:
       - image: cimg/node:18.16-browsers
     environment:
       NODE_OPTIONS: '--openssl-legacy-provider'
-  xcode-11:
-    macos:
-      xcode: 11.7.0
-    environment:
-      HOMEBREW_NO_AUTO_UPDATE: 1
-      XCODE_VERSION: 11.7.0
-      NODE_OPTIONS: '--openssl-legacy-provider'
   xcode:
     macos:
       xcode: *xcode-version
@@ -292,14 +285,6 @@ workflows:
       - test-js:
           requires:
             - checkout
-      - test-ios:
-          name: test-ios-0.60
-          executor: xcode-11
-          react-native-version: '0.60'
-          install-yarn: false
-          requires:
-            - lint
-            - test-js
       - test-ios:
           matrix:
             parameters:
