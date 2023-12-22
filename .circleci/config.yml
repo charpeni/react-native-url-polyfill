@@ -8,6 +8,7 @@ aliases:
 orbs:
   node: circleci/node@5.1.1
   browser-tools: circleci/browser-tools@1.4.6
+  react-native: react-native-community/react-native@7.1.1
 
 executors:
   default:
@@ -221,6 +222,10 @@ jobs:
       - restore-android-build-cache
       - install-node
       - install-yarn-dependencies
+      - react-native/android_emulator_start:
+          device_name: TestingAVD
+          build_tools_version: '33.0.0'
+          platform_version: 'android-33'
       - run:
           name: Run Detox
           command: yarn e2e:android
