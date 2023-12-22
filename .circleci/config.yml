@@ -1,32 +1,25 @@
 version: 2.1
 
 aliases:
-  - &xcode-version 14.3.1
-  - &node-version '18.16'
+  - &xcode-version 15.1.0
+  - &node-version '20.10.0'
   - &yarn-version '1.22.19'
 
 orbs:
-  node: circleci/node@5.1.0
-  browser-tools: circleci/browser-tools@1.4.1
+  node: circleci/node@5.1.1
+  browser-tools: circleci/browser-tools@1.4.6
 
 executors:
   default:
     docker:
-      - image: cimg/node:18.16
+      - image: cimg/node:20.10.0
     working_directory: ~/react-native-url-polyfill
     environment:
       NODE_OPTIONS: '--openssl-legacy-provider'
   node-browsers:
     docker:
-      - image: cimg/node:18.16-browsers
+      - image: cimg/node:20.10.0-browsers
     environment:
-      NODE_OPTIONS: '--openssl-legacy-provider'
-  xcode-11:
-    macos:
-      xcode: 11.7.0
-    environment:
-      HOMEBREW_NO_AUTO_UPDATE: 1
-      XCODE_VERSION: 11.7.0
       NODE_OPTIONS: '--openssl-legacy-provider'
   xcode:
     macos:
@@ -292,14 +285,6 @@ workflows:
       - test-js:
           requires:
             - checkout
-      - test-ios:
-          name: test-ios-0.60
-          executor: xcode-11
-          react-native-version: '0.60'
-          install-yarn: false
-          requires:
-            - lint
-            - test-js
       - test-ios:
           matrix:
             parameters:
