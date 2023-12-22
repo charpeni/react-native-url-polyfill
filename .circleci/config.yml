@@ -332,6 +332,4 @@ workflows:
             parameters:
               react-native-version: ['0.68']
           requires:
-            - lint
-            - test-js
             - test-android-<< matrix.react-native-version >>
