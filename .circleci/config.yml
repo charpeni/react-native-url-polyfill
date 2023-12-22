@@ -340,13 +340,6 @@ workflows:
           requires:
             - lint
             - test-js
-      # - test-expo-web:
-      #     matrix:
-      #       parameters:
-      #         expo-version: ['43', '44']
-      #     requires:
-      #       - lint
-      #       - test-js
       - test-hermes-ios:
           matrix:
             parameters:
@@ -359,3 +352,10 @@ workflows:
               react-native-version: ['0.68']
           requires:
             - test-android-<< matrix.react-native-version >>
+      - test-expo-web:
+          matrix:
+            parameters:
+              expo-version: ['48']
+          requires:
+            - lint
+            - test-js
