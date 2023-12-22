@@ -11,6 +11,9 @@
     "build:ios": "detox build --configuration ios.sim.release",
     "test:ios": "detox test --configuration ios.sim.release --cleanup",
     "e2e:ios": "yarn build:ios && yarn test:ios",
+    "build:android": "detox build --configuration android.emu.release",
+    "test:android": "detox test --configuration android.emu.release",
+    "e2e:android": "yarn build:android && yarn test:android",
     "postinstall": "patch-package"
   },
   "dependencies": {
