@@ -23,6 +23,7 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint .",
+    "type-check": "tsc index.d.ts",
     "prepare": "husky install",
     "bundle-size": "node scripts/bundle-size"
   },
