@@ -10,7 +10,7 @@ orbs:
   browser-tools: circleci/browser-tools@1.4.6
 
 executors:
-  default:
+  node:
     docker:
       - image: cimg/node:20.10.0
     working_directory: ~/react-native-url-polyfill
@@ -144,7 +144,7 @@ commands:
 
 jobs:
   checkout:
-    executor: default
+    executor: node
     steps:
       - checkout
       - restore-cache-yarn
@@ -161,18 +161,25 @@ jobs:
           paths:
             - .
   lint:
-    executor: default
+    executor: node
     steps:
       - attach-workspace
       - run:
           name: Lint
           command: yarn lint
+  type-check:
+    executor: node
+    steps:
+      - attach-workspace
+      - run:
+          name: Type Check
+          command: yarn type-check
   test-js:
     parameters:
       react-native-version:
         type: string
         default: ''
-    executor: default
+    executor: node
     steps:
       - attach-workspace
       - when:
@@ -280,6 +287,9 @@ workflows:
     jobs:
       - checkout
       - lint:
+          requires:
+            - checkout
+      - type-check:
           requires:
             - checkout
       - test-js:
