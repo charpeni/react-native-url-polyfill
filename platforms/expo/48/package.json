@@ -7,7 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "NODE_OPTIONS=--openssl-legacy-provider expo start --web",
-    "test:web": "jest"
+    "test:web": "NODE_OPTIONS=--openssl-legacy-provider jest"
   },
   "dependencies": {
     "expo": "~48.0.18",
@@ -24,13 +24,13 @@
     "babel-loader": "^8.2.3",
     "jest": "^29.5.0",
     "jest-expo": "^48.0.2",
-    "jest-expo-puppeteer": "^1.4.4",
-    "puppeteer": "^20.7.4"
+    "jest-puppeteer": "^9.0.2",
+    "puppeteer": "^21.6.1"
   },
   "jest": {
-    "preset": "jest-expo-puppeteer",
+    "preset": "jest-puppeteer",
     "projects": [
-      "../../jest-puppeteer"
+      "<rootDir>"
     ]
   },
   "private": true

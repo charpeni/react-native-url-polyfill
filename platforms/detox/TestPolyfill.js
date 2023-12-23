@@ -22,7 +22,7 @@ function testCreateObjectURL() {
 const PolyfillTests = () => (
   <>
     <Text testID="url-polyfill-version">
-      {global.REACT_NATIVE_URL_POLYFILL}
+      {global.REACT_NATIVE_URL_POLYFILL ?? 'react-native-url-polyfill is not detected'}
     </Text>
     <Text testID="url-test-1">{new URL('dev', 'https://google.dev').href}</Text>
     <Text testID="url-test-2">
