@@ -25,7 +25,7 @@
     "jest": "^29.5.0",
     "jest-expo": "^48.0.2",
     "jest-puppeteer": "^9.0.2",
-    "puppeteer": "^20.7.4"
+    "puppeteer": "^21.6.1"
   },
   "jest": {
     "preset": "jest-puppeteer",
