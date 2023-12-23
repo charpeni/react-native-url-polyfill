@@ -8,6 +8,7 @@ aliases:
 orbs:
   node: circleci/node@5.1.1
   browser-tools: circleci/browser-tools@1.4.6
+  android: circleci/android@2.3.0
 
 executors:
   node:
@@ -217,6 +218,36 @@ jobs:
           name: Run Detox on iOS
           command: yarn e2e:ios
       - save-cache-detox-app
+  test-android:
+    parameters:
+      react-native-version:
+        type: string
+    executor:
+      name: android/android-machine
+      resource-class: large
+      tag: 2023.11.1
+    working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
+    steps:
+      - attach-workspace
+      - install-node
+      - install-yarn-dependencies
+      - run:
+          name: List available SDKs
+          command: sdkmanager --list
+      - android/create-avd:
+          avd-name: TestingAVD
+          install: true
+          system-image: system-images;android-34;default;x86_64
+      - android/start-emulator:
+          avd-name: TestingAVD
+          no-window: true
+          post-emulator-launch-assemble-command: ''
+          restore-gradle-cache-prefix: v1a
+      - run:
+          name: Run Detox
+          command: yarn e2e:android
+      - android/save-gradle-cache:
+          cache-prefix: v1a
   test-hermes-android:
     parameters:
       react-native-version:
@@ -302,6 +333,20 @@ workflows:
           requires:
             - lint
             - test-js
+      - test-android:
+          matrix:
+            parameters:
+              react-native-version: ['0.68', '0.72']
+          requires:
+            - lint
+            - test-js
+      # - test-expo-web:
+      #     matrix:
+      #       parameters:
+      #         expo-version: ['43', '44']
+      #     requires:
+      #       - lint
+      #       - test-js
       - test-hermes-ios:
           matrix:
             parameters:
@@ -313,12 +358,4 @@ workflows:
             parameters:
               react-native-version: ['0.68']
           requires:
-            - lint
-            - test-js
-      # - test-expo-web:
-      #     matrix:
-      #       parameters:
-      #         expo-version: ['43', '44']
-      #     requires:
-      #       - lint
-      #       - test-js
+            - test-android-<< matrix.react-native-version >>
