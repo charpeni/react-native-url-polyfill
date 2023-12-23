@@ -309,6 +309,9 @@ jobs:
       - restore-cache-expo-app
       - install-node
       - install-yarn-dependencies
+      - run:
+          name: Install Chrome for Puppeteer
+          command: npx puppeteer browsers install chrome
       - run: yarn global add expo-cli
       - run: yarn test:web --runInBand
       - save-cache-expo-app
