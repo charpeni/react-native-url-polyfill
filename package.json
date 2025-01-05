@@ -62,5 +62,16 @@
     "*.js": [
       "eslint --fix"
     ]
+  },
+  "codegenConfig": {
+    "name": "URLPolyfillSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "ios": {
+      "output": "./ios"
+    },
+    "android": {
+      "javaPackageName": "com.urlpolyfill"
+    }
   }
 }
