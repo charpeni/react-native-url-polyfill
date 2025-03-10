@@ -8,7 +8,7 @@ aliases:
 orbs:
   node: circleci/node@5.1.1
   browser-tools: circleci/browser-tools@1.4.6
-  android: circleci/android@2.3.0
+  android: circleci/android@2.5.0
 
 executors:
   node:
@@ -225,7 +225,7 @@ jobs:
     executor:
       name: android/android-machine
       resource-class: large
-      tag: 2023.11.1
+      tag: 2025.03.1
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
       - attach-workspace
