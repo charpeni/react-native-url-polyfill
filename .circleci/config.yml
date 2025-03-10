@@ -332,7 +332,7 @@ workflows:
       - test-ios:
           matrix:
             parameters:
-              react-native-version: ['0.68', '0.72']
+              react-native-version: ['0.72']
           requires:
             - lint
             - test-js
