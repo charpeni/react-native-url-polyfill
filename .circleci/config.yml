@@ -225,7 +225,7 @@ jobs:
     executor:
       name: android/android-machine
       resource-class: large
-      tag: 2025.03.1
+      tag: 2024.11.1
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
       - attach-workspace
