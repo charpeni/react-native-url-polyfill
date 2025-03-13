@@ -3,16 +3,20 @@ import {URL as whatwgUrl} from 'whatwg-url-without-unicode';
 
 let BLOB_URL_PREFIX = null;
 
-const {BlobModule} = NativeModules;
+const NativeBlobModule = NativeModules.BlobModule;
 
-if (BlobModule && typeof BlobModule.BLOB_URI_SCHEME === 'string') {
-  BLOB_URL_PREFIX = BlobModule.BLOB_URI_SCHEME + ':';
-  if (typeof BlobModule.BLOB_URI_HOST === 'string') {
-    BLOB_URL_PREFIX += `//${BlobModule.BLOB_URI_HOST}/`;
+if (
+  NativeBlobModule &&
+  typeof NativeBlobModule.getConstants().BLOB_URI_SCHEME === 'string'
+) {
+  const constants = NativeBlobModule.getConstants();
+  BLOB_URL_PREFIX = constants.BLOB_URI_SCHEME + ':';
+  if (typeof constants.BLOB_URI_HOST === 'string') {
+    BLOB_URL_PREFIX += `//${constants.BLOB_URI_HOST}/`;
   }
 }
 
-/**
+/*
  * To allow Blobs be accessed via `content://` URIs,
  * you need to register `BlobProvider` as a ContentProvider in your app's `AndroidManifest.xml`:
  *
