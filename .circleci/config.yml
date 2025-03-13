@@ -237,7 +237,7 @@ jobs:
       - android/create-avd:
           avd-name: TestingAVD
           install: true
-          system-image: system-images;android-35;default;x86_64
+          system-image: system-images;android-34;default;x86_64
       - android/start-emulator:
           avd-name: TestingAVD
           no-window: true
