@@ -1,7 +1,7 @@
 version: 2.1
 
 aliases:
-  - &xcode-version 16.2.0
+  - &xcode-version 15.4.0
   - &node-version '22.14.0'
   - &yarn-version '1.22.22'
 
