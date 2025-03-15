@@ -37,10 +37,16 @@ module.exports = {
     },
   },
   devices: {
-    simulator: {
+    simulator15: {
       type: 'ios.simulator',
       device: {
         type: 'iPhone 15 Pro',
+      },
+    },
+    simulator: {
+      type: 'ios.simulator',
+      device: {
+        type: 'iPhone 16 Pro',
       },
     },
     attached: {
@@ -60,6 +66,10 @@ module.exports = {
     'ios.sim.debug': {
       device: 'simulator',
       app: 'ios.debug',
+    },
+    'ios.sim.release.15': {
+      device: 'simulator15',
+      app: 'ios.release',
     },
     'ios.sim.release': {
       device: 'simulator',
