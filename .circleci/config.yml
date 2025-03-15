@@ -6,7 +6,7 @@ aliases:
   - &yarn-version '1.22.22'
 
 orbs:
-  node: circleci/node@5.1.1
+  node: circleci/node@5.3.0
   browser-tools: circleci/browser-tools@1.5.3
   android: circleci/android@2.5.0
 
