@@ -1,7 +1,6 @@
 version: 2.1
 
 aliases:
-  - &xcode-version 16.2.0
   - &node-version '22.14.0'
   - &yarn-version '1.22.22'
 
@@ -21,13 +20,6 @@ executors:
     docker:
       - image: cimg/node:22.14.0-browsers
     environment:
-      NODE_OPTIONS: '--openssl-legacy-provider'
-  xcode:
-    macos:
-      xcode: *xcode-version
-    environment:
-      HOMEBREW_NO_AUTO_UPDATE: 1
-      XCODE_VERSION: *xcode-version
       NODE_OPTIONS: '--openssl-legacy-provider'
   android:
     docker:
@@ -194,15 +186,19 @@ jobs:
           command: yarn test
   test-ios:
     parameters:
-      executor:
-        default: xcode
-        type: executor
       react-native-version:
+        type: string
+      xcode-version:
         type: string
       install-yarn:
         type: boolean
         default: true
-    executor: << parameters.executor >>
+    macos:
+      xcode: << parameters.xcode-version >>
+    environment:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      XCODE_VERSION: *xcode-version
+      NODE_OPTIONS: '--openssl-legacy-provider'
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
       - attach-workspace
@@ -305,9 +301,16 @@ workflows:
           requires:
             - checkout
       - test-ios:
-          matrix:
-            parameters:
-              react-native-version: ['0.72', '0.78']
+          name: test-ios-0.72
+          react-native-version: '0.72'
+          xcode-version: 15.4.0
+          requires:
+            - lint
+            - test-js
+      - test-ios:
+          name: test-ios-0.78
+          react-native-version: '0.78'
+          xcode-version: 16.2.0
           requires:
             - lint
             - test-js
