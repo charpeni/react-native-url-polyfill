@@ -9,7 +9,7 @@
     "start": "react-native start",
     "test": "jest",
     "build:ios": "detox build --configuration ios.sim.release",
-    "test:ios": "detox test --configuration ios.sim.release --cleanup",
+    "test:ios": "detox test --configuration ios.sim.release --cleanup --headless",
     "e2e:ios": "yarn build:ios && yarn test:ios",
     "build:android": "detox build --configuration android.emu.release",
     "test:android": "detox test --configuration android.emu.release",
