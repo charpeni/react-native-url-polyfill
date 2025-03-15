@@ -31,7 +31,7 @@ executors:
       NODE_OPTIONS: '--openssl-legacy-provider'
   android:
     docker:
-      - image: cimg/android:2023.06.1
+      - image: cimg/android:2024.07.1
     resource_class: large
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
