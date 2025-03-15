@@ -1,36 +1,31 @@
-/**
- * Metro configuration for React Native
- * https://github.com/facebook/react-native
- *
- * @format
- */
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
 const path = require('path');
 
 const reactNativeLib = path.resolve(__dirname, '../../..');
 
-module.exports = {
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
+const config = {
   watchFolders: [reactNativeLib],
   resolver: {
     blockList: [
       new RegExp(`${reactNativeLib}/node_modules/react-native/.*`),
       new RegExp(`${reactNativeLib}/node_modules/react/.*`),
-      new RegExp(`${reactNativeLib}/platforms/react-native/((?!0.68).).*`),
+      new RegExp(`${reactNativeLib}/platforms/react-native/((?!0.78).).*`),
       new RegExp(`${reactNativeLib}/platforms/expo/.*`),
       new RegExp(path.resolve(__dirname, 'ios/.*')),
     ],
     extraNodeModules: {
       'react-native': path.resolve(__dirname, 'node_modules/react-native'),
       'react': path.resolve(__dirname, 'node_modules/react'),
-      'react-native-url-polyfill': path.resolve(__dirname, reactNativeLib),
+      'react-native-url-polyfill': reactNativeLib,
     },
   },
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
-  },
 };
+
+module.exports = mergeConfig(getDefaultConfig(__dirname), config);
