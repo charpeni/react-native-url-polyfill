@@ -197,7 +197,7 @@ jobs:
       xcode: << parameters.xcode-version >>
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
-      XCODE_VERSION: *xcode-version
+      XCODE_VERSION: << parameters.xcode-version >>
       NODE_OPTIONS: '--openssl-legacy-provider'
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
