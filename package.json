@@ -34,7 +34,8 @@
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "3.2.0",
-    "detox": "20.14.3",
+    "@types/node": "^22.13.10",
+    "detox": "20.34.5",
     "eslint": "8.56.0",
     "eslint-plugin-prettier": "5.1.1",
     "husky": "8.0.3",
@@ -43,10 +44,10 @@
     "metro-react-native-babel-preset": "0.76.7",
     "nanoid": "3.3.7",
     "prettier": "3.1.1",
-    "react": "18.2.0",
-    "react-native": "0.72.1",
+    "react": "19.0.0",
+    "react-native": "0.78.0",
     "react-native-bundle-scale": "1.1.0",
-    "typescript": "5.3.3"
+    "typescript": "5.8.2"
   },
   "peerDependencies": {
     "react-native": "*"

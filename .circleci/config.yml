@@ -1,37 +1,29 @@
 version: 2.1
 
 aliases:
-  - &xcode-version 15.4.0
-  - &node-version '20.10.0'
-  - &yarn-version '1.22.19'
+  - &node-version '22.14.0'
+  - &yarn-version '1.22.22'
 
 orbs:
-  node: circleci/node@5.1.1
-  browser-tools: circleci/browser-tools@1.4.6
+  node: circleci/node@5.3.0
+  browser-tools: circleci/browser-tools@1.5.3
   android: circleci/android@2.5.0
 
 executors:
   node:
     docker:
-      - image: cimg/node:20.10.0
+      - image: cimg/node:22.14.0
     working_directory: ~/react-native-url-polyfill
     environment:
       NODE_OPTIONS: '--openssl-legacy-provider'
   node-browsers:
     docker:
-      - image: cimg/node:20.10.0-browsers
+      - image: cimg/node:22.14.0-browsers
     environment:
-      NODE_OPTIONS: '--openssl-legacy-provider'
-  xcode:
-    macos:
-      xcode: *xcode-version
-    environment:
-      HOMEBREW_NO_AUTO_UPDATE: 1
-      XCODE_VERSION: *xcode-version
       NODE_OPTIONS: '--openssl-legacy-provider'
   android:
     docker:
-      - image: cimg/android:2023.06.1
+      - image: cimg/android:2023.12.1-node
     resource_class: large
     environment:
       JAVA_TOOL_OPTIONS: '-Xmx1536m'
@@ -194,15 +186,19 @@ jobs:
           command: yarn test
   test-ios:
     parameters:
-      executor:
-        default: xcode
-        type: executor
       react-native-version:
+        type: string
+      xcode-version:
         type: string
       install-yarn:
         type: boolean
         default: true
-    executor: << parameters.executor >>
+    macos:
+      xcode: << parameters.xcode-version >>
+    environment:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      XCODE_VERSION: << parameters.xcode-version >>
+      NODE_OPTIONS: '--openssl-legacy-provider'
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
       - attach-workspace
@@ -266,31 +262,6 @@ jobs:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
       - save-android-build-cache
-  test-hermes-ios:
-    parameters:
-      executor:
-        default: xcode
-        type: executor
-      react-native-version:
-        type: string
-    executor: << parameters.executor >>
-    working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
-    steps:
-      - attach-workspace
-      - restore-cache-detox-app
-      - run:
-          name: Enable Hermes
-          command: npx shx sed -i "s/:hermes_enabled\s=>\sfalse/:hermes_enabled => true/g" ios/Podfile
-      - install-node
-      - install-yarn-dependencies
-      - install-detox
-      - run:
-          name: Install Pods
-          command: |
-            cd ios && pod install
-      - run:
-          name: Run Detox on iOS
-          command: yarn e2e:ios
   test-expo-web:
     parameters:
       expo-version:
@@ -330,25 +301,26 @@ workflows:
           requires:
             - checkout
       - test-ios:
-          matrix:
-            parameters:
-              react-native-version: ['0.72']
+          name: test-ios-0.72
+          react-native-version: '0.72'
+          xcode-version: 15.4.0
+          requires:
+            - lint
+            - test-js
+      - test-ios:
+          name: test-ios-0.78
+          react-native-version: '0.78'
+          xcode-version: 16.2.0
           requires:
             - lint
             - test-js
       - test-android:
           matrix:
             parameters:
-              react-native-version: ['0.68', '0.72']
+              react-native-version: ['0.68', '0.72', '0.78']
           requires:
             - lint
             - test-js
-      # - test-hermes-ios:
-      #     matrix:
-      #       parameters:
-      #         react-native-version: ['0.68']
-      #     requires:
-      #       - test-ios-<< matrix.react-native-version >>
       - test-hermes-android:
           matrix:
             parameters:
