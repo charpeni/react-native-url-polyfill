@@ -308,8 +308,8 @@ workflows:
             - lint
             - test-js
       - test-ios:
-          name: test-ios-0.78
-          react-native-version: '0.78'
+          name: test-ios-0.79
+          react-native-version: '0.79'
           xcode-version: 16.2.0
           requires:
             - lint
@@ -317,7 +317,7 @@ workflows:
       - test-android:
           matrix:
             parameters:
-              react-native-version: ['0.68', '0.72', '0.78']
+              react-native-version: ['0.68', '0.72', '0.79']
           requires:
             - lint
             - test-js

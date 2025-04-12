@@ -16,7 +16,7 @@ const config = {
     blockList: [
       new RegExp(`${reactNativeLib}/node_modules/react-native/.*`),
       new RegExp(`${reactNativeLib}/node_modules/react/.*`),
-      new RegExp(`${reactNativeLib}/platforms/react-native/((?!0.78).).*`),
+      new RegExp(`${reactNativeLib}/platforms/react-native/((?!0.79).).*`),
       new RegExp(`${reactNativeLib}/platforms/expo/.*`),
       new RegExp(path.resolve(__dirname, 'ios/.*')),
     ],
