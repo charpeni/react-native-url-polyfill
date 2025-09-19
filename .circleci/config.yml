@@ -1,7 +1,7 @@
 version: 2.1
 
 aliases:
-  - &node-version '22.14.0'
+  - &node-version '22.19.0'
   - &yarn-version '1.22.22'
 
 orbs:
@@ -12,13 +12,13 @@ orbs:
 executors:
   node:
     docker:
-      - image: cimg/node:22.14.0
+      - image: cimg/node:22.19.0
     working_directory: ~/react-native-url-polyfill
     environment:
       NODE_OPTIONS: '--openssl-legacy-provider'
   node-browsers:
     docker:
-      - image: cimg/node:22.14.0-browsers
+      - image: cimg/node:22.19.0-browsers
     environment:
       NODE_OPTIONS: '--openssl-legacy-provider'
   android:
