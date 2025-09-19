@@ -195,6 +195,7 @@ jobs:
         default: true
     macos:
       xcode: << parameters.xcode-version >>
+    resource_class: m4pro.medium
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
       XCODE_VERSION: << parameters.xcode-version >>
