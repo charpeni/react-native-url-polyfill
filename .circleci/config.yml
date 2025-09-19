@@ -193,6 +193,10 @@ jobs:
       install-yarn:
         type: boolean
         default: true
+      skip-pods:
+        type: boolean
+        description: Skip installing CocoaPods dependencies as it's now deprecated (RN >= 0.80)
+        default: false
     macos:
       xcode: << parameters.xcode-version >>
     environment:
@@ -207,9 +211,12 @@ jobs:
           install-yarn: << parameters.install-yarn >>
       - install-yarn-dependencies
       - install-detox
-      - run:
-          name: Install Pods
-          command: cd ios && pod install --repo-update
+      - unless:
+          condition: <<parameters.skip-pods>>
+          steps:
+            - run:
+                name: Install Pods
+                command: cd ios && pod install --repo-update
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
@@ -318,6 +325,7 @@ workflows:
           name: test-ios-0.81
           react-native-version: '0.81'
           xcode-version: 16.4.0
+          skip-pods: true
           requires:
             - lint
             - test-js
