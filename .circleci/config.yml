@@ -314,6 +314,13 @@ workflows:
           requires:
             - lint
             - test-js
+      - test-ios:
+          name: test-ios-0.81
+          react-native-version: '0.81'
+          xcode-version: 16.4.0
+          requires:
+            - lint
+            - test-js
       - test-android:
           matrix:
             parameters:
