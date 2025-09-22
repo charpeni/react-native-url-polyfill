@@ -222,7 +222,7 @@ jobs:
           steps:
             - run:
                 name: Install Pods
-                command: cd ios && yarn ios --only-pods
+                command: cd ios && bundle install && bundle exec pod install
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios

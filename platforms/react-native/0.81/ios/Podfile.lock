@@ -1749,7 +1749,92 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
   - react-native-safe-area-context (5.6.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - react-native-safe-area-context/common (= 5.6.1)
+    - react-native-safe-area-context/fabric (= 5.6.1)
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
+  - react-native-safe-area-context/common (5.6.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
+  - react-native-safe-area-context/fabric (5.6.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - react-native-safe-area-context/common
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - React-NativeModulesApple (0.81.4):
     - boost
     - DoubleConversion
@@ -2526,21 +2611,21 @@ SPEC CHECKSUMS:
   React-logger: 1767babce2d28c3251039ce05556714a2c8c6ded
   React-Mapbuffer: 33f678ee25b6c0ee2b01b1ecec08e3e02424cefe
   React-microtasksnativemodule: 44b44a4d3cd6ffb85d928abf741acdc26722de2e
-  react-native-safe-area-context: aac2745e96999c8633d2f6119e4e39b499c2ac8b
+  react-native-safe-area-context: 6d8a7b750e496e37bda47c938320bf2c734d441f
   React-NativeModulesApple: b5d18bc109c45c9a1c6b71664991b5cc3adc4e48
   React-oscompat: 93b5535ea7f7dff46aaee4f78309a70979bdde9d
   React-perflogger: a03d913e3205b00aee4128082abe42fd45ce0c98
   React-performancetimeline: 9b5986cc15afafb9bf246d7dd55bdd138df94451
   React-RCTActionSheet: 42195ae666e6d79b4af2346770f765b7c29435b9
   React-RCTAnimation: 5c10527683128c56ff2c09297fb080f7c35bd293
-  React-RCTAppDelegate: 36d71b04a7ba1143fa783ce4840a04ebd9379d73
+  React-RCTAppDelegate: c616bd5b0d12f0b21dfacee9cd2d512c6df013aa
   React-RCTBlob: 6e3757bdd7dce6fd9788c0dd675fd6b6c432db9d
-  React-RCTFabric: 093b280be70e5c9f871830c6a628f53bf2c8038b
-  React-RCTFBReactNativeSpec: 59f4ad68294512b75a8b213dd219df70d3d17fc5
+  React-RCTFabric: e8f3b9da97477710bf0904a62eb5b5209c964694
+  React-RCTFBReactNativeSpec: c042f8d60d44ad9e2c722da89323c0bdab7a37af
   React-RCTImage: a3482fe1ae562d1bab08b42d4670a7c9a21813cd
   React-RCTLinking: d82b9adb141aef9d2b38d446b837ae7017ab60aa
   React-RCTNetwork: fa9350dd99354c5695964f589bd4790bdd4f6a85
-  React-RCTRuntime: 50868a908922c3a331f9d0249c934638e067a890
+  React-RCTRuntime: be99a38cd23388c08921d8969c82a1997a11ec90
   React-RCTSettings: b7f4a03f44dba1d3a4dc6770843547b203ca9129
   React-RCTText: 91dc597a5f6b27fd1048bb287c41ea05eeca9333
   React-RCTVibration: 27b09ddf74bddfa30a58d20e48f885ea6ed6c9d9
