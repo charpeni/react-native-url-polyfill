@@ -25,6 +25,7 @@
     "lint": "eslint .",
     "type-check": "tsc index.d.ts",
     "prepare": "husky install",
+    "prepublishOnly": "node scripts/prepublish",
     "bundle-size": "node scripts/bundle-size"
   },
   "author": "Nicolas Charpentier <nicolas.charpentier079@gmail.com>",

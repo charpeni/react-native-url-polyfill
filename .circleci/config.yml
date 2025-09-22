@@ -109,6 +109,8 @@ commands:
           name: Yarn Install
           command: |
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
+            cd ~/react-native-url-polyfill && yarn prepublishOnly
+
   install-detox:
     steps:
       - restore-cache-detox-env
