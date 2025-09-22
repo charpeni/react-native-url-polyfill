@@ -1,7 +1,3 @@
-Documentation:
-- changed-files:
-  - any-glob-to-any-file: 'docs/*'
-
 ':tea: Detox':
 - changed-files:
   - any-glob-to-any-file: 'detox/**/*'
