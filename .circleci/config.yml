@@ -193,6 +193,10 @@ jobs:
       install-yarn:
         type: boolean
         default: true
+      legacy-pods-install:
+        type: boolean
+        description: Install pods via CocoaPods (deprecated) rather than React Native CLI
+        default: false
     macos:
       xcode: << parameters.xcode-version >>
     environment:
@@ -207,9 +211,18 @@ jobs:
           install-yarn: << parameters.install-yarn >>
       - install-yarn-dependencies
       - install-detox
-      - run:
-          name: Install Pods
-          command: cd ios && pod install --repo-update
+      - when:
+          condition: <<parameters.legacy-pods-install>>
+          steps:
+            - run:
+                name: Install Pods
+                command: cd ios && pod install --repo-update
+      - unless:
+          condition: <<parameters.legacy-pods-install>>
+          steps:
+            - run:
+                name: Install Pods
+                command: yarn ios --only-pods
       - run:
           name: Run Detox on iOS
           command: yarn e2e:ios
@@ -304,6 +317,7 @@ workflows:
           name: test-ios-0.72
           react-native-version: '0.72'
           xcode-version: 15.4.0
+          legacy-pods-install: true
           requires:
             - lint
             - test-js
@@ -311,6 +325,14 @@ workflows:
           name: test-ios-0.78
           react-native-version: '0.78'
           xcode-version: 16.2.0
+          legacy-pods-install: true
+          requires:
+            - lint
+            - test-js
+      - test-ios:
+          name: test-ios-0.81
+          react-native-version: '0.81'
+          xcode-version: 16.4.0
           requires:
             - lint
             - test-js
