@@ -1,13 +1,19 @@
+Documentation:
+- changed-files:
+  - any-glob-to-any-file: 'docs/*'
+
 ':tea: Detox':
-  - detox/**/*
+- changed-files:
+  - any-glob-to-any-file: 'detox/**/*'
 
 ':test_tube: Tests':
-  - __tests__/**/*
-  - /**/__tests__/**/*
+- changed-files:
+  - any-glob-to-any-file: ['__tests__/**/*', '/**/__tests__/**/*']
 
 ':toolbox: Infra':
-  - .github/**/*
-  - .circleci/**/*
+- changed-files:
+  - any-glob-to-any-file: ['.github/**/*', '.circleci/**/*']
   
 ':books: Documentation':
-  - README.md
+- changed-files:
+  - any-glob-to-any-file: 'README.md'
