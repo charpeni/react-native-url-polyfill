@@ -15,7 +15,7 @@ A lightweight and trustworthy URL polyfill for React Native, based on the WHATWG
 - **Trustworthy**. Follows the URL Standard spec, and relies on unit tests and Detox e2e tests within [React Native](https://github.com/facebook/react-native).
 - **Blob support**. Supports React Native's Blob without additional steps.
 - **Hermes support**. Supports [Hermes](https://github.com/facebook/hermes), a JavaScript engine optimized for running React Native.
-- **Expo support**. Supports [Expo](https://expo.dev/) and tested against.
+- **Expo support**. Supports [Expo](https://expo.dev/).
 - **Web support**. Most of the time, this polyfill isn't useful on web and therefore using `react-native-url-polyfill/auto` will be no-op on web.
 
 > [!IMPORTANT]

@@ -69,18 +69,6 @@ commands:
           name: Restoring Detox App Cache
           keys:
             - detox-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
-  save-cache-expo-app:
-    steps:
-      - save_cache:
-          key: expo-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
-          paths:
-            - node_modules
-  restore-cache-expo-app:
-    steps:
-      - restore_cache:
-          name: Restoring Detox App Cache
-          keys:
-            - expo-app-{{ .Environment.CACHE_VERSION }}-{{ checksum "yarn.lock"}}
   save-android-build-cache:
     steps:
       - save_cache:
@@ -275,30 +263,6 @@ jobs:
           name: Build APK
           command: cd android && ./gradlew assembleRelease
       - save-android-build-cache
-  test-expo-web:
-    parameters:
-      expo-version:
-        type: string
-    executor: node-browsers
-    working_directory: ~/react-native-url-polyfill/platforms/expo/<< parameters.expo-version >>
-    steps:
-      - attach-workspace
-      - browser-tools/install-chrome
-      - run: google-chrome --version
-      - run:
-          name: Install certutil
-          command: |
-            sudo apt update
-            sudo apt install libnss3-tools
-      - restore-cache-expo-app
-      - install-node
-      - install-yarn-dependencies
-      - run:
-          name: Install Chrome for Puppeteer
-          command: npx puppeteer browsers install chrome
-      - run: yarn global add expo-cli
-      - run: yarn test:web --runInBand
-      - save-cache-expo-app
 
 workflows:
   tests:
@@ -349,10 +313,3 @@ workflows:
               react-native-version: ['0.68']
           requires:
             - test-android-<< matrix.react-native-version >>
-      # - test-expo-web:
-      #     matrix:
-      #       parameters:
-      #         expo-version: ['48']
-      #     requires:
-      #       - lint
-      #       - test-js
