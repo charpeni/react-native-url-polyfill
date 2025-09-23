@@ -1,6 +1,6 @@
 import {URL} from '../URL';
 
-describe('URL', function () {
+describe('URL', () => {
   it('should pass Mozilla Dev Network examples', () => {
     const a = new URL('/', 'https://developer.mozilla.org');
     expect(a.href).toBe('https://developer.mozilla.org/');
@@ -60,5 +60,23 @@ describe('URL', function () {
     expect(url.href).toBe(
       'https://facebook.github.io/react-native/img/header_logo.png',
     );
+  });
+
+  describe('URL.canParse', () => {
+    it('should return true for valid URLs', () => {
+      expect(URL.canParse('https://example.com')).toBe(true);
+      expect(URL.canParse('ftp://example.com')).toBe(true);
+      expect(URL.canParse('mailto:example@example.com')).toBe(true);
+      expect(
+        URL.canParse('/en-US/docs', 'https://developer.mozilla.org/'),
+      ).toBe(true);
+    });
+
+    it('should return false for invalid URLs', () => {
+      expect(URL.canParse('invalid-url')).toBe(false);
+      expect(URL.canParse('http://')).toBe(false);
+      expect(URL.canParse('ftp://')).toBe(false);
+      expect(URL.canParse('//', 'https://developer.mozilla.org/')).toBe(false);
+    });
   });
 });
