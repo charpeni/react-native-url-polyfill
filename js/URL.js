@@ -52,4 +52,14 @@ whatwgUrl.revokeObjectURL = function revokeObjectURL(url) {
   // Do nothing.
 };
 
+whatwgUrl.canParse = function canParse(url, base) {
+  try {
+    // eslint-disable-next-line no-new
+    new URL(url, base);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const URL = whatwgUrl;
