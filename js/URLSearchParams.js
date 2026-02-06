@@ -1,1 +1,1 @@
-export {URLSearchParams} from 'whatwg-url-without-unicode';
+export {URLSearchParams} from 'whatwg-url-minimum';

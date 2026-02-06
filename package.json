@@ -30,7 +30,7 @@
   "author": "Nicolas Charpentier <nicolas.charpentier079@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "whatwg-url-without-unicode": "8.0.0-3"
+    "whatwg-url-minimum": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

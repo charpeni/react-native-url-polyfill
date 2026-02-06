@@ -1,5 +1,5 @@
 import {NativeModules} from 'react-native';
-import {URL as whatwgUrl} from 'whatwg-url-without-unicode';
+import {URL as whatwgUrl} from 'whatwg-url-minimum';
 
 let BLOB_URL_PREFIX = null;
 
