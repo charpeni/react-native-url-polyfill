@@ -288,7 +288,7 @@ workflows:
       - test-ios:
           name: test-ios-0.78
           react-native-version: '0.78'
-          xcode-version: 16.2.0
+          xcode-version: 16.4.0
           legacy-pods-install: true
           requires:
             - lint
