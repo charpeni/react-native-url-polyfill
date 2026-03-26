@@ -25,7 +25,8 @@
     "lint": "eslint .",
     "type-check": "tsc index.d.ts",
     "prepare": "husky install",
-    "bundle-size": "node scripts/bundle-size"
+    "bundle-size": "node scripts/bundle-size",
+    "update-wpt": "node scripts/update-wpt"
   },
   "author": "Nicolas Charpentier <nicolas.charpentier079@gmail.com>",
   "license": "MIT",
@@ -60,7 +61,8 @@
     "preset": "react-native",
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "./platforms/"
+      "./platforms/",
+      "/wpt/"
     ]
   },
   "lint-staged": {
