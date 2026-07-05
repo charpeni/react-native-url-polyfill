@@ -630,6 +630,36 @@
     "hash": ""
   },
   {
+    "input": "http://é@é",
+    "base": null,
+    "href": "http://%C3%A9@xn--9ca/",
+    "origin": "http://xn--9ca",
+    "protocol": "http:",
+    "username": "%C3%A9",
+    "password": "",
+    "host": "xn--9ca",
+    "hostname": "xn--9ca",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "http://é@example.com",
+    "base": null,
+    "href": "http://%C3%A9@example.com/",
+    "origin": "http://example.com",
+    "protocol": "http:",
+    "username": "%C3%A9",
+    "password": "",
+    "host": "example.com",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
     "input": "http::@c:29",
     "base": "http://example.org/foo/bar",
     "href": "http://example.org/foo/:@c:29",
@@ -1041,6 +1071,21 @@
     "hostname": "example.org",
     "port": "",
     "pathname": "/example.com/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "http:/",
+    "base": "http://example.com/",
+    "href": "http://example.com/",
+    "origin": "http://example.com",
+    "protocol": "http:",
+    "username": "",
+    "password": "",
+    "host": "example.com",
+    "hostname": "example.com",
+    "port": "",
+    "pathname": "/",
     "search": "",
     "hash": ""
   },
@@ -3956,33 +4001,93 @@
   {
     "input": "http://a.b.c.xn--pokxncvks",
     "base": null,
-    "failure": true
+    "href": "http://a.b.c.xn--pokxncvks/",
+    "origin": "http://a.b.c.xn--pokxncvks",
+    "protocol": "http:",
+    "username": "",
+    "password": "",
+    "host": "a.b.c.xn--pokxncvks",
+    "hostname": "a.b.c.xn--pokxncvks",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
   },
   {
     "input": "http://10.0.0.xn--pokxncvks",
     "base": null,
-    "failure": true
+    "href": "http://10.0.0.xn--pokxncvks/",
+    "origin": "http://10.0.0.xn--pokxncvks",
+    "protocol": "http:",
+    "username": "",
+    "password": "",
+    "host": "10.0.0.xn--pokxncvks",
+    "hostname": "10.0.0.xn--pokxncvks",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
   },
   "IDNA labels should be matched case-insensitively",
   {
     "input": "http://a.b.c.XN--pokxncvks",
     "base": null,
-    "failure": true
+    "href": "http://a.b.c.xn--pokxncvks/",
+    "origin": "http://a.b.c.xn--pokxncvks",
+    "protocol": "http:",
+    "username": "",
+    "password": "",
+    "host": "a.b.c.xn--pokxncvks",
+    "hostname": "a.b.c.xn--pokxncvks",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
   },
   {
     "input": "http://a.b.c.Xn--pokxncvks",
     "base": null,
-    "failure": true
+    "href": "http://a.b.c.xn--pokxncvks/",
+    "origin": "http://a.b.c.xn--pokxncvks",
+    "protocol": "http:",
+    "username": "",
+    "password": "",
+    "host": "a.b.c.xn--pokxncvks",
+    "hostname": "a.b.c.xn--pokxncvks",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
   },
   {
     "input": "http://10.0.0.XN--pokxncvks",
     "base": null,
-    "failure": true
+    "href": "http://10.0.0.xn--pokxncvks/",
+    "origin": "http://10.0.0.xn--pokxncvks",
+    "protocol": "http:",
+    "username": "",
+    "password": "",
+    "host": "10.0.0.xn--pokxncvks",
+    "hostname": "10.0.0.xn--pokxncvks",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
   },
   {
     "input": "http://10.0.0.xN--pokxncvks",
     "base": null,
-    "failure": true
+    "href": "http://10.0.0.xn--pokxncvks/",
+    "origin": "http://10.0.0.xn--pokxncvks",
+    "protocol": "http:",
+    "username": "",
+    "password": "",
+    "host": "10.0.0.xn--pokxncvks",
+    "hostname": "10.0.0.xn--pokxncvks",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
   },
   "Test name prepping, fullwidth input should be converted to ASCII and NOT IDN-ized. This is 'Go' in fullwidth UTF-8/UTF-16.",
   {
@@ -4267,6 +4372,82 @@
     "pathname": "/bar",
     "search": "",
     "hash": ""
+  },
+  "Astral code point followed by a trailing character in the userinfo",
+  {
+    "input": "http://😀x@host/",
+    "base": null,
+    "href": "http://%F0%9F%98%80x@host/",
+    "origin": "http://host",
+    "protocol": "http:",
+    "username": "%F0%9F%98%80x",
+    "password": "",
+    "host": "host",
+    "hostname": "host",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "http://a:😀x@host/",
+    "base": null,
+    "href": "http://a:%F0%9F%98%80x@host/",
+    "origin": "http://host",
+    "protocol": "http:",
+    "username": "a",
+    "password": "%F0%9F%98%80x",
+    "host": "host",
+    "hostname": "host",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "http://😀@host/",
+    "base": null,
+    "href": "http://%F0%9F%98%80@host/",
+    "origin": "http://host",
+    "protocol": "http:",
+    "username": "%F0%9F%98%80",
+    "password": "",
+    "host": "host",
+    "hostname": "host",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "input": "https://localhost?q=🔥",
+    "base": null,
+    "href": "https://localhost/?q=%F0%9F%94%A5",
+    "origin": "https://localhost",
+    "protocol": "https:",
+    "username": "",
+    "password": "",
+    "host": "localhost",
+    "hostname": "localhost",
+    "port": "",
+    "pathname": "/",
+    "search": "?q=%F0%9F%94%A5",
+    "hash": ""
+  },
+  {
+    "input": "https://localhost#🔥",
+    "base": null,
+    "href": "https://localhost/#%F0%9F%94%A5",
+    "origin": "https://localhost",
+    "protocol": "https:",
+    "username": "",
+    "password": "",
+    "host": "localhost",
+    "hostname": "localhost",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": "#%F0%9F%94%A5"
   },
   "# resolving a fragment against any scheme succeeds",
   {
@@ -6022,6 +6203,16 @@
   },
   {
     "input": "http://4294967296",
+    "base": "http://other.com/",
+    "failure": true
+  },
+  {
+    "input": "http://18446744073709551616",
+    "base": "http://other.com/",
+    "failure": true
+  },
+  {
+    "input": "http://18446744075840258049",
     "base": "http://other.com/",
     "failure": true
   },
@@ -8667,7 +8858,16 @@
   {
     "input": "file://xn--/p",
     "base": null,
-    "failure": true
+    "href": "file://xn--/p",
+    "protocol": "file:",
+    "username": "",
+    "password": "",
+    "host": "xn--",
+    "hostname": "xn--",
+    "port": "",
+    "pathname": "/p",
+    "search": "",
+    "hash": ""
   },
   "https://bugzilla.mozilla.org/show_bug.cgi?id=1647058",
   {
@@ -9413,7 +9613,17 @@
   {
     "input": "https://xn--/",
     "base": null,
-    "failure": true
+    "href": "https://xn--/",
+    "origin": "https://xn--",
+    "protocol": "https:",
+    "username": "",
+    "password": "",
+    "host": "xn--",
+    "hostname": "xn--",
+    "port": "",
+    "pathname": "/",
+    "search": "",
+    "hash": ""
   },
   "Non-special schemes that some implementations might incorrectly treat as special",
   {
@@ -10309,6 +10519,52 @@
     "hostname": "host",
     "port": "",
     "pathname": "/a\\b",
+    "search": "",
+    "hash": ""
+  },
+  "# Non-special relative URL and backslashes",
+  {
+    "comment": "Non-special relative: \\ should not enter RelativeSlash state",
+    "input": "\\a",
+    "base": "foo://foo/a",
+    "href": "foo://foo/\\a",
+    "protocol": "foo:",
+    "username": "",
+    "password": "",
+    "host": "foo",
+    "hostname": "foo",
+    "port": "",
+    "pathname": "/\\a",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "comment": "Non-special relative: \\ should not enter RelativeSlash, so / is a path separator",
+    "input": "\\/a",
+    "base": "foo://foo/a",
+    "href": "foo://foo/\\/a",
+    "protocol": "foo:",
+    "username": "",
+    "password": "",
+    "host": "foo",
+    "hostname": "foo",
+    "port": "",
+    "pathname": "/\\/a",
+    "search": "",
+    "hash": ""
+  },
+  {
+    "comment": "Non-special relative: \\\\ should not trigger authority parsing",
+    "input": "\\\\a",
+    "base": "foo://foo/a",
+    "href": "foo://foo/\\\\a",
+    "protocol": "foo:",
+    "username": "",
+    "password": "",
+    "host": "foo",
+    "hostname": "foo",
+    "port": "",
+    "pathname": "/\\\\a",
     "search": "",
     "hash": ""
   },
