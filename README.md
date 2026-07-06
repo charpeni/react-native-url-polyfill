@@ -11,8 +11,8 @@ A lightweight and trustworthy URL polyfill for React Native, based on the WHATWG
 
 <br />
 
-- **Lightweight**. Uses a forked version of [`whatwg-url`](https://github.com/jsdom/whatwg-url) ([`whatwg-url-without-unicode`](https://github.com/charpeni/whatwg-url)) where Unicode support has been stripped out—Going down from [372 KB](https://bundlephobia.com/result?p=whatwg-url@8.0.0) to [40.9 KB](https://bundlephobia.com/result?p=whatwg-url-without-unicode@8.0.0-3).
-- **Trustworthy**. Follows the URL Standard spec, and relies on unit tests and Detox e2e tests within [React Native](https://github.com/facebook/react-native).
+- **Lightweight**. Ships its own dependency-free implementation of the URL Standard where Unicode hostname support has been left out to keep the bundle small. Written in TypeScript, published as plain JavaScript.
+- **Trustworthy**. Follows the URL Standard spec, and relies on unit tests generated from [Web Platform Tests](https://github.com/web-platform-tests/wpt/tree/master/url) and Detox e2e tests within [React Native](https://github.com/facebook/react-native). Types are verified to stay interchangeable with Node.js's built-in `URL` and `whatwg-url`.
 - **Blob support**. Supports React Native's Blob without additional steps.
 - **Hermes support**. Supports [Hermes](https://github.com/facebook/hermes), a JavaScript engine optimized for running React Native.
 - **Expo support**. Supports [Expo](https://expo.dev/).

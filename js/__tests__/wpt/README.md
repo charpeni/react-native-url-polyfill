@@ -57,10 +57,10 @@ Each test case is evaluated at load time to determine its current status:
 
 - **`it`** — the test passes against the polyfill.
 - **`it.skip`** — the test fails due to Unicode/IDNA limitations. The polyfill
-  uses `whatwg-url-without-unicode` which intentionally strips IDNA/Unicode
-  support (hostname lowercasing, punycode encoding, fullwidth character
-  normalization, etc.) to reduce bundle size. These tests are structurally
-  impossible to pass without replacing the dependency.
+  (`js/URL.ts`) intentionally omits IDNA/Unicode host support (punycode
+  encoding, Unicode hostname mapping and normalization such as fullwidth
+  characters) to reduce bundle size. These tests are structurally impossible
+  to pass without adding IDNA support.
 - **`it.failing`** — the test fails for non-Unicode reasons (e.g., missing
   `URLSearchParams.sort()`, `.size`, newer spec behaviors). These document the
   expected spec behavior and serve as a todo list. When the implementation is

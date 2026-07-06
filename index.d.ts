@@ -1,13 +1,3 @@
-/// <reference types="node" />
-declare module 'react-native-url-polyfill' {
-  import {
-    URL as NativeURL,
-    URLSearchParams as NativeURLSearchParams,
-  } from 'url';
+export {URL, URLSearchParams} from './js/URL';
 
-  class URL extends NativeURL {}
-
-  class URLSearchParams extends NativeURLSearchParams {}
-
-  function setupURLPolyfill(): void;
-}
+export function setupURLPolyfill(): void;

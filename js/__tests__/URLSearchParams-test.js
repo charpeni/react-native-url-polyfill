@@ -737,7 +737,7 @@ describe('URLSearchParams — WPT forEach tests', () => {
 // WPT URLSearchParams.size Tests
 // =============================================================================
 describe('URLSearchParams — WPT size tests', () => {
-  it.failing("URLSearchParams's size and deletion", () => {
+  it("URLSearchParams's size and deletion", () => {
     const params = new URLSearchParams('a=1&b=2&a=3');
     expect(params.size).toBe(3);
 
@@ -745,7 +745,7 @@ describe('URLSearchParams — WPT size tests', () => {
     expect(params.size).toBe(1);
   });
 
-  it.failing("URLSearchParams's size and addition", () => {
+  it("URLSearchParams's size and addition", () => {
     const params = new URLSearchParams('a=1&b=2&a=3');
     expect(params.size).toBe(3);
 
@@ -753,7 +753,7 @@ describe('URLSearchParams — WPT size tests', () => {
     expect(params.size).toBe(4);
   });
 
-  it.failing("URLSearchParams's size when obtained from a URL", () => {
+  it("URLSearchParams's size when obtained from a URL", () => {
     const url = new URL('http://localhost/query?a=1&b=2&a=3');
     expect(url.searchParams.size).toBe(3);
 
@@ -764,16 +764,13 @@ describe('URLSearchParams — WPT size tests', () => {
     expect(url.searchParams.size).toBe(2);
   });
 
-  it.failing(
-    "URLSearchParams's size when obtained from a URL and using .search",
-    () => {
-      const url = new URL('http://localhost/query?a=1&b=2&a=3');
-      expect(url.searchParams.size).toBe(3);
+  it("URLSearchParams's size when obtained from a URL and using .search", () => {
+    const url = new URL('http://localhost/query?a=1&b=2&a=3');
+    expect(url.searchParams.size).toBe(3);
 
-      url.search = '?';
-      expect(url.searchParams.size).toBe(0);
-    },
-  );
+    url.search = '?';
+    expect(url.searchParams.size).toBe(0);
+  });
 });
 
 // =============================================================================
