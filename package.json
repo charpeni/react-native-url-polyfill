@@ -31,10 +31,9 @@
     "test": "jest",
     "lint": "eslint .",
     "type-check": "tsgo",
-    "build": "tsgo -p tsconfig.build.json",
-    "clean": "rm -f js/URL.js js/URL.d.ts js/URLSearchParams.js js/URLSearchParams.d.ts",
+    "build": "tsdown",
     "prepare": "husky install",
-    "prepack": "tsgo -p tsconfig.build.json",
+    "prepack": "yarn build",
     "benchmark": "node scripts/benchmark",
     "bundle-size": "node scripts/bundle-size",
     "update-wpt": "node scripts/update-wpt"
@@ -62,6 +61,7 @@
     "react": "19.1.1",
     "react-native": "0.81.4",
     "react-native-bundle-scale": "2.0.0",
+    "tsdown": "0.22.3",
     "typescript": "5.9.2"
   },
   "peerDependencies": {
