@@ -318,11 +318,14 @@ function percentDecodeString(string: string): string {
 // Host parsing and serialization
 // (https://url.spec.whatwg.org/#host-representation)
 //
-// Hosts are represented as: a string (domain, opaque host, or empty host),
-// a number (IPv4 address), or an array of eight numbers (IPv6 address).
+// Hosts are stored in their serialized string form (domain, opaque host,
+// empty host, dotted-quad IPv4, or bracketed IPv6). IPv4/IPv6 addresses are
+// parsed to their numeric form for validation and normalization, then
+// serialized once at parse time — getters read the record without
+// re-serializing (https://url.spec.whatwg.org/#host-serializing).
 // =============================================================================
 
-type Host = string | number | number[];
+type Host = string;
 
 // https://url.spec.whatwg.org/#forbidden-host-code-point: U+0000, TAB, LF,
 // CR, SPACE, #, /, :, <, >, ?, @, [, \, ], ^, |. The forbidden domain code
@@ -464,13 +467,15 @@ function parseIPv4(input: string): number | Failure {
 }
 
 function serializeIPv4(address: number): string {
-  const output: string[] = [];
-  let n = address;
-  for (let i = 0; i < 4; i++) {
-    output.unshift(String(n % 256));
-    n = Math.floor(n / 256);
-  }
-  return output.join('.');
+  return (
+    (address >>> 24) +
+    '.' +
+    ((address >>> 16) & 0xff) +
+    '.' +
+    ((address >>> 8) & 0xff) +
+    '.' +
+    (address & 0xff)
+  );
 }
 
 /**
@@ -647,7 +652,11 @@ function parseHost(input: string, isOpaque: boolean): Host | Failure {
     if (input[input.length - 1] !== ']') {
       return FAILURE;
     }
-    return parseIPv6(input.substring(1, input.length - 1));
+    const address = parseIPv6(input.substring(1, input.length - 1));
+    if (address === FAILURE) {
+      return FAILURE;
+    }
+    return '[' + serializeIPv6(address) + ']';
   }
   if (isOpaque) {
     return parseOpaqueHost(input);
@@ -661,22 +670,13 @@ function parseHost(input: string, isOpaque: boolean): Host | Failure {
     return FAILURE;
   }
   if (endsInANumber(asciiDomain)) {
-    return parseIPv4(asciiDomain);
+    const address = parseIPv4(asciiDomain);
+    if (address === FAILURE) {
+      return FAILURE;
+    }
+    return serializeIPv4(address);
   }
   return asciiDomain;
-}
-
-/**
- * https://url.spec.whatwg.org/#host-serializing
- */
-function serializeHost(host: Host): string {
-  if (typeof host === 'number') {
-    return serializeIPv4(host);
-  }
-  if (Array.isArray(host)) {
-    return '[' + serializeIPv6(host) + ']';
-  }
-  return host;
 }
 
 // =============================================================================
@@ -1424,7 +1424,7 @@ function serializeURL(url: URLRecord, excludeFragment = false): string {
       }
       output += '@';
     }
-    output += serializeHost(url.host);
+    output += url.host;
     if (url.port !== null) {
       output += ':' + url.port;
     }
@@ -1478,7 +1478,7 @@ function serializeOrigin(url: URLRecord): string {
     case 'https':
     case 'ws':
     case 'wss': {
-      let output = url.scheme + '://' + serializeHost(url.host as Host);
+      let output = url.scheme + '://' + url.host;
       if (url.port !== null) {
         output += ':' + url.port;
       }
@@ -1959,7 +1959,7 @@ export class URL {
     if (url.host === null) {
       return '';
     }
-    return serializeHost(url.host) + (url.port !== null ? ':' + url.port : '');
+    return url.port !== null ? url.host + ':' + url.port : url.host;
   }
 
   set host(value: string) {
@@ -1970,7 +1970,7 @@ export class URL {
   }
 
   get hostname(): string {
-    return this._url.host === null ? '' : serializeHost(this._url.host);
+    return this._url.host ?? '';
   }
 
   set hostname(value: string) {
