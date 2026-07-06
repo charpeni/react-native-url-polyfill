@@ -303,7 +303,7 @@ workflows:
       - test-ios:
           name: test-ios-0.84
           react-native-version: '0.84'
-          xcode-version: 26.6
+          xcode-version: "26.6"
           requires:
             - lint
             - test-js
