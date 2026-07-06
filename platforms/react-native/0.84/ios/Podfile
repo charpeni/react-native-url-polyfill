@@ -30,5 +30,13 @@ target 'Detox' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    hermes_cli_path = File.expand_path('../node_modules/hermes-compiler/hermesc/osx-bin/hermesc', __dir__)
+    Dir.glob(File.join(__dir__, 'Pods/Target Support Files/Pods-Detox/Pods-Detox.*.xcconfig')).each do |xcconfig_path|
+      xcconfig = File.read(xcconfig_path)
+      next unless xcconfig.include?('HERMES_CLI_PATH =')
+
+      File.write(xcconfig_path, xcconfig.gsub(/^HERMES_CLI_PATH = .*$/, "HERMES_CLI_PATH = #{hermes_cli_path}"))
+    end
   end
 end
