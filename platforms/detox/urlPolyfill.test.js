@@ -3,10 +3,6 @@ describe('URL Polyfill', () => {
     await device.launchApp();
   });
 
-  beforeEach(async () => {
-    await device.reloadReactNative();
-  });
-
   it('should have REACT_NATIVE_URL_POLYFILL', async () => {
     const {name, version} = require('../../package.json');
 

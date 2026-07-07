@@ -6,7 +6,7 @@ module.exports = mergeDetoxConfig(detoxConfig, {
   devices: {
     simulator: {
       device: {
-        type: 'iPhone 16 Pro',
+        type: 'iPhone 17 Pro',
       },
     },
   },

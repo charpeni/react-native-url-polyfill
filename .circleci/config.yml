@@ -104,6 +104,9 @@ commands:
           name: Install Detox
           command: |
             brew tap wix/brew
+            if [ "${XCODE_VERSION%%.*}" -ge 26 ]; then
+              brew trust --formula wix/brew/applesimutils
+            fi
             brew install applesimutils
             yarn global add detox-cli
       - run:
@@ -285,6 +288,7 @@ workflows:
           requires:
             - lint
             - test-js
+            - test-ios-0.84
       - test-ios:
           name: test-ios-0.78
           react-native-version: '0.78'
@@ -293,10 +297,19 @@ workflows:
           requires:
             - lint
             - test-js
+            - test-ios-0.84
       - test-ios:
           name: test-ios-0.81
           react-native-version: '0.81'
           xcode-version: 16.4.0
+          requires:
+            - lint
+            - test-js
+            - test-ios-0.84
+      - test-ios:
+          name: test-ios-0.84
+          react-native-version: '0.84'
+          xcode-version: "26.6"
           requires:
             - lint
             - test-js
