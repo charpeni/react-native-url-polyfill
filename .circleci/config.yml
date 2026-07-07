@@ -286,6 +286,7 @@ workflows:
           requires:
             - lint
             - test-js
+            - test-ios-0.84
       - test-ios:
           name: test-ios-0.78
           react-native-version: '0.78'
@@ -294,6 +295,7 @@ workflows:
           requires:
             - lint
             - test-js
+            - test-ios-0.84
       - test-ios:
           name: test-ios-0.81
           react-native-version: '0.81'
@@ -301,6 +303,7 @@ workflows:
           requires:
             - lint
             - test-js
+            - test-ios-0.84
       - test-ios:
           name: test-ios-0.84
           react-native-version: '0.84'
