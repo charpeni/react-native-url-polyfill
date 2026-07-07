@@ -104,7 +104,9 @@ commands:
           name: Install Detox
           command: |
             brew tap wix/brew
-            brew trust --formula wix/brew/applesimutils
+            if [ "${XCODE_VERSION%%.*}" -ge 26 ]; then
+              brew trust --formula wix/brew/applesimutils
+            fi
             brew install applesimutils
             yarn global add detox-cli
       - run:
