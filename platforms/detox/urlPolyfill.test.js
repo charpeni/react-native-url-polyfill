@@ -34,4 +34,8 @@ describe('URL Polyfill', () => {
       );
     }
   });
+
+  it('should pass URL conformance checks in the app runtime', async () => {
+    await expect(element(by.id('url-conformance-result'))).toHaveText('passed');
+  });
 });
