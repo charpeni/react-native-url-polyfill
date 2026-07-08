@@ -1,23 +1,19 @@
 #!/usr/bin/node
 /* eslint-env node */
-/* eslint-disable no-void -- `void expr` forces getter reads to run without
-   letting the engine optimize the discarded result away. */
+/* eslint-disable no-bitwise -- XOR keeps benchmark results observable. */
 
 /**
  * Micro-benchmark for the `URL` / `URLSearchParams` polyfill.
  *
- * It always measures this repository's implementation (`js/URL.ts`, executed
- * directly through Node's type stripping — the source is restricted to
- * erasable TypeScript syntax) against Node's built-in `URL` as a stable,
- * always-available reference baseline.
+ * It measures this repository's default `tsdown` build (`js/URL.js`) against
+ * comparable userland URL implementations.
  *
- * If `whatwg-url-without-unicode` (the package this polyfill replaced) is
- * installed, it is added as an extra column so you can reproduce the
- * old-vs-new comparison. It is no longer a dependency, so install it on the
- * side to include it:
+ * If `whatwg-url` or `whatwg-url-minimum` are installed, they are added as
+ * extra columns so you can compare against them. They are not dependencies, so
+ * run them on the side to include them:
  *
- *   npm install --no-save whatwg-url-without-unicode@8.0.0-3
- *   node scripts/benchmark.js
+ *   npx --yes --loglevel error --package whatwg-url --package whatwg-url-minimum \
+ *     -- sh -c 'NODE_PATH="${PATH%%/node_modules/.bin*}/node_modules" node scripts/benchmark.js "$@"' sh
  *
  * Usage:
  *
@@ -28,7 +24,11 @@ const {register} = require('node:module');
 const {pathToFileURL} = require('node:url');
 const {createRequire} = require('node:module');
 const {spawnSync} = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
+
+const DEFAULT_ITERATIONS = 50000;
+const DEFAULT_SAMPLES = 5;
 
 // Loading `js/URL.ts` (an ES module in a package without `"type": "module"`)
 // triggers one-time notices from Node's module loader thread (module-syntax
@@ -65,6 +65,10 @@ register(
 );
 
 const ROOT = path.resolve(__dirname, '..');
+const PACKAGE_JSON = require(path.join(ROOT, 'package.json'));
+const POLYFILL_PATH = fs.existsSync(path.join(ROOT, 'js/URL.js'))
+  ? path.join(ROOT, 'js/URL.js')
+  : path.join(ROOT, 'js/URL.ts');
 
 // -----------------------------------------------------------------------------
 // Workloads
@@ -97,35 +101,41 @@ const QUERIES = [
 ];
 
 /**
- * Each benchmark is a factory `(URL, URLSearchParams) => () => void`. The outer
+ * Each benchmark is a factory `(URL, URLSearchParams) => () => number`. The outer
  * call may allocate fixtures once; the returned function is what gets timed.
+ * Returning a value gives the timing loop something observable to consume so
+ * engines cannot prove the work is unused.
  */
 const BENCHMARKS = {
   'URL construction (absolute)': (URL) => () => {
+    let object = null;
     for (const input of ABSOLUTE_URLS) {
-      // eslint-disable-next-line no-new
-      new URL(input);
+      object = new URL(input);
     }
+    return object.protocol.length + object.pathname.length;
   },
   'URL construction (relative + base)': (URL) => () => {
+    let object = null;
     for (const [input, base] of RELATIVE_URLS) {
-      // eslint-disable-next-line no-new
-      new URL(input, base);
+      object = new URL(input, base);
     }
+    return object.protocol.length + object.pathname.length;
   },
   'URL property getters': (URL) => {
     const objects = ABSOLUTE_URLS.map((input) => new URL(input));
     return () => {
+      let length = 0;
       for (const object of objects) {
-        void object.href;
-        void object.protocol;
-        void object.host;
-        void object.hostname;
-        void object.pathname;
-        void object.search;
-        void object.hash;
-        void object.origin;
+        length += object.href.length;
+        length += object.protocol.length;
+        length += object.host.length;
+        length += object.hostname.length;
+        length += object.pathname.length;
+        length += object.search.length;
+        length += object.hash.length;
+        length += object.origin.length;
       }
+      return length;
     };
   },
   'URL setters': (URL) => {
@@ -137,13 +147,15 @@ const BENCHMARKS = {
       object.pathname = '/new/path';
       object.search = '?a=1&b=2';
       object.hash = '#top';
+      return object.href.length;
     };
   },
   'URLSearchParams parse': (URL, URLSearchParams) => () => {
+    let params = null;
     for (const query of QUERIES) {
-      // eslint-disable-next-line no-new
-      new URLSearchParams(query);
+      params = new URLSearchParams(query);
     }
+    return params.toString().length;
   },
   'URLSearchParams manipulate + stringify': (URL, URLSearchParams) => () => {
     const params = new URLSearchParams('a=1&b=2&c=3');
@@ -151,13 +163,13 @@ const BENCHMARKS = {
     params.set('a', 'updated');
     params.delete('b');
     params.sort();
-    void params.toString();
+    return params.toString().length;
   },
   'URL + searchParams roundtrip': (URL, URLSearchParams) => () => {
     const url = new URL('https://example.com/search?a=1&b=2&c=3');
     url.searchParams.append('d', '4');
     url.searchParams.set('a', 'z');
-    void url.href;
+    return url.href.length;
   },
 };
 
@@ -165,72 +177,199 @@ const BENCHMARKS = {
 // Timing
 // -----------------------------------------------------------------------------
 
-function timeit(fn, iterations) {
+function consume(value) {
+  if (typeof value === 'number') {
+    return value;
+  }
+  if (typeof value === 'string') {
+    return value.length;
+  }
+  return value == null ? 0 : String(value).length;
+}
+
+function timeit(fn, iterations, samples) {
   // Warmup so the JIT has settled before we measure.
   const warmup = Math.min(iterations, 5000);
+  let sink = 0;
   for (let i = 0; i < warmup; i++) {
-    fn();
+    sink ^= consume(fn());
   }
 
-  let best = Infinity;
-  for (let run = 0; run < 5; run++) {
+  const timings = [];
+  for (let run = 0; run < samples; run++) {
     const start = process.hrtime.bigint();
     for (let i = 0; i < iterations; i++) {
-      fn();
+      sink ^= consume(fn());
     }
     const elapsedMs = Number(process.hrtime.bigint() - start) / 1e6;
-    if (elapsedMs < best) {
-      best = elapsedMs;
-    }
+    timings.push(elapsedMs);
   }
-  return best; // best-of-5, in milliseconds
+  return {timings, sink};
 }
 
 // -----------------------------------------------------------------------------
 // Engines under test
 // -----------------------------------------------------------------------------
 
-async function loadEngines() {
+async function loadEngines({quiet = false} = {}) {
   const engines = [];
 
-  const polyfill = await import(
-    pathToFileURL(path.join(ROOT, 'js/URL.ts')).href
-  );
+  const builtPolyfill = await import(pathToFileURL(POLYFILL_PATH).href);
   engines.push({
-    label: 'polyfill',
-    name: 'this polyfill (js/URL.ts)',
-    URL: polyfill.URL,
-    URLSearchParams: polyfill.URLSearchParams,
+    label: 'react-native-url-polyfill',
+    name: 'react-native-url-polyfill',
+    version: PACKAGE_JSON.version,
+    URL: builtPolyfill.URL,
+    URLSearchParams: builtPolyfill.URLSearchParams,
     isBaseline: true,
   });
 
-  const nodeUrl = require('node:url');
-  engines.push({
-    label: 'node',
-    name: "Node's built-in URL",
-    URL: nodeUrl.URL,
-    URLSearchParams: nodeUrl.URLSearchParams,
-  });
-
-  try {
-    const require2 = createRequire(path.join(ROOT, 'package.json'));
-    const old = require2('whatwg-url-without-unicode');
-    engines.push({
+  const require2 = createRequire(path.join(ROOT, 'package.json'));
+  for (const {packageName, installName, label} of [
+    {
+      packageName: 'whatwg-url',
+      installName: 'whatwg-url',
       label: 'whatwg-url',
-      name: 'whatwg-url-without-unicode',
-      URL: old.URL,
-      URLSearchParams: old.URLSearchParams,
-    });
-  } catch {
-    console.log(
-      'Note: `whatwg-url-without-unicode` is not installed, so the old ' +
-        'implementation is\n' +
-        '      excluded. To include it:\n\n' +
-        '      npm install --no-save whatwg-url-without-unicode@8.0.0-3\n',
-    );
+    },
+    {
+      packageName: 'whatwg-url-minimum',
+      installName: 'whatwg-url-minimum',
+      label: '(Expo) whatwg-url-minimum',
+    },
+  ]) {
+    try {
+      const competitor = loadOptionalPackage(require2, packageName);
+      engines.push({
+        label,
+        name: packageName,
+        version: loadOptionalPackageVersion(require2, packageName),
+        URL: competitor.URL,
+        URLSearchParams: competitor.URLSearchParams,
+      });
+    } catch {
+      if (!quiet) {
+        console.log(
+          `Note: \`${packageName}\` is not installed, so it is excluded. ` +
+            'To include it:\n\n' +
+            `      npx --yes --loglevel error --package ${installName} ` +
+            '-- sh -c ' +
+            '\'NODE_PATH="${PATH%%/node_modules/.bin*}/node_modules" ' +
+            'node scripts/benchmark.js "$@"\' sh\n',
+        );
+      }
+    }
   }
 
   return engines;
+}
+
+function loadOptionalPackageVersion(require2, packageName) {
+  try {
+    return loadOptionalPackage(require2, `${packageName}/package.json`).version;
+  } catch {
+    return 'unknown';
+  }
+}
+
+function loadOptionalPackage(require2, packageName) {
+  try {
+    return require2(packageName);
+  } catch (error) {
+    if (error.code !== 'MODULE_NOT_FOUND') {
+      throw error;
+    }
+  }
+
+  const nodePath = process.env.NODE_PATH;
+  if (!nodePath) {
+    return require2(packageName);
+  }
+
+  const paths = nodePath.split(path.delimiter).filter(Boolean);
+  const resolved = require2.resolve(packageName, {paths});
+  return require2(resolved);
+}
+
+function median(values) {
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 1) {
+    return sorted[middle];
+  }
+  return (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+function stats(values) {
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+  const variance =
+    values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
+  return {
+    median: median(values),
+    min: Math.min(...values),
+    max: Math.max(...values),
+    rsd: mean === 0 ? 0 : (Math.sqrt(variance) / mean) * 100,
+  };
+}
+
+async function runWorker(payload) {
+  const engines = await loadEngines({quiet: true});
+  const engine = engines.find(
+    (candidate) => candidate.label === payload.engine,
+  );
+  const factory = BENCHMARKS[payload.benchmark];
+  if (!engine || !factory) {
+    throw new Error('Invalid benchmark worker payload');
+  }
+  const fn = factory(engine.URL, engine.URLSearchParams);
+  const result = timeit(fn, payload.iterations, payload.samples);
+  process.stdout.write(JSON.stringify(result));
+}
+
+function measureInWorker(engine, benchmark, iterations, samples) {
+  const result = spawnSync(
+    process.execPath,
+    [
+      '--no-warnings',
+      __filename,
+      '--worker',
+      JSON.stringify({
+        engine: engine.label,
+        benchmark,
+        iterations,
+        samples,
+      }),
+    ],
+    {
+      encoding: 'utf8',
+      env: {...process.env, RN_URL_BENCHMARK_CHILD: '1'},
+    },
+  );
+  if (result.status !== 0) {
+    throw new Error(
+      result.stderr || result.stdout || 'Benchmark worker failed',
+    );
+  }
+  return JSON.parse(result.stdout);
+}
+
+function formatRatio(ms, baselineMs) {
+  if (ms === baselineMs) {
+    return 'baseline';
+  }
+  const ratio = ms / baselineMs;
+  if (ratio > 1) {
+    return `${ratio.toFixed(2)}x slower`;
+  }
+  return `${(1 / ratio).toFixed(2)}x faster`;
+}
+
+function formatStats(result, baselineMedian) {
+  return `${result.median.toFixed(1)} [${result.min.toFixed(
+    1,
+  )}-${result.max.toFixed(1)}, ${result.rsd.toFixed(1)}%] ${formatRatio(
+    result.median,
+    baselineMedian,
+  )}`;
 }
 
 // -----------------------------------------------------------------------------
@@ -238,13 +377,19 @@ async function loadEngines() {
 // -----------------------------------------------------------------------------
 
 async function main() {
-  const iterations = Number.parseInt(process.argv[2], 10) || 50000;
+  if (process.argv[2] === '--worker') {
+    await runWorker(JSON.parse(process.argv[3]));
+    return;
+  }
+
+  const iterations = Number.parseInt(process.argv[2], 10) || DEFAULT_ITERATIONS;
+  const samples = Number.parseInt(process.argv[3], 10) || DEFAULT_SAMPLES;
   const engines = await loadEngines();
 
   // Sanity check: the polyfill must agree with the reference on a representative
   // URL, otherwise the columns are not measuring equivalent work.
   const probe = 'https://user:pass@example.com:8080/a/b/../c?x=1&y=2#frag';
-  const reference = new engines[1].URL(probe).href;
+  const reference = new (require('node:url').URL)(probe).href;
   const polyfillHref = new engines[0].URL(probe).href;
   if (polyfillHref !== reference) {
     console.error(
@@ -255,63 +400,73 @@ async function main() {
   }
 
   console.log(
-    `\nBenchmark: best-of-5, ${iterations.toLocaleString()} iterations each`,
+    `\nBenchmark: median-of-${samples}, ${iterations.toLocaleString()} iterations each`,
   );
   console.log(
     '(each iteration processes the full input set for that operation; ' +
-      'lower is faster)\n',
+      'lower is faster)',
+  );
+  console.log(
+    '(each engine/operation is measured in an isolated worker process; ' +
+      'cells show median [min-max, relative standard deviation])\n',
   );
 
-  console.log('Columns:');
-  for (const engine of engines) {
-    console.log(`  ${engine.label.padEnd(12)} ${engine.name}`);
-  }
-  console.log('');
-
   const nameColumn = 40;
-  const numberColumn = 16;
+  const numberColumn = 38;
 
   let header = 'Operation'.padEnd(nameColumn);
   for (const engine of engines) {
-    header += `${engine.label} (ms)`.padStart(numberColumn);
+    header += `  ${`${engine.label}@${engine.version} (ms)`.padEnd(
+      numberColumn,
+    )}`;
   }
   console.log(header);
   console.log('-'.repeat(header.length));
 
-  const totals = engines.map(() => 0);
+  const totals = engines.map(() => ({median: 0, min: 0, max: 0, rsd: 0}));
 
-  for (const [label, factory] of Object.entries(BENCHMARKS)) {
+  let operationIndex = 0;
+  for (const label of Object.keys(BENCHMARKS)) {
     let row = label.padEnd(nameColumn);
-    engines.forEach((engine, index) => {
-      const fn = factory(engine.URL, engine.URLSearchParams);
-      const ms = timeit(fn, iterations);
-      totals[index] += ms;
-      row += ms.toFixed(1).padStart(numberColumn);
+    const rowResults = new Array(engines.length);
+    const offset = operationIndex % engines.length;
+    const orderedEngines = engines
+      .slice(offset)
+      .concat(engines.slice(0, offset));
+
+    for (const engine of orderedEngines) {
+      const index = engines.indexOf(engine);
+      const measurement = measureInWorker(engine, label, iterations, samples);
+      const result = stats(measurement.timings);
+      rowResults[index] = result;
+      totals[index].median += result.median;
+      totals[index].min += result.min;
+      totals[index].max += result.max;
+      totals[index].rsd += result.rsd;
+    }
+
+    rowResults.forEach((result) => {
+      row += `  ${formatStats(result, rowResults[0].median).padEnd(
+        numberColumn,
+      )}`;
     });
     console.log(row);
+    operationIndex++;
   }
 
   console.log('-'.repeat(header.length));
   let totalRow = 'total'.padEnd(nameColumn);
-  for (const total of totals) {
-    totalRow += total.toFixed(1).padStart(numberColumn);
-  }
-  console.log(totalRow);
-
-  // Speedup summary relative to the polyfill.
-  console.log('\nSpeedup vs polyfill (>1 means the polyfill is faster):');
-  const polyfillTotal = totals[0];
-  engines.forEach((engine, index) => {
-    if (engine.isBaseline) {
-      return;
-    }
-    const ratio = totals[index] / polyfillTotal;
-    const verdict =
-      ratio > 1
-        ? `${ratio.toFixed(2)}x slower`
-        : `${(1 / ratio).toFixed(2)}x faster`;
-    console.log(`  ${engine.name.padEnd(30)} ${verdict} than the polyfill`);
+  totals.forEach((total) => {
+    totalRow += `  ${formatStats(
+      {...total, rsd: total.rsd / Object.keys(BENCHMARKS).length},
+      totals[0].median,
+    ).padEnd(numberColumn)}`;
   });
+  console.log(totalRow);
+  console.log(
+    '\nNote: the total row sums per-operation medians/mins/maxes; its rsd is ' +
+      'the average per-operation rsd.',
+  );
   console.log('');
 }
 
