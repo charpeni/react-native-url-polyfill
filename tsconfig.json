@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es2021",
+    "lib": ["es2021"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "noEmit": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "erasableSyntaxOnly": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["js/**/*.ts", "types/**/*.ts", "index.d.ts"]
+}

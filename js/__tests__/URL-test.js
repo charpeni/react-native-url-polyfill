@@ -6,8 +6,8 @@ import {URL} from '../URL';
 
 /**
  * Detect whether a WPT test case involves Unicode/IDNA processing.
- * The polyfill uses `whatwg-url-without-unicode` which intentionally strips
- * Unicode/IDNA support for bundle size. These tests are skipped.
+ * The polyfill intentionally omits Unicode/IDNA support for bundle size.
+ * These tests are skipped.
  */
 function hasNonAscii(str) {
   if (!str) {
@@ -390,5 +390,16 @@ describe('URL — React Native issue regressions', () => {
     expect(url.hostname).toBe('localhost');
     expect(url.port).toBe('3000');
     expect(url.pathname).toBe('/api/v1');
+  });
+
+  it('should not treat schemes named after Object.prototype properties as special', () => {
+    // 'constructor' is the only valid scheme name that collides with an
+    // Object.prototype property; the special-scheme lookup must not walk the
+    // prototype chain and turn it into a special scheme.
+    const url = new URL('constructor:foo');
+    expect(url.href).toBe('constructor:foo');
+    expect(url.protocol).toBe('constructor:');
+    expect(url.pathname).toBe('foo');
+    expect(url.host).toBe('');
   });
 });

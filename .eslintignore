@@ -1,3 +1,7 @@
 /platforms/
 index.d.ts
 js/__tests__/wpt/
+js/URL.js
+js/URL.d.ts
+js/URLSearchParams.js
+js/URLSearchParams.d.ts

@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "stripInternal": true,
+    "removeComments": false,
+    "rootDir": "js",
+    "outDir": "js"
+  },
+  "include": [],
+  "files": ["js/URL.ts", "js/URLSearchParams.ts"]
+}

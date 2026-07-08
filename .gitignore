@@ -18,3 +18,10 @@ pids
 *.tgz
 
 tmp
+# Build output, generated from the TypeScript sources by `yarn build` (npm
+# lifecycle: prepack). The published package ships these instead of the .ts
+# sources.
+/js/URL.js
+/js/URL.d.ts
+/js/URLSearchParams.js
+/js/URLSearchParams.d.ts
