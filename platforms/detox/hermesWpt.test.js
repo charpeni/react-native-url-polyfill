@@ -1,11 +1,16 @@
 /* global by, device, element, waitFor */
+const hermes = require('../../js/__tests__/wpt/hermes.json');
 const {cases} = require('../../scripts/wpt/run-wpt');
 
 const describeOnAndroid =
   device.getPlatform() === 'android' ? describe : describe.skip;
 
 describeOnAndroid('official WPT on Hermes', () => {
-  it.each(cases())(
+  const testCases = cases().filter(
+    (testCase) => !hermes.excluded[testCase.file],
+  );
+
+  it.each(testCases)(
     '$file$search',
     async ({file, search}) => {
       const testCase = `${file}${search}`;
