@@ -25,3 +25,4 @@ tmp
 /js/URL.d.ts
 /js/URLSearchParams.js
 /js/URLSearchParams.d.ts
+/platforms/detox/generated/

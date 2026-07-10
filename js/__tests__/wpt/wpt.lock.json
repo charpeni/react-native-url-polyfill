@@ -1,0 +1,31 @@
+{
+  "revision": "666eb5b96c132e900373bd2c06f4f67f766b8fb0",
+  "tests": [
+    "idlharness.any.js",
+    "url-constructor.any.js",
+    "url-origin.any.js",
+    "url-searchparams.any.js",
+    "url-setters-stripping.any.js",
+    "url-setters.any.js",
+    "url-statics-canparse.any.js",
+    "url-statics-parse.any.js",
+    "url-tojson.any.js",
+    "urlencoded-parser.any.js",
+    "urlsearchparams-append.any.js",
+    "urlsearchparams-constructor.any.js",
+    "urlsearchparams-delete.any.js",
+    "urlsearchparams-foreach.any.js",
+    "urlsearchparams-get.any.js",
+    "urlsearchparams-getall.any.js",
+    "urlsearchparams-has.any.js",
+    "urlsearchparams-set.any.js",
+    "urlsearchparams-size.any.js",
+    "urlsearchparams-sort.any.js",
+    "urlsearchparams-stringifier.any.js"
+  ],
+  "excluded": {
+    "IdnaTestV2-removed.any.js": "IDNA processing is intentionally omitted from this package",
+    "IdnaTestV2.any.js": "IDNA processing is intentionally omitted from this package",
+    "historical.any.js": "Tests browser-only historical aliases outside this React Native polyfill"
+  }
+}

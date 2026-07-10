@@ -872,7 +872,7 @@ function parseURL(
   url: URLRecord | null = null,
   stateOverride: number | null = null,
 ): URLRecord | Failure {
-  let input = String(rawInput);
+  let input = toUSVString(rawInput);
   if (url === null) {
     url = createURLRecord();
     // Remove leading and trailing C0 controls and spaces. The regexes only
@@ -1621,6 +1621,49 @@ type URLSearchParamsInit =
   | ReadonlyArray<readonly string[]>
   | Record<string, string>;
 
+function toUSVString(value: unknown): string {
+  if (typeof value === 'symbol') {
+    throw new TypeError('Cannot convert a Symbol value to a string');
+  }
+  const string = String(value);
+  if (!/[\uD800-\uDFFF]/.test(string)) {
+    return string;
+  }
+  let result = '';
+
+  for (let i = 0; i < string.length; i++) {
+    const codeUnit = string.charCodeAt(i);
+    if (codeUnit < 0xd800 || codeUnit > 0xdfff) {
+      result += string[i];
+      continue;
+    }
+    if (
+      codeUnit <= 0xdbff &&
+      i + 1 < string.length &&
+      string.charCodeAt(i + 1) >= 0xdc00 &&
+      string.charCodeAt(i + 1) <= 0xdfff
+    ) {
+      result += string[i] + string[++i];
+    } else {
+      result += '\uFFFD';
+    }
+  }
+
+  return result;
+}
+
+function requireArguments(
+  operation: string,
+  actual: number,
+  required: number,
+): void {
+  if (actual < required) {
+    throw new TypeError(
+      `${operation} requires at least ${required} argument${required === 1 ? '' : 's'}, but only ${actual} present`,
+    );
+  }
+}
+
 export class URLSearchParams {
   /** @internal */
   _list: Array<[string, string]>;
@@ -1635,24 +1678,39 @@ export class URLSearchParams {
       return;
     }
     if (typeof init === 'object' || typeof init === 'function') {
-      if (typeof (init as Iterable<unknown>)[Symbol.iterator] === 'function') {
+      const iterator = (init as Iterable<unknown>)[Symbol.iterator];
+      if (iterator !== undefined && iterator !== null) {
+        if (typeof iterator !== 'function') {
+          throw new TypeError('URLSearchParams initializer is not iterable');
+        }
         for (const pair of init as Iterable<Iterable<string>>) {
-          const entry = Array.from(pair);
+          if (
+            pair === null ||
+            pair === undefined ||
+            typeof pair[Symbol.iterator] !== 'function'
+          ) {
+            throw new TypeError(
+              "Failed to construct 'URLSearchParams': parameter 1 sequence's element is not iterable.",
+            );
+          }
+          const entry = Array.from(pair, toUSVString);
           if (entry.length !== 2) {
             throw new TypeError(
               "Failed to construct 'URLSearchParams': parameter 1 sequence's element does not contain exactly two elements.",
             );
           }
-          this._list.push([String(entry[0]), String(entry[1])]);
+          this._list.push([entry[0], entry[1]]);
         }
       } else {
         const record = init as Record<string, unknown>;
+        const entries = new Map<string, string>();
         for (const key of Object.keys(record)) {
-          this._list.push([String(key), String(record[key])]);
+          entries.set(toUSVString(key), toUSVString(record[key]));
         }
+        this._list = Array.from(entries);
       }
     } else {
-      let string = String(init);
+      let string = toUSVString(init);
       if (string[0] === '?') {
         string = string.substring(1);
       }
@@ -1681,22 +1739,29 @@ export class URLSearchParams {
   }
 
   append(name: string, value: string): void {
-    this._list.push([String(name), String(value)]);
+    requireArguments('URLSearchParams.append', arguments.length, 2);
+    this._list.push([toUSVString(name), toUSVString(value)]);
     this._update();
   }
 
   delete(name: string, value?: string): void {
-    name = String(name);
-    const matchesValue =
-      value === undefined ? () => true : (v: string) => v === String(value);
+    requireArguments('URLSearchParams.delete', arguments.length, 1);
+    name = toUSVString(name);
+    const normalizedValue =
+      value === undefined ? undefined : toUSVString(value);
     this._list = this._list.filter(
-      (pair) => !(pair[0] === name && matchesValue(pair[1])),
+      (pair) =>
+        !(
+          pair[0] === name &&
+          (normalizedValue === undefined || pair[1] === normalizedValue)
+        ),
     );
     this._update();
   }
 
   get(name: string): string | null {
-    name = String(name);
+    requireArguments('URLSearchParams.get', arguments.length, 1);
+    name = toUSVString(name);
     for (const [pairName, value] of this._list) {
       if (pairName === name) {
         return value;
@@ -1706,7 +1771,8 @@ export class URLSearchParams {
   }
 
   getAll(name: string): string[] {
-    name = String(name);
+    requireArguments('URLSearchParams.getAll', arguments.length, 1);
+    name = toUSVString(name);
     const output: string[] = [];
     for (const [pairName, value] of this._list) {
       if (pairName === name) {
@@ -1717,11 +1783,14 @@ export class URLSearchParams {
   }
 
   has(name: string, value?: string): boolean {
-    name = String(name);
+    requireArguments('URLSearchParams.has', arguments.length, 1);
+    name = toUSVString(name);
+    const normalizedValue =
+      value === undefined ? undefined : toUSVString(value);
     for (const [pairName, pairValue] of this._list) {
       if (
         pairName === name &&
-        (value === undefined || pairValue === String(value))
+        (normalizedValue === undefined || pairValue === normalizedValue)
       ) {
         return true;
       }
@@ -1730,8 +1799,9 @@ export class URLSearchParams {
   }
 
   set(name: string, value: string): void {
-    name = String(name);
-    value = String(value);
+    requireArguments('URLSearchParams.set', arguments.length, 2);
+    name = toUSVString(name);
+    value = toUSVString(value);
     let seen = false;
     this._list = this._list.filter((pair) => {
       if (pair[0] !== name) {
@@ -1764,8 +1834,16 @@ export class URLSearchParams {
     ) => void,
     thisArg?: unknown,
   ): void {
+    requireArguments('URLSearchParams.forEach', arguments.length, 1);
+    if (typeof callback !== 'function') {
+      throw new TypeError('URLSearchParams.forEach callback must be callable');
+    }
     for (let i = 0; i < this._list.length; i++) {
-      callback.call(thisArg, this._list[i][1], this._list[i][0], this);
+      Reflect.apply(callback, thisArg, [
+        this._list[i][1],
+        this._list[i][0],
+        this,
+      ]);
     }
   }
 
@@ -1824,6 +1902,14 @@ interface BlobLike {
   size: number;
 }
 
+const URL_BRAND = new WeakSet<object>();
+
+function assertURLBrand(value: object): void {
+  if (!URL_BRAND.has(value)) {
+    throw new TypeError('Illegal invocation');
+  }
+}
+
 export class URL {
   /** @internal */
   _url: URLRecord;
@@ -1831,33 +1917,43 @@ export class URL {
   _searchParams: URLSearchParams | null;
 
   constructor(url: string | URL, base?: string | URL) {
+    URL_BRAND.add(this);
+    requireArguments('URL constructor', arguments.length, 1);
+    const urlString = toUSVString(url);
     let parsedBase: URLRecord | Failure | null = null;
     if (base !== undefined) {
-      parsedBase = parseURL(String(base));
+      const baseString = toUSVString(base);
+      parsedBase = parseURL(baseString);
       if (parsedBase === FAILURE) {
-        throw new TypeError(`Invalid base URL: ${base}`);
+        throw new TypeError(`Invalid base URL: ${baseString}`);
       }
     }
-    const parsedURL = parseURL(String(url), parsedBase);
+    const parsedURL = parseURL(urlString, parsedBase);
     if (parsedURL === FAILURE) {
-      throw new TypeError(`Invalid URL: ${url}`);
+      throw new TypeError(`Invalid URL: ${urlString}`);
     }
     this._url = parsedURL;
     this._searchParams = null;
   }
 
   static parse(url: string | URL, base?: string | URL): URL | null {
+    requireArguments('URL.parse', arguments.length, 1);
+    const urlString = toUSVString(url);
+    const baseString = base === undefined ? undefined : toUSVString(base);
     try {
-      return new URL(url, base);
+      return new URL(urlString, baseString);
     } catch {
       return null;
     }
   }
 
   static canParse(url: string | URL, base?: string | URL): boolean {
+    requireArguments('URL.canParse', arguments.length, 1);
+    const urlString = toUSVString(url);
+    const baseString = base === undefined ? undefined : toUSVString(base);
     try {
       // eslint-disable-next-line no-new
-      new URL(url, base);
+      new URL(urlString, baseString);
       return true;
     } catch {
       return false;
@@ -1912,9 +2008,10 @@ export class URL {
   }
 
   set href(value: string) {
-    const parsedURL = parseURL(String(value));
+    const string = toUSVString(value);
+    const parsedURL = parseURL(string);
     if (parsedURL === FAILURE) {
-      throw new TypeError(`Invalid URL: ${value}`);
+      throw new TypeError(`Invalid URL: ${string}`);
     }
     this._url = parsedURL;
     this._updateSearchParams();
@@ -1929,7 +2026,8 @@ export class URL {
   }
 
   set protocol(value: string) {
-    parseURL(String(value) + ':', null, this._url, SCHEME_START);
+    assertURLBrand(this);
+    parseURL(toUSVString(value) + ':', null, this._url, SCHEME_START);
   }
 
   get username(): string {
@@ -1937,10 +2035,11 @@ export class URL {
   }
 
   set username(value: string) {
+    const string = toUSVString(value);
     if (cannotHaveUsernamePasswordPort(this._url)) {
       return;
     }
-    this._url.username = utf8PercentEncodeString(String(value), USERINFO_SET);
+    this._url.username = utf8PercentEncodeString(string, USERINFO_SET);
   }
 
   get password(): string {
@@ -1948,10 +2047,11 @@ export class URL {
   }
 
   set password(value: string) {
+    const string = toUSVString(value);
     if (cannotHaveUsernamePasswordPort(this._url)) {
       return;
     }
-    this._url.password = utf8PercentEncodeString(String(value), USERINFO_SET);
+    this._url.password = utf8PercentEncodeString(string, USERINFO_SET);
   }
 
   get host(): string {
@@ -1963,10 +2063,11 @@ export class URL {
   }
 
   set host(value: string) {
+    const string = toUSVString(value);
     if (hasOpaquePath(this._url)) {
       return;
     }
-    parseURL(String(value), null, this._url, HOST);
+    parseURL(string, null, this._url, HOST);
   }
 
   get hostname(): string {
@@ -1974,10 +2075,11 @@ export class URL {
   }
 
   set hostname(value: string) {
+    const string = toUSVString(value);
     if (hasOpaquePath(this._url)) {
       return;
     }
-    parseURL(String(value), null, this._url, HOSTNAME);
+    parseURL(string, null, this._url, HOSTNAME);
   }
 
   get port(): string {
@@ -1985,10 +2087,10 @@ export class URL {
   }
 
   set port(value: string) {
+    const string = toUSVString(value);
     if (cannotHaveUsernamePasswordPort(this._url)) {
       return;
     }
-    const string = String(value);
     if (string === '') {
       this._url.port = null;
     } else {
@@ -2001,11 +2103,12 @@ export class URL {
   }
 
   set pathname(value: string) {
+    const string = toUSVString(value);
     if (hasOpaquePath(this._url)) {
       return;
     }
     this._url.path = [];
-    parseURL(String(value), null, this._url, PATH_START);
+    parseURL(string, null, this._url, PATH_START);
   }
 
   get search(): string {
@@ -2015,7 +2118,7 @@ export class URL {
 
   set search(value: string) {
     const url = this._url;
-    let string = String(value);
+    let string = toUSVString(value);
     if (string === '') {
       url.query = null;
       this._updateSearchParams();
@@ -2031,6 +2134,9 @@ export class URL {
   }
 
   get searchParams(): URLSearchParams {
+    if (!URL_BRAND.has(this)) {
+      throw new TypeError('Illegal invocation');
+    }
     if (this._searchParams === null) {
       this._searchParams = new URLSearchParams();
       this._searchParams._list = parseUrlencoded(this._url.query || '');
@@ -2046,7 +2152,7 @@ export class URL {
 
   set hash(value: string) {
     const url = this._url;
-    let string = String(value);
+    let string = toUSVString(value);
     if (string === '') {
       url.fragment = null;
       potentiallyStripTrailingSpacesFromOpaquePath(url);
@@ -2071,3 +2177,88 @@ export class URL {
     return serializeURL(this._url);
   }
 }
+
+function setFunctionLength(fn: Function, length: number): void {
+  Object.defineProperty(fn, 'length', {value: length});
+}
+
+function setFunctionName(fn: Function, name: string): void {
+  Object.defineProperty(fn, 'name', {value: name});
+}
+
+function setAccessorNames(prototype: object, property: string): void {
+  const descriptor = Object.getOwnPropertyDescriptor(prototype, property);
+  if (descriptor?.get) {
+    setFunctionName(descriptor.get, `get ${property}`);
+  }
+  if (descriptor?.set) {
+    setFunctionName(descriptor.set, `set ${property}`);
+  }
+}
+
+setFunctionLength(URL, 1);
+setFunctionLength(URL.parse, 1);
+setFunctionLength(URL.canParse, 1);
+setFunctionLength(URLSearchParams, 0);
+setFunctionLength(URLSearchParams.prototype.delete, 1);
+setFunctionLength(URLSearchParams.prototype.has, 1);
+setFunctionLength(URLSearchParams.prototype.forEach, 1);
+setFunctionName(URLSearchParams.prototype.delete, 'delete');
+
+for (const property of ['parse', 'canParse']) {
+  Object.defineProperty(URL, property, {
+    ...Object.getOwnPropertyDescriptor(URL, property),
+    enumerable: true,
+  });
+}
+
+for (const property of [
+  'href',
+  'origin',
+  'protocol',
+  'username',
+  'password',
+  'host',
+  'hostname',
+  'port',
+  'pathname',
+  'search',
+  'searchParams',
+  'hash',
+  'toString',
+  'toJSON',
+]) {
+  setAccessorNames(URL.prototype, property);
+  Object.defineProperty(URL.prototype, property, {
+    ...Object.getOwnPropertyDescriptor(URL.prototype, property),
+    enumerable: true,
+  });
+}
+
+for (const property of [
+  'size',
+  'append',
+  'delete',
+  'get',
+  'getAll',
+  'has',
+  'set',
+  'sort',
+  'forEach',
+  'keys',
+  'values',
+  'entries',
+  'toString',
+]) {
+  setAccessorNames(URLSearchParams.prototype, property);
+  Object.defineProperty(URLSearchParams.prototype, property, {
+    ...Object.getOwnPropertyDescriptor(URLSearchParams.prototype, property),
+    enumerable: true,
+  });
+}
+
+Object.defineProperty(URLSearchParams.prototype, Symbol.iterator, {
+  ...Object.getOwnPropertyDescriptor(URLSearchParams.prototype, 'entries'),
+  value: URLSearchParams.prototype.entries,
+  enumerable: false,
+});

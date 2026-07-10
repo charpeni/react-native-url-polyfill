@@ -136,23 +136,23 @@ function checkSetterTest(testCase, property) {
  * Pick the right test runner:
  * - `it` if the test passes
  * - `it.skip` if it fails due to Unicode/IDNA limitation
- * - `it.failing` if it fails for non-Unicode reasons (to be fixed later)
+ * All non-Unicode failures remain ordinary tests so regressions fail CI.
  */
 function pickRunner(passes, isUnicode) {
-  if (passes) {
-    return it;
-  }
-  if (isUnicode) {
+  if (!passes && isUnicode) {
     return it.skip;
   }
-  return it.failing;
+  return it;
 }
 
 // =============================================================================
 // WPT URL Constructor Tests (urltestdata.json)
 // Source: https://github.com/web-platform-tests/wpt/tree/master/url
 // =============================================================================
-const urlTestData = require('./wpt/urltestdata.json');
+const urlTestData = [
+  ...require('./wpt/urltestdata.json'),
+  ...require('./wpt/urltestdata-javascript-only.json'),
+];
 
 describe('URL — WPT constructor tests (urltestdata.json)', () => {
   const testCases = urlTestData.filter((entry) => typeof entry === 'object');

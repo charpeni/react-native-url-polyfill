@@ -29,6 +29,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "test:wpt": "jest OfficialWPT-test --runInBand",
     "lint": "eslint .",
     "type-check": "tsgo",
     "build": "tsdown",
@@ -36,12 +37,15 @@
     "prepack": "yarn build",
     "benchmark": "yarn build && npx --yes --loglevel error --package whatwg-url --package whatwg-url-minimum -- sh -c 'NODE_PATH=\"${PATH%%/node_modules/.bin*}/node_modules\" node scripts/benchmark.js \"$@\"' sh",
     "bundle-size": "node scripts/bundle-size",
-    "update-wpt": "node scripts/update-wpt"
+    "update-wpt": "node scripts/update-wpt",
+    "generate:wpt:react-native": "node scripts/wpt/generate-react-native-wpt.js"
   },
   "author": "Nicolas Charpentier <nicolas.charpentier079@gmail.com>",
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.27.1",
+    "@babel/plugin-transform-typescript": "^7.28.0",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
     "@react-native-community/eslint-config": "3.2.0",
