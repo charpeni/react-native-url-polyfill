@@ -56,7 +56,7 @@ inspect every changed test and harness dependency, then run `yarn test:wpt`.
 
 ## Hermes and React Native
 
-The React Native `0.78` Android Detox fixture runs the pinned WPT files and
+The React Native `0.84` Android Detox fixture runs the pinned WPT files and
 variants that exercise this URL polyfill in Hermes. Generate its Metro input
 with:
 

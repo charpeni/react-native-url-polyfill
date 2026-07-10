@@ -1,6 +1,7 @@
 import React from 'react';
 import {SafeAreaView, StatusBar, useColorScheme} from 'react-native';
 
+import HermesWPT from '../../detox/HermesWPT';
 import TestPolyfill from '../../detox/TestPolyfill';
 
 function App(): React.JSX.Element {
@@ -9,7 +10,7 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaView>
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <TestPolyfill />
+      <HermesWPT fallback={<TestPolyfill />} />
     </SafeAreaView>
   );
 }
