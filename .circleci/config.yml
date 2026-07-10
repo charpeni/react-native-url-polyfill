@@ -246,10 +246,6 @@ jobs:
       - run:
           name: Run Detox
           command: yarn e2e:android
-      - run:
-          name: Collect Android logs on failure
-          command: adb logcat -d -v threadtime
-          when: on_fail
       - android/save-gradle-cache:
           cache-prefix: v1a
   test-hermes-android:
