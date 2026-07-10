@@ -289,6 +289,9 @@ workflows:
             - lint
             - test-js
             - test-ios-0.84
+          filters:
+            branches:
+              ignore: main
       - test-ios:
           name: test-ios-0.78
           react-native-version: '0.78'
@@ -298,6 +301,9 @@ workflows:
             - lint
             - test-js
             - test-ios-0.84
+          filters:
+            branches:
+              ignore: main
       - test-ios:
           name: test-ios-0.81
           react-native-version: '0.81'
@@ -306,17 +312,32 @@ workflows:
             - lint
             - test-js
             - test-ios-0.84
+          filters:
+            branches:
+              ignore: main
+      - approve-ios-tests:
+          type: approval
+          requires:
+            - test-android-0.84
+          filters:
+            branches:
+              ignore: main
       - test-ios:
           name: test-ios-0.84
           react-native-version: '0.84'
-          xcode-version: "26.6"
+          xcode-version: '26.6'
           requires:
             - lint
             - test-js
+            - test-android-0.84
+            - approve-ios-tests
+          filters:
+            branches:
+              ignore: main
       - test-android:
           matrix:
             parameters:
-              react-native-version: ['0.68', '0.72', '0.78']
+              react-native-version: ['0.68', '0.72', '0.78', '0.84']
           requires:
             - lint
             - test-js
@@ -326,3 +347,49 @@ workflows:
               react-native-version: ['0.68']
           requires:
             - test-android-<< matrix.react-native-version >>
+      - test-ios:
+          name: test-ios-0.84-main
+          react-native-version: '0.84'
+          xcode-version: '26.6'
+          requires:
+            - lint
+            - test-js
+            - test-android-0.84
+          filters:
+            branches:
+              only: main
+      - test-ios:
+          name: test-ios-0.72-main
+          react-native-version: '0.72'
+          xcode-version: 15.4.0
+          legacy-pods-install: true
+          requires:
+            - lint
+            - test-js
+            - test-ios-0.84-main
+          filters:
+            branches:
+              only: main
+      - test-ios:
+          name: test-ios-0.78-main
+          react-native-version: '0.78'
+          xcode-version: 16.4.0
+          legacy-pods-install: true
+          requires:
+            - lint
+            - test-js
+            - test-ios-0.84-main
+          filters:
+            branches:
+              only: main
+      - test-ios:
+          name: test-ios-0.81-main
+          react-native-version: '0.81'
+          xcode-version: 16.4.0
+          requires:
+            - lint
+            - test-js
+            - test-ios-0.84-main
+          filters:
+            branches:
+              only: main
