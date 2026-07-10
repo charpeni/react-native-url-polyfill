@@ -1,0 +1,52 @@
+{
+  "url-constructor.any.js?include=file": [
+    "Parsing: <file://a­b/p> without base",
+    "Parsing: <file://a%C2%ADb/p> without base",
+    "Parsing: <file://loC𝐀𝐋𝐇𝐨𝐬𝐭/usr/bin> without base",
+    "Parsing: <file://­/p> without base",
+    "Parsing: <file://%C2%AD/p> without base"
+  ],
+  "url-constructor.any.js?exclude=(file|javascript|mailto)": [
+    "Parsing: <http://é@é> without base",
+    "Parsing: <http://GOO 　goo.com> against <http://other.com/>",
+    "Parsing: <http://GOO​⁠﻿goo.com> against <http://other.com/>",
+    "Parsing: <http://www.foo。bar.com> against <http://other.com/>",
+    "Parsing: <http://﷐zyx.com> against <http://other.com/>",
+    "Parsing: <http://%ef%b7%90zyx.com> against <http://other.com/>",
+    "Parsing: <http://Ｇｏ.com> against <http://other.com/>",
+    "Parsing: <http://％４１.com> against <http://other.com/>",
+    "Parsing: <http://%ef%bc%85%ef%bc%94%ef%bc%91.com> against <http://other.com/>",
+    "Parsing: <http://％００.com> against <http://other.com/>",
+    "Parsing: <http://%ef%bc%85%ef%bc%90%ef%bc%90.com> against <http://other.com/>",
+    "Parsing: <http://你好你好> against <http://other.com/>",
+    "Parsing: <https://faß.ExAmPlE/> without base",
+    "Parsing: <http://０Ｘｃ０．０２５０．０１> against <http://other.com/>",
+    "Parsing: <ftp://%e2%98%83> without base",
+    "Parsing: <https://%e2%98%83> without base",
+    "Parsing: <https://￿y> without base",
+    "Parsing: <https://a%C2%ADb/> without base",
+    "Parsing: <https://­/> without base",
+    "Parsing: <https://%C2%AD/> without base"
+  ],
+  "url-origin.any.js": [
+    "Origin parsing: <http://é@é> without base",
+    "Origin parsing: <http://GOO​⁠﻿goo.com> against <http://other.com/>",
+    "Origin parsing: <http://www.foo。bar.com> against <http://other.com/>",
+    "Origin parsing: <http://Ｇｏ.com> against <http://other.com/>",
+    "Origin parsing: <http://你好你好> against <http://other.com/>",
+    "Origin parsing: <https://faß.ExAmPlE/> without base",
+    "Origin parsing: <http://０Ｘｃ０．０２５０．０１> against <http://other.com/>",
+    "Origin parsing: <ftp://%e2%98%83> without base",
+    "Origin parsing: <https://%e2%98%83> without base",
+    "Origin parsing: <https://a%C2%ADb/> without base"
+  ],
+  "url-setters.any.js?exclude=(file|javascript|mailto)": [
+    "URL: Setting <https://x/>.host = 'ß' IDNA Nontransitional_Processing",
+    "URL: Setting <https://example.com/>.host = 'a%C2%ADb'",
+    "URL: Setting <https://example.com/>.host = '­'",
+    "URL: Setting <https://example.com/>.host = '%C2%AD'",
+    "URL: Setting <https://example.com/>.hostname = 'a%C2%ADb'",
+    "URL: Setting <https://example.com/>.hostname = '­'",
+    "URL: Setting <https://example.com/>.hostname = '%C2%AD'"
+  ]
+}

@@ -503,16 +503,7 @@ describe('URLSearchParams — WPT sort tests', () => {
   ];
 
   for (const val of sortTests) {
-    // Determine at load time whether this sort test passes
-    const checkSort = (() => {
-      const p = new URLSearchParams(val.input);
-      p.sort();
-      const actual = [...p];
-      return JSON.stringify(actual) === JSON.stringify(val.output);
-    })();
-    const runner = checkSort ? it : it.failing;
-
-    runner(`Parse and sort: ${val.input}`, () => {
+    it(`Parse and sort: ${val.input}`, () => {
       const params = new URLSearchParams(val.input);
       params.sort();
       let i = 0;
@@ -522,7 +513,7 @@ describe('URLSearchParams — WPT sort tests', () => {
       }
     });
 
-    runner(`URL parse and sort: ${val.input}`, () => {
+    it(`URL parse and sort: ${val.input}`, () => {
       const url = new URL('?' + val.input, 'https://example/');
       url.searchParams.sort();
       const params = new URLSearchParams(url.search);

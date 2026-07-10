@@ -1,0 +1,10 @@
+{
+  "excluded": {
+    "urlencoded-parser.any.js": "Tests React Native's Request and Response formData implementation, not this URL polyfill"
+  },
+  "exceptions": {
+    "urlsearchparams-constructor.any.js": [
+      "URLSearchParams constructor, FormData."
+    ]
+  }
+}
