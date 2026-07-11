@@ -135,20 +135,32 @@ function utf8Decode(bytes: number[]): string {
 // Percent-encoding and decoding
 // =============================================================================
 
-function isASCIIDigit(c: string): boolean {
-  return c >= '0' && c <= '9';
+function isASCIIDigit(c: string | undefined): boolean {
+  const code = c?.charCodeAt(0) ?? -1;
+  return code >= 0x30 && code <= 0x39;
 }
 
-function isASCIIAlpha(c: string): boolean {
-  return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+function isASCIIAlpha(c: string | undefined): boolean {
+  const code = c?.charCodeAt(0) ?? -1;
+  return (code >= 0x41 && code <= 0x5a) || (code >= 0x61 && code <= 0x7a);
 }
 
-function isASCIIAlphanumeric(c: string): boolean {
-  return isASCIIAlpha(c) || isASCIIDigit(c);
+function isASCIIAlphanumeric(c: string | undefined): boolean {
+  const code = c?.charCodeAt(0) ?? -1;
+  return (
+    (code >= 0x30 && code <= 0x39) ||
+    (code >= 0x41 && code <= 0x5a) ||
+    (code >= 0x61 && code <= 0x7a)
+  );
 }
 
-function isASCIIHexDigit(c: string): boolean {
-  return isASCIIDigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+function isASCIIHexDigit(c: string | undefined): boolean {
+  const code = c?.charCodeAt(0) ?? -1;
+  return (
+    (code >= 0x30 && code <= 0x39) ||
+    (code >= 0x41 && code <= 0x46) ||
+    (code >= 0x61 && code <= 0x66)
+  );
 }
 
 // Percent-encode sets (https://url.spec.whatwg.org/#percent-encoded-bytes),
