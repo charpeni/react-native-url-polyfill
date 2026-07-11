@@ -221,8 +221,10 @@ const USERINFO_SET = percentEncodeSet(
   0x7c,
 );
 
+const HEX_DIGITS = '0123456789ABCDEF';
+
 function percentEncodeByte(byte: number): string {
-  return '%' + byte.toString(16).toUpperCase().padStart(2, '0');
+  return '%' + HEX_DIGITS[Math.floor(byte / 16)] + HEX_DIGITS[byte % 16];
 }
 
 /**
@@ -237,7 +239,28 @@ function utf8PercentEncode(
   if (codePoint < 0x80 && set[codePoint] === 0) {
     return codePointString;
   }
-  return utf8Encode(codePointString).map(percentEncodeByte).join('');
+  if (codePoint < 0x80) {
+    return percentEncodeByte(codePoint);
+  }
+  if (codePoint < 0x800) {
+    return (
+      percentEncodeByte(0xc0 + Math.floor(codePoint / 64)) +
+      percentEncodeByte(0x80 + (codePoint % 64))
+    );
+  }
+  if (codePoint < 0x10000) {
+    return (
+      percentEncodeByte(0xe0 + Math.floor(codePoint / 4096)) +
+      percentEncodeByte(0x80 + (Math.floor(codePoint / 64) % 64)) +
+      percentEncodeByte(0x80 + (codePoint % 64))
+    );
+  }
+  return (
+    percentEncodeByte(0xf0 + Math.floor(codePoint / 262144)) +
+    percentEncodeByte(0x80 + (Math.floor(codePoint / 4096) % 64)) +
+    percentEncodeByte(0x80 + (Math.floor(codePoint / 64) % 64)) +
+    percentEncodeByte(0x80 + (codePoint % 64))
+  );
 }
 
 /**
