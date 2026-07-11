@@ -907,7 +907,15 @@ function parseURL(
   url: URLRecord | null = null,
   stateOverride: number | null = null,
 ): URLRecord | Failure {
-  let input = toUSVString(rawInput);
+  return parseURLFromUSVString(toUSVString(rawInput), base, url, stateOverride);
+}
+
+function parseURLFromUSVString(
+  input: string,
+  base: URLRecord | null = null,
+  url: URLRecord | null = null,
+  stateOverride: number | null = null,
+): URLRecord | Failure {
   if (url === null) {
     url = createURLRecord();
     // Remove leading and trailing C0 controls and spaces. The regexes only
@@ -1969,6 +1977,21 @@ function assertURLBrand(value: object): void {
   }
 }
 
+function parseURLWithBase(
+  input: string,
+  base: string | undefined,
+): URLRecord | Failure {
+  let parsedBase: URLRecord | null = null;
+  if (base !== undefined) {
+    const result = parseURLFromUSVString(base);
+    if (result === FAILURE) {
+      return FAILURE;
+    }
+    parsedBase = result;
+  }
+  return parseURLFromUSVString(input, parsedBase);
+}
+
 export class URL {
   /** @internal */
   _url: URLRecord;
@@ -1982,12 +2005,12 @@ export class URL {
     let parsedBase: URLRecord | Failure | null = null;
     if (base !== undefined) {
       const baseString = toUSVString(base);
-      parsedBase = parseURL(baseString);
+      parsedBase = parseURLFromUSVString(baseString);
       if (parsedBase === FAILURE) {
         throw new TypeError(`Invalid base URL: ${baseString}`);
       }
     }
-    const parsedURL = parseURL(urlString, parsedBase);
+    const parsedURL = parseURLFromUSVString(urlString, parsedBase);
     if (parsedURL === FAILURE) {
       throw new TypeError(`Invalid URL: ${urlString}`);
     }
@@ -2010,13 +2033,7 @@ export class URL {
     requireArguments('URL.canParse', arguments.length, 1);
     const urlString = toUSVString(url);
     const baseString = base === undefined ? undefined : toUSVString(base);
-    try {
-      // eslint-disable-next-line no-new
-      new URL(urlString, baseString);
-      return true;
-    } catch {
-      return false;
-    }
+    return parseURLWithBase(urlString, baseString) !== FAILURE;
   }
 
   /*
