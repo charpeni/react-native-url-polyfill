@@ -165,6 +165,18 @@ const BENCHMARKS = {
     params.sort();
     return params.toString().length;
   },
+  'URLSearchParams repeated mutation': (URL, URLSearchParams) => {
+    const query = Array.from(
+      {length: 100},
+      (_, index) => `key${index}=${index}`,
+    ).join('&');
+    const params = new URLSearchParams(query);
+    return () => {
+      params.set('key50', 'updated');
+      params.delete('missing');
+      return params.size;
+    };
+  },
   'URL + searchParams roundtrip': (URL, URLSearchParams) => () => {
     const url = new URL('https://example.com/search?a=1&b=2&c=3');
     url.searchParams.append('d', '4');

@@ -1761,13 +1761,17 @@ export class URLSearchParams {
     name = toUSVString(name);
     const normalizedValue =
       value === undefined ? undefined : toUSVString(value);
-    this._list = this._list.filter(
-      (pair) =>
-        !(
-          pair[0] === name &&
-          (normalizedValue === undefined || pair[1] === normalizedValue)
-        ),
-    );
+    let writeIndex = 0;
+    for (let readIndex = 0; readIndex < this._list.length; readIndex++) {
+      const pair = this._list[readIndex];
+      if (
+        pair[0] !== name ||
+        (normalizedValue !== undefined && pair[1] !== normalizedValue)
+      ) {
+        this._list[writeIndex++] = pair;
+      }
+    }
+    this._list.length = writeIndex;
     this._update();
   }
 
@@ -1815,17 +1819,18 @@ export class URLSearchParams {
     name = toUSVString(name);
     value = toUSVString(value);
     let seen = false;
-    this._list = this._list.filter((pair) => {
+    let writeIndex = 0;
+    for (let readIndex = 0; readIndex < this._list.length; readIndex++) {
+      const pair = this._list[readIndex];
       if (pair[0] !== name) {
-        return true;
+        this._list[writeIndex++] = pair;
+      } else if (!seen) {
+        seen = true;
+        pair[1] = value;
+        this._list[writeIndex++] = pair;
       }
-      if (seen) {
-        return false;
-      }
-      seen = true;
-      pair[1] = value;
-      return true;
-    });
+    }
+    this._list.length = writeIndex;
     if (!seen) {
       this._list.push([name, value]);
     }
