@@ -183,6 +183,13 @@ const BENCHMARKS = {
     url.searchParams.set('a', 'z');
     return url.href.length;
   },
+  'URL + searchParams repeated append': (URL, URLSearchParams) => () => {
+    const url = new URL('https://example.com/search');
+    for (let index = 0; index < 100; index++) {
+      url.searchParams.append(`key${index}`, `value${index}`);
+    }
+    return url.href.length;
+  },
 };
 
 // -----------------------------------------------------------------------------
