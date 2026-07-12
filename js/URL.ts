@@ -1812,6 +1812,7 @@ export class URLSearchParams {
     const normalizedValue =
       value === undefined ? undefined : toUSVString(value);
     let writeIndex = 0;
+    let deleted = false;
     for (let readIndex = 0; readIndex < this._list.length; readIndex++) {
       const pair = this._list[readIndex];
       if (
@@ -1819,7 +1820,15 @@ export class URLSearchParams {
         (normalizedValue !== undefined && pair[1] !== normalizedValue)
       ) {
         this._list[writeIndex++] = pair;
+      } else {
+        deleted = true;
       }
+    }
+    if (!deleted) {
+      if (this._urlObject !== null) {
+        this._update();
+      }
+      return;
     }
     this._list.length = writeIndex;
     this._update();
@@ -1868,22 +1877,41 @@ export class URLSearchParams {
     requireArguments('URLSearchParams.set', arguments.length, 2);
     name = toUSVString(name);
     value = toUSVString(value);
-    let seen = false;
-    let writeIndex = 0;
-    for (let readIndex = 0; readIndex < this._list.length; readIndex++) {
+    let firstMatch = -1;
+    for (let index = 0; index < this._list.length; index++) {
+      if (this._list[index][0] === name) {
+        firstMatch = index;
+        break;
+      }
+    }
+
+    if (firstMatch === -1) {
+      this._list.push([name, value]);
+      this._update();
+      return;
+    }
+
+    const previousValue = this._list[firstMatch][1];
+    let writeIndex = firstMatch + 1;
+    for (
+      let readIndex = writeIndex;
+      readIndex < this._list.length;
+      readIndex++
+    ) {
       const pair = this._list[readIndex];
       if (pair[0] !== name) {
         this._list[writeIndex++] = pair;
-      } else if (!seen) {
-        seen = true;
-        pair[1] = value;
-        this._list[writeIndex++] = pair;
       }
     }
-    this._list.length = writeIndex;
-    if (!seen) {
-      this._list.push([name, value]);
+    if (
+      writeIndex === this._list.length &&
+      previousValue === value &&
+      this._urlObject === null
+    ) {
+      return;
     }
+    this._list[firstMatch][1] = value;
+    this._list.length = writeIndex;
     this._update();
   }
 

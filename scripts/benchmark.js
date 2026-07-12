@@ -17,7 +17,7 @@
  *
  * Usage:
  *
- *   node scripts/benchmark.js [iterations]
+ *   node scripts/benchmark.js [samples]
  */
 
 const {register} = require('node:module');
@@ -27,8 +27,26 @@ const {spawnSync} = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
 
-const DEFAULT_ITERATIONS = 50000;
-const DEFAULT_SAMPLES = 5;
+const DEFAULT_SAMPLES = 10;
+const WARMUP_ITERATIONS = 5000;
+const MAX_ACCEPTABLE_RSD = 5;
+const ITERATIONS_BY_BENCHMARK = {
+  'URL construction (absolute)': 5000,
+  'URL construction (relative + base)': 10000,
+  'URL.canParse (valid)': 5000,
+  'URL.canParse (invalid)': 100000,
+  'URL.parse': 5000,
+  'URL construction (percent-encoding)': 1500,
+  'URL property getters': 150000,
+  'URL setters': 30000,
+  'URLSearchParams parse': 20000,
+  'URLSearchParams percent-heavy stringify': 400,
+  'URLSearchParams manipulate + stringify': 50000,
+  'URLSearchParams repeated mutation': 500000,
+  'URL + searchParams roundtrip': 20000,
+  // Rebuilding the URL after each append is quadratic in the reference engines.
+  'URL + searchParams repeated append': 15,
+};
 
 // Loading `js/URL.ts` (an ES module in a package without `"type": "module"`)
 // triggers one-time notices from Node's module loader thread (module-syntax
@@ -235,7 +253,7 @@ function consume(value) {
 
 function timeit(fn, iterations, samples) {
   // Warmup so the JIT has settled before we measure.
-  const warmup = Math.min(iterations, 5000);
+  const warmup = Math.min(iterations, WARMUP_ITERATIONS);
   let sink = 0;
   for (let i = 0; i < warmup; i++) {
     sink ^= consume(fn());
@@ -371,7 +389,7 @@ async function runWorker(payload) {
   process.stdout.write(JSON.stringify(result));
 }
 
-function measureInWorker(engine, benchmark, iterations, samples) {
+function runInWorker(engine, benchmark, iterations, samples) {
   const result = spawnSync(
     process.execPath,
     [
@@ -410,12 +428,13 @@ function formatRatio(ms, baselineMs) {
 }
 
 function formatStats(result, baselineMedian) {
+  const unstable = result.rsd > MAX_ACCEPTABLE_RSD ? ' !' : '';
   return `${result.median.toFixed(1)} [${result.min.toFixed(
     1,
   )}-${result.max.toFixed(1)}, ${result.rsd.toFixed(1)}%] ${formatRatio(
     result.median,
     baselineMedian,
-  )}`;
+  )}${unstable}`;
 }
 
 // -----------------------------------------------------------------------------
@@ -428,8 +447,7 @@ async function main() {
     return;
   }
 
-  const iterations = Number.parseInt(process.argv[2], 10) || DEFAULT_ITERATIONS;
-  const samples = Number.parseInt(process.argv[3], 10) || DEFAULT_SAMPLES;
+  const samples = Number.parseInt(process.argv[2], 10) || DEFAULT_SAMPLES;
   const engines = await loadEngines();
 
   // Sanity check: the polyfill must agree with the reference on a representative
@@ -446,21 +464,20 @@ async function main() {
   }
 
   console.log(
-    `\nBenchmark: median-of-${samples}, ${iterations.toLocaleString()} iterations each`,
+    `\nBenchmark: median-of-${samples}, fixed iterations per operation`,
   );
   console.log(
-    '(each iteration processes the full input set for that operation; ' +
-      'lower is faster)',
+    '(each operation uses the fixed count shown in its row; lower is faster)',
   );
   console.log(
     '(each engine/operation is measured in an isolated worker process; ' +
-      'cells show median [min-max, relative standard deviation])\n',
+      'cells show median ms [min-max, relative standard deviation])\n',
   );
 
-  const nameColumn = 40;
+  const nameColumn = 54;
   const numberColumn = 38;
 
-  let header = 'Operation'.padEnd(nameColumn);
+  let header = 'Operation (iterations)'.padEnd(nameColumn);
   for (const engine of engines) {
     header += `  ${`${engine.label}@${engine.version} (ms)`.padEnd(
       numberColumn,
@@ -469,11 +486,11 @@ async function main() {
   console.log(header);
   console.log('-'.repeat(header.length));
 
-  const totals = engines.map(() => ({median: 0, min: 0, max: 0, rsd: 0}));
-
+  const highlySkewedRows = [];
   let operationIndex = 0;
   for (const label of Object.keys(BENCHMARKS)) {
-    let row = label.padEnd(nameColumn);
+    const iterations = ITERATIONS_BY_BENCHMARK[label];
+    let row = `${label} (${iterations.toLocaleString()})`.padEnd(nameColumn);
     const rowResults = new Array(engines.length);
     const offset = operationIndex % engines.length;
     const orderedEngines = engines
@@ -482,13 +499,9 @@ async function main() {
 
     for (const engine of orderedEngines) {
       const index = engines.indexOf(engine);
-      const measurement = measureInWorker(engine, label, iterations, samples);
+      const measurement = runInWorker(engine, label, iterations, samples);
       const result = stats(measurement.timings);
       rowResults[index] = result;
-      totals[index].median += result.median;
-      totals[index].min += result.min;
-      totals[index].max += result.max;
-      totals[index].rsd += result.rsd;
     }
 
     rowResults.forEach((result) => {
@@ -497,21 +510,29 @@ async function main() {
       )}`;
     });
     console.log(row);
+    if (
+      rowResults.some((result) => result.median / rowResults[0].median >= 100)
+    ) {
+      highlySkewedRows.push({label, iterations, results: rowResults});
+    }
     operationIndex++;
   }
 
   console.log('-'.repeat(header.length));
-  let totalRow = 'total'.padEnd(nameColumn);
-  totals.forEach((total) => {
-    totalRow += `  ${formatStats(
-      {...total, rsd: total.rsd / Object.keys(BENCHMARKS).length},
-      totals[0].median,
-    ).padEnd(numberColumn)}`;
-  });
-  console.log(totalRow);
+  console.log(`! indicates RSD above ${MAX_ACCEPTABLE_RSD}%.`);
+  if (highlySkewedRows.length > 0) {
+    console.log('\nPer-operation medians for highly skewed rows (us/op):');
+    for (const {label, iterations, results} of highlySkewedRows) {
+      console.log(
+        `${label}: ${results
+          .map((result) => ((result.median * 1000) / iterations).toFixed(3))
+          .join(' / ')}`,
+      );
+    }
+  }
   console.log(
-    '\nNote: the total row sums per-operation medians/mins/maxes; its rsd is ' +
-      'the average per-operation rsd.',
+    '\nNote: each operation uses one fixed iteration count shared by all ' +
+      'engines, so cells are directly comparable within a row.',
   );
   console.log('');
 }
