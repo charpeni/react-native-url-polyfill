@@ -121,6 +121,22 @@ const BENCHMARKS = {
     }
     return object.protocol.length + object.pathname.length;
   },
+  'URL.canParse (valid)': (URL) => () => {
+    let valid = false;
+    for (const input of ABSOLUTE_URLS) {
+      valid = URL.canParse(input);
+    }
+    return Number(valid);
+  },
+  'URL.canParse (invalid)': (URL) => () =>
+    Number(URL.canParse('https://[invalid-host/')),
+  'URL.parse': (URL) => () => {
+    let object = null;
+    for (const input of ABSOLUTE_URLS) {
+      object = URL.parse(input);
+    }
+    return object.href.length;
+  },
   'URL construction (percent-encoding)': (URL) => {
     const input = `https://example.com/${'路径 😀/'.repeat(100)}`;
     return () => new URL(input).href.length;

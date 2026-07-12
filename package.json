@@ -1,6 +1,6 @@
 {
   "name": "react-native-url-polyfill",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "A lightweight and trustworthy URL polyfill for React Native",
   "keywords": [
     "URL",
