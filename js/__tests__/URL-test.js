@@ -333,6 +333,22 @@ describe('URL — WPT URL.searchParams integration tests', () => {
     expect(url2.search).toBe('??a=b');
     expect(url2.searchParams.toString()).toBe('%3Fa=b');
   });
+
+  it('serializes existing parameters before incrementally appending', () => {
+    const url = new URL('https://example.org/?existing=~');
+    const searchParams = url.searchParams;
+
+    searchParams.append('first', 'one two');
+    searchParams.append('second', '~');
+
+    expect(url.search).toBe('?existing=%7E&first=one+two&second=%7E');
+
+    url.search = '?reset=~';
+    searchParams.append('after', 'reset');
+    searchParams.append('again', '~');
+
+    expect(url.search).toBe('?reset=%7E&after=reset&again=%7E');
+  });
 });
 
 // =============================================================================

@@ -1681,10 +1681,13 @@ export class URLSearchParams {
   _list: Array<[string, string]>;
   /** @internal */
   _urlObject: URL | null;
+  /** @internal */
+  _urlQueryIsSerialized: boolean;
 
   constructor(init?: URLSearchParamsInit | null) {
     this._list = [];
     this._urlObject = null;
+    this._urlQueryIsSerialized = false;
 
     if (init === undefined || init === null) {
       return;
@@ -1741,6 +1744,7 @@ export class URLSearchParams {
     const url = this._urlObject._url;
     const serialization = serializeUrlencoded(this._list);
     url.query = serialization === '' ? null : serialization;
+    this._urlQueryIsSerialized = true;
     if (serialization === '') {
       potentiallyStripTrailingSpacesFromOpaquePath(url);
     }
@@ -1752,8 +1756,23 @@ export class URLSearchParams {
 
   append(name: string, value: string): void {
     requireArguments('URLSearchParams.append', arguments.length, 2);
-    this._list.push([toUSVString(name), toUSVString(value)]);
-    this._update();
+    name = toUSVString(name);
+    value = toUSVString(value);
+    this._list.push([name, value]);
+    if (this._urlObject === null) {
+      return;
+    }
+    if (!this._urlQueryIsSerialized) {
+      this._update();
+      return;
+    }
+    const url = this._urlObject._url;
+    const serialization =
+      serializeUrlencodedComponent(name) +
+      '=' +
+      serializeUrlencodedComponent(value);
+    url.query =
+      url.query === null ? serialization : url.query + '&' + serialization;
   }
 
   delete(name: string, value?: string): void {
@@ -2017,6 +2036,7 @@ export class URL {
   _updateSearchParams(): void {
     if (this._searchParams !== null) {
       this._searchParams._list = parseUrlencoded(this._url.query || '');
+      this._searchParams._urlQueryIsSerialized = false;
     }
   }
 
