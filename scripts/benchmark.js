@@ -121,6 +121,10 @@ const BENCHMARKS = {
     }
     return object.protocol.length + object.pathname.length;
   },
+  'URL construction (percent-encoding)': (URL) => {
+    const input = `https://example.com/${'路径 😀/'.repeat(100)}`;
+    return () => new URL(input).href.length;
+  },
   'URL property getters': (URL) => {
     const objects = ABSOLUTE_URLS.map((input) => new URL(input));
     return () => {
@@ -156,6 +160,13 @@ const BENCHMARKS = {
       params = new URLSearchParams(query);
     }
     return params.toString().length;
+  },
+  'URLSearchParams percent-heavy stringify': (URL, URLSearchParams) => {
+    const params = new URLSearchParams();
+    for (let index = 0; index < 100; index++) {
+      params.append(`键 ${index}`, '值 😀'.repeat(10));
+    }
+    return () => params.toString().length;
   },
   'URLSearchParams manipulate + stringify': (URL, URLSearchParams) => () => {
     const params = new URLSearchParams('a=1&b=2&c=3');
