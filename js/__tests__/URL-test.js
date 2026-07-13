@@ -245,6 +245,29 @@ describe('URL — WPT setters tests (setters_tests.json)', () => {
   }
 });
 
+describe('URL — historical API tests', () => {
+  it('should reject a relative href assignment', () => {
+    const url = new URL('http://example.com/');
+
+    expect(() => {
+      url.href = './bar';
+    }).toThrow(TypeError);
+  });
+
+  it('should accept an absolute href assignment', () => {
+    const url = new URL('http://example.com/');
+
+    url.href = 'https://other.example/x';
+
+    expect(url.href).toBe('https://other.example/x');
+  });
+
+  it('should not expose Node-only domain conversion methods', () => {
+    expect(URL.domainToASCII).toBeUndefined();
+    expect(URL.domainToUnicode).toBeUndefined();
+  });
+});
+
 // =============================================================================
 // WPT URL.canParse() static method tests
 // =============================================================================

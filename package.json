@@ -24,8 +24,11 @@
     "index.js",
     "index.d.ts",
     "auto.js",
-    "js/*.js",
-    "js/*.d.ts"
+    "js/URL.js",
+    "js/URL.d.ts",
+    "js/URLSearchParams.js",
+    "js/URLSearchParams.d.ts",
+    "js/ios10Fix.js"
   ],
   "scripts": {
     "test": "jest",

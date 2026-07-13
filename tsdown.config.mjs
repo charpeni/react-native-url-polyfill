@@ -7,6 +7,7 @@ export default defineConfig({
   target: 'esnext',
   minify: true,
   dts: true,
+  tsconfig: 'tsconfig.build.json',
   outDir: 'js',
   clean: [
     'js/URL.js',
