@@ -167,4 +167,71 @@ describe('WebIDL bindings', () => {
     expect(callback).toHaveBeenCalledWith('1', 'a', params);
     expect(callback.mock.instances[0]).toBe(thisArg);
   });
+
+  it('rejects forged URL and URLSearchParams receivers', () => {
+    const url = new URL('https://example.com/?a=1');
+    const hrefGetter = Object.getOwnPropertyDescriptor(
+      URL.prototype,
+      'href',
+    ).get;
+    const hrefSetter = Object.getOwnPropertyDescriptor(
+      URL.prototype,
+      'href',
+    ).set;
+
+    expect(() => hrefGetter.call({_url: url._url})).toThrow(TypeError);
+    expect(() => hrefSetter.call({_url: url._url}, url.href)).toThrow(
+      TypeError,
+    );
+    expect(() => URL.prototype.toString.call({_url: url._url})).toThrow(
+      TypeError,
+    );
+    expect(() =>
+      URLSearchParams.prototype.get.call({_list: [['a', '1']]}, 'a'),
+    ).toThrow(TypeError);
+    expect(() =>
+      URLSearchParams.prototype.append.call({_list: []}, 'a', '1'),
+    ).toThrow(TypeError);
+  });
+
+  it('keeps implementation slots hidden', () => {
+    expect(Object.keys(new URL('https://example.com/?a=1'))).toEqual([]);
+    expect(Object.keys(new URLSearchParams('a=1'))).toEqual([]);
+  });
+
+  it('exposes branded URLSearchParams iterators', () => {
+    const iterator = new URLSearchParams('a=1').entries();
+    const next = iterator.next;
+    const prototype = Object.getPrototypeOf(iterator);
+    const intrinsicIteratorPrototype = Object.getPrototypeOf(
+      Object.getPrototypeOf([][Symbol.iterator]()),
+    );
+
+    expect(Object.prototype.toString.call(iterator)).toBe(
+      '[object URLSearchParams Iterator]',
+    );
+    expect(() => next.call({})).toThrow(TypeError);
+    expect(iterator[Symbol.iterator]()).toBe(iterator);
+    expect(Object.getPrototypeOf(prototype)).toBe(intrinsicIteratorPrototype);
+    expect(Object.hasOwn(prototype, 'constructor')).toBe(false);
+    expect(Object.getOwnPropertyDescriptor(prototype, 'next').enumerable).toBe(
+      true,
+    );
+  });
+
+  it('exposes WebIDL toStringTag data properties', () => {
+    for (const [prototype, value] of [
+      [URL.prototype, 'URL'],
+      [URLSearchParams.prototype, 'URLSearchParams'],
+    ]) {
+      expect(
+        Object.getOwnPropertyDescriptor(prototype, Symbol.toStringTag),
+      ).toEqual({
+        value,
+        writable: false,
+        enumerable: false,
+        configurable: true,
+      });
+    }
+  });
 });

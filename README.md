@@ -38,7 +38,7 @@ Meanwhile, React Native has grown around that polyfill, then some unexpected err
 That's why you may need this external dependency. If you use [`URL`](https://developer.mozilla.org/en-US/docs/Web/API/URL) within your app, you should look at the installation steps below!
 
 > [!NOTE]
-> Adding `react-native-url-polyfill` to React Native source code only adds 📦 **20.51 kB (+2%)** (as of RN 0.86.0) to the JavaScript bundle.
+> Adding `react-native-url-polyfill` to React Native source code only adds 📦 **25.19 kB (+3%)** (as of RN 0.86.0) to the JavaScript bundle.
 
 ## Installation
 
