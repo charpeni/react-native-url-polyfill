@@ -84,6 +84,17 @@ const url = new URL('https://github.com');
 const searchParams = new URLSearchParams('q=GitHub');
 ```
 
+## Benchmarks
+
+Run the URL workloads on Node with `yarn benchmark [samples]`, or on the
+optimized standalone Hermes runtime bundled with React Native with
+`yarn benchmark:hermes [samples]`. The Hermes command currently relies on the
+standalone runtime shipped for supported host platforms (macOS in React Native
+0.81.4); `HERMES_BIN` and `HERMESC_BIN` can point to another matching binary pair.
+These desktop standalone-Hermes measurements are not representative of device
+performance. Unsupported optional implementations and operations are reported
+and skipped.
+
 ## License
 
 react-native-url-polyfill is [MIT licensed](LICENSE).

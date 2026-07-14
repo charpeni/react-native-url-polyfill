@@ -39,6 +39,7 @@
     "prepare": "husky install",
     "prepack": "yarn build",
     "benchmark": "yarn build && npx --yes --loglevel error --package whatwg-url --package whatwg-url-minimum -- sh -c 'NODE_PATH=\"${PATH%%/node_modules/.bin*}/node_modules\" node scripts/benchmark.js \"$@\"' sh",
+    "benchmark:hermes": "yarn build && npx --yes --loglevel error --package whatwg-url-without-unicode --package whatwg-url-minimum -- sh -c 'NODE_PATH=\"${PATH%%/node_modules/.bin*}/node_modules\" node scripts/benchmark-hermes.js \"$@\"' sh",
     "bundle-size": "node scripts/bundle-size",
     "update-wpt": "node scripts/update-wpt",
     "generate:wpt:react-native": "node scripts/wpt/generate-react-native-wpt.js"
