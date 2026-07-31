@@ -46,14 +46,14 @@ function sha256(data) {
 
 async function validateInventory() {
   const url = `https://api.github.com/repos/web-platform-tests/wpt/contents/url?ref=${lock.revision}`;
-  const entries = JSON.parse(
-    (
-      await download(url, {
-        Accept: 'application/vnd.github+json',
-        'User-Agent': 'react-native-url-polyfill-wpt-updater',
-      })
-    ).toString('utf8'),
-  );
+  const headers = {
+    Accept: 'application/vnd.github+json',
+    'User-Agent': 'react-native-url-polyfill-wpt-updater',
+  };
+  if (process.env.GITHUB_TOKEN) {
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  }
+  const entries = JSON.parse((await download(url, headers)).toString('utf8'));
   const upstream = entries
     .filter((entry) => entry.type === 'file' && entry.name.endsWith('.any.js'))
     .map((entry) => entry.name)
