@@ -103,10 +103,15 @@ commands:
       - run:
           name: Install Detox
           command: |
+            # Cask definitions are served from the Homebrew JSON API and track
+            # upstream continuously, while HOMEBREW_NO_AUTO_UPDATE pins the
+            # image's Homebrew. That skew breaks tapping once any cask adopts a
+            # stanza the pinned Homebrew cannot parse, so update it explicitly.
+            brew update
             brew tap wix/brew
-            if [ "${XCODE_VERSION%%.*}" -ge 26 ]; then
-              brew trust --formula wix/brew/applesimutils
-            fi
+            # Updating above puts every Xcode image on a Homebrew that enforces
+            # tap trust, so this is no longer specific to newer Xcode images.
+            brew trust --formula wix/brew/applesimutils
             brew install applesimutils
             yarn global add detox-cli
       - run:
@@ -192,7 +197,6 @@ jobs:
       xcode: << parameters.xcode-version >>
     environment:
       HOMEBREW_NO_AUTO_UPDATE: 1
-      XCODE_VERSION: << parameters.xcode-version >>
       NODE_OPTIONS: '--openssl-legacy-provider'
     working_directory: ~/react-native-url-polyfill/platforms/react-native/<< parameters.react-native-version >>
     steps:
