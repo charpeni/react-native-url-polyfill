@@ -20,6 +20,10 @@
   },
   "main": "index.js",
   "types": "index.d.ts",
+  "sideEffects": [
+    "./auto.js",
+    "./js/ios10Fix.js"
+  ],
   "files": [
     "index.js",
     "index.d.ts",
