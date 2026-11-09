@@ -1,5 +1,3 @@
-import './js/ios10Fix';
-
 import packageJson from './package.json';
 
 export * from './js/URL';

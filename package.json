@@ -27,8 +27,7 @@
     "js/URL.js",
     "js/URL.d.ts",
     "js/URLSearchParams.js",
-    "js/URLSearchParams.d.ts",
-    "js/ios10Fix.js"
+    "js/URLSearchParams.d.ts"
   ],
   "scripts": {
     "test": "jest",
