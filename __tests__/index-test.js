@@ -25,6 +25,25 @@ describe('Index', function () {
     expect(imports.URLSearchParams).toBeDefined();
   });
 
+  it('should apply the exported URL and URLSearchParams as globals', () => {
+    const {setupURLPolyfill, URL, URLSearchParams} = require('../index');
+    const {name, version} = require('../package.json');
+    const originalURL = global.URL;
+    const originalURLSearchParams = global.URLSearchParams;
+
+    try {
+      setupURLPolyfill();
+
+      expect(global.URL).toBe(URL);
+      expect(global.URLSearchParams).toBe(URLSearchParams);
+      expect(global.REACT_NATIVE_URL_POLYFILL).toBe(`${name}@${version}`);
+    } finally {
+      global.URL = originalURL;
+      global.URLSearchParams = originalURLSearchParams;
+      delete global.REACT_NATIVE_URL_POLYFILL;
+    }
+  });
+
   it('should reserialize the URL when deleting a missing search parameter', () => {
     const {URL} = require('../index');
     const url = new URL('https://example.com/?a=%20');
