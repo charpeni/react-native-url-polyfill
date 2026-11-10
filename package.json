@@ -21,8 +21,7 @@
   "main": "index.js",
   "types": "index.d.ts",
   "sideEffects": [
-    "./auto.js",
-    "./js/ios10Fix.js"
+    "./auto.js"
   ],
   "files": [
     "index.js",
