@@ -180,6 +180,13 @@ jobs:
       - run:
           name: Run Jest
           command: yarn test
+  test-wpt-build:
+    executor: node
+    steps:
+      - attach-workspace
+      - run:
+          name: Run WPT against the built package
+          command: yarn test:wpt:build
   test-ios:
     parameters:
       react-native-version:
@@ -282,6 +289,9 @@ workflows:
           requires:
             - checkout
       - test-js:
+          requires:
+            - checkout
+      - test-wpt-build:
           requires:
             - checkout
       - test-ios:

@@ -32,6 +32,7 @@
   "scripts": {
     "test": "jest",
     "test:wpt": "jest OfficialWPT-test --runInBand",
+    "test:wpt:build": "yarn build && WPT_TARGET=build jest OfficialWPT-test --runInBand",
     "lint": "eslint .",
     "type-check": "tsgo",
     "build": "tsdown",

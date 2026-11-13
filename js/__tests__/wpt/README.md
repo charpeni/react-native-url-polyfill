@@ -18,6 +18,16 @@ repository.
 yarn test:wpt
 ```
 
+This runs the suite against the TypeScript source in `js/URL.ts`. To run it
+against the minified `js/URL.js` that is published to npm, use:
+
+```bash
+yarn test:wpt:build
+```
+
+This builds the package, then sets `WPT_TARGET=build` so the runner loads
+`js/URL.js` instead. CI runs both.
+
 `OfficialWPT-test.js` runs one Jest test for each upstream WPT file and declared
 variant. `scripts/wpt/run-wpt.js` evaluates the package implementation and the
 official WPT harness in an isolated JavaScript realm. It supports upstream
