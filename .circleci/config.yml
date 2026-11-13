@@ -145,6 +145,12 @@ jobs:
           command: |
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
       - save-cache-yarn
+      # Build the published `js/URL.js` into the workspace. Metro resolves
+      # `.js` before `.ts`, so with the build present the Detox fixtures bundle
+      # the minified file that ships to npm instead of the TypeScript source.
+      - run:
+          name: Build
+          command: yarn build
       - persist_to_workspace:
           root: .
           paths:
