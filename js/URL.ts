@@ -501,6 +501,7 @@ function parseIPv4(input: string): number | Failure {
   return ipv4;
 }
 
+/* eslint-disable no-bitwise */
 function serializeIPv4(address: number): string {
   return (
     (address >>> 24) +
@@ -512,6 +513,7 @@ function serializeIPv4(address: number): string {
     (address & 0xff)
   );
 }
+/* eslint-enable no-bitwise */
 
 /**
  * https://url.spec.whatwg.org/#concept-ipv6-parser
@@ -839,19 +841,6 @@ function shortenPath(url: URLRecord): void {
     return;
   }
   path.pop();
-}
-
-/**
- * https://url.spec.whatwg.org/#potentially-strip-trailing-spaces-from-an-opaque-path
- */
-function potentiallyStripTrailingSpacesFromOpaquePath(url: URLRecord): void {
-  if (!hasOpaquePath(url)) {
-    return;
-  }
-  if (url.fragment !== null || url.query !== null) {
-    return;
-  }
-  url.path = (url.path as string).replace(/ +$/, '');
 }
 
 function isSingleDot(buffer: string): boolean {
@@ -1813,9 +1802,6 @@ export class URLSearchParams {
     const serialization = serializeUrlencoded(internals.list);
     url.query = serialization === '' ? null : serialization;
     internals.urlQueryIsSerialized = true;
-    if (serialization === '') {
-      potentiallyStripTrailingSpacesFromOpaquePath(url);
-    }
   }
 
   get size(): number {
@@ -2282,7 +2268,6 @@ export class URL {
     if (string === '') {
       url.query = null;
       this._updateSearchParams();
-      potentiallyStripTrailingSpacesFromOpaquePath(url);
       return;
     }
     if (string[0] === '?') {
@@ -2316,7 +2301,6 @@ export class URL {
     let string = toUSVString(value);
     if (string === '') {
       url.fragment = null;
-      potentiallyStripTrailingSpacesFromOpaquePath(url);
       return;
     }
     if (string[0] === '#') {

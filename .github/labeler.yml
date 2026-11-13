@@ -1,10 +1,10 @@
 ':tea: Detox':
 - changed-files:
-  - any-glob-to-any-file: 'detox/**/*'
+  - any-glob-to-any-file: 'platforms/**/*'
 
 ':test_tube: Tests':
 - changed-files:
-  - any-glob-to-any-file: ['__tests__/**/*', '/**/__tests__/**/*']
+  - any-glob-to-any-file: '**/__tests__/**/*'
 
 ':toolbox: Infra':
 - changed-files:
