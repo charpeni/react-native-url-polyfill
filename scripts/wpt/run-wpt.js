@@ -8,7 +8,19 @@ const babel = require('@babel/core');
 
 const ROOT = path.resolve(__dirname, '..', '..');
 const WPT_DIR = path.join(ROOT, 'js', '__tests__', 'wpt');
-const SOURCE_PATH = path.join(ROOT, 'js', 'URL.ts');
+// `WPT_TARGET=build` runs the suite against the published `js/URL.js` (run
+// `yarn build` first) instead of the TypeScript source.
+const WPT_TARGET = process.env.WPT_TARGET || 'source';
+if (WPT_TARGET !== 'source' && WPT_TARGET !== 'build') {
+  throw new Error(
+    `Unknown WPT_TARGET: ${WPT_TARGET} (expected source or build)`,
+  );
+}
+const SOURCE_PATH = path.join(
+  ROOT,
+  'js',
+  WPT_TARGET === 'build' ? 'URL.js' : 'URL.ts',
+);
 const implementationRequire = createRequire(SOURCE_PATH);
 let transformedImplementation;
 
@@ -48,14 +60,18 @@ function verifyChecksums() {
 
 function implementationSource() {
   if (transformedImplementation === undefined) {
+    if (!fs.existsSync(SOURCE_PATH)) {
+      throw new Error(`Missing ${SOURCE_PATH}; run \`yarn build\` first.`);
+    }
     transformedImplementation = babel.transformSync(read(SOURCE_PATH), {
       filename: SOURCE_PATH,
       babelrc: false,
       configFile: false,
       plugins: [
-        require.resolve('@babel/plugin-transform-typescript'),
+        WPT_TARGET === 'source' &&
+          require.resolve('@babel/plugin-transform-typescript'),
         require.resolve('@babel/plugin-transform-modules-commonjs'),
-      ],
+      ].filter(Boolean),
       sourceMaps: 'inline',
     }).code;
   }

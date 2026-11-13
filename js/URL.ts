@@ -2367,6 +2367,10 @@ function setAccessorNames(prototype: object, property: string): void {
   }
 }
 
+// Minifiers (ours and consumers') rename classes, so pin the WebIDL interface
+// names explicitly instead of relying on the class bindings.
+setFunctionName(URL, 'URL');
+setFunctionName(URLSearchParams, 'URLSearchParams');
 setFunctionLength(URL, 1);
 setFunctionLength(URL.parse, 1);
 setFunctionLength(URL.canParse, 1);

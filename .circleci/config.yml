@@ -145,6 +145,12 @@ jobs:
           command: |
             yarn install --frozen-lockfile --no-progress --non-interactive --cache-folder ~/.cache/yarn
       - save-cache-yarn
+      # Build the published `js/URL.js` into the workspace. Metro resolves
+      # `.js` before `.ts`, so with the build present the Detox fixtures bundle
+      # the minified file that ships to npm instead of the TypeScript source.
+      - run:
+          name: Build
+          command: yarn build
       - persist_to_workspace:
           root: .
           paths:
@@ -180,6 +186,13 @@ jobs:
       - run:
           name: Run Jest
           command: yarn test
+  test-wpt-build:
+    executor: node
+    steps:
+      - attach-workspace
+      - run:
+          name: Run WPT against the built package
+          command: yarn test:wpt:build
   test-ios:
     parameters:
       react-native-version:
@@ -282,6 +295,9 @@ workflows:
           requires:
             - checkout
       - test-js:
+          requires:
+            - checkout
+      - test-wpt-build:
           requires:
             - checkout
       - test-ios:

@@ -18,6 +18,16 @@ repository.
 yarn test:wpt
 ```
 
+This runs the suite against the TypeScript source in `js/URL.ts`. To run it
+against the minified `js/URL.js` that is published to npm, use:
+
+```bash
+yarn test:wpt:build
+```
+
+This builds the package, then sets `WPT_TARGET=build` so the runner loads
+`js/URL.js` instead. CI runs both.
+
 `OfficialWPT-test.js` runs one Jest test for each upstream WPT file and declared
 variant. `scripts/wpt/run-wpt.js` evaluates the package implementation and the
 official WPT harness in an isolated JavaScript realm. It supports upstream
@@ -68,6 +78,11 @@ The generated `platforms/detox/generated/hermes-wpt.js` file embeds the pinned
 tests, harness, resources, and exception titles. It is ignored by Git and must
 not be edited or committed. The React Native fixture build regenerates it after
 verifying `checksums.json`.
+
+The fixtures import the package through Metro, which resolves `js/URL.js`
+before `js/URL.ts`. CI runs `yarn build` before the Detox jobs, so they exercise
+the minified file that is published to npm. Locally, run `yarn build` first to
+test the same file; without it the fixtures bundle the TypeScript source.
 
 `hermes.json` records React Native host-environment differences separately from
 polyfill exceptions. The Hermes lane excludes `urlencoded-parser.any.js`
