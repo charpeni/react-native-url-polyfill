@@ -20,6 +20,9 @@
   },
   "main": "index.js",
   "types": "index.d.ts",
+  "sideEffects": [
+    "./auto.js"
+  ],
   "files": [
     "index.js",
     "index.d.ts",
