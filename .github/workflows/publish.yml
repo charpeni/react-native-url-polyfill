@@ -2,7 +2,9 @@ name: Publish Package to npmjs
 
 on:
   release:
-    types: [created]
+    # `published` also fires when a draft release is published; `created` does
+    # not fire for releases first saved as drafts.
+    types: [published]
 
 jobs:
   publish:
@@ -21,5 +23,11 @@ jobs:
       - name: Update npm
         run: npm install -g npm@latest
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
+      - name: Run tests
+        run: yarn test
+      # Builds the package, then runs the WPT suite against the built
+      # `js/URL.js` that is about to be published.
+      - name: Run WPT against the built package
+        run: yarn test:wpt:build
       - run: npm publish --access public
